@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Where in the World is Chris Graham?</title>
+  <style>
+    :root { --bg:#111; --fg:#33ff33; --panel:#000; --dim:#0a0a0a; }
+    body{
+      background-color:var(--bg); color:var(--fg);
+      font-family:"Courier New",Courier,monospace;
+      margin:0; padding:20px; display:flex; justify-content:center; align-items:center;
+      min-height:100vh; text-shadow:0 0 5px rgba(51,255,51,.7);
+    }
+    #game-container{
+      width:920px; max-width:100%;
+      border:2px solid var(--fg); padding:18px; background-color:var(--panel);
+      position:relative; box-shadow:0 0 20px rgba(51,255,51,.2); overflow:hidden;
+    }
+    #game-container::before{
+      content:" "; display:block; position:absolute; inset:0;
+      background:
+        linear-gradient(rgba(18,16,16,0) 50%, rgba(0,0,0,.28) 50%),
+        linear-gradient(90deg, rgba(255,0,0,.05), rgba(0,255,0,.02), rgba(0,0,255,.05));
+      z-index:2; background-size:100% 2px, 3px 100%; pointer-events:none;
+    }
+    h1{ text-align:center; border-bottom:1px dashed var(--fg); padding-bottom:10px; margin:0 0 14px 0; letter-spacing:1px; }
+    #screen{
+      min-height:280px; margin-bottom:14px; white-space:pre-wrap; line-height:1.5;
+      position:relative; z-index:3;
+    }
+    .status-bar{
+      display:flex; flex-wrap:wrap; gap:10px; justify-content:space-between;
+      border-bottom:1px solid var(--fg); margin-bottom:12px; padding-bottom:6px;
+      font-weight:bold; position:relative; z-index:3;
+    }
+    .controls{
+      display:grid; grid-template-columns:1fr 1fr; gap:10px;
+      position:relative; z-index:3;
+    }
+    button{
+      background-color:var(--panel); color:var(--fg); border:1px solid var(--fg);
+      padding:14px; font-family:"Courier New",Courier,monospace; font-size:16px;
+      cursor:pointer; text-transform:uppercase; transition:background-color .15s, color .15s, transform .05s;
+      touch-action:manipulation;
+      -webkit-tap-highlight-color: transparent;
+    }
+    button:active{ transform:translateY(1px); }
+    button:hover{ background-color:var(--fg); color:var(--panel); }
+    button:disabled{ border-color:#555; color:#555; cursor:not-allowed; }
+    .hidden{ display:none; }
+    .panel{
+      border:1px solid var(--fg); padding:10px; background:var(--dim); margin-top:10px;
+      position:relative; z-index:3;
+    }
+    .small{ font-size:14px; opacity:.92; }
+    .mono{ font-family:"Courier New",Courier,monospace; }
+  </style>
+</head>
+<body>
+  <div id="game-container">
+    <h1>ACME CRIME NET</h1>
+
+    <div class="status-bar hidden" id="statusBar">
+      <span id="locationDisplay">LOC: UNKNOWN</span>
+      <span id="timeDisplay">TIME: 0.0 DAYS</span>
+      <span id="scoreDisplay">SCORE: 0</span>
+      <span id="caseDisplay">CASE: 0</span>
+    </div>
+
+    <div id="screen">CONNECTING TO INTERPOL DATABASE...
+
+LOADING SUSPECT PROFILE: CHRIS GRAHAM...
+
+PRESS START TO BEGIN MISSION.</div>
+
+    <div class="controls" id="controls">
+      <button id="startBtn">START GAME</button>
+      <button id="howBtn">HOW TO PLAY</button>
+    </div>
+
+    <div class="panel hidden" id="extraPanel"></div>
+  </div>
+
+  <script>
+    "use strict";
+
+    // Polyfill for older engines, prevents total script failure if replaceAll is missing.
+    if (typeof String.prototype.replaceAll !== "function") {
+      // eslint-disable-next-line no-extend-native
+      String.prototype.replaceAll = function(search, replacement) {
+        var target = String(this);
+        return target.split(search).join(replacement);
+      };
+    }
+
+    // On-screen error reporting (so "buttons do nothing" becomes diagnosable)
+    window.onerror = function(message, source, lineno, colno) {
+      try {
+        var scr = document.getElementById("screen");
+        scr.textContent = "SCRIPT ERROR\\n\\n" +
+          String(message) + "\\n\\n" +
+          "Line: " + lineno + " Col: " + colno + "\\n\\n" +
+          "If you opened this in a file preview, use Share -> Open in Safari.";
+      } catch {}
+      return false;
+    };
+
+    const SUSPECT = "Chris Graham";
+
+    const DIFFICULTY_LEVELS = {
+      "1": { name: "Intern", days: 7.0, multiplier: 1.0, intelCost: 120, wrongPenalty: 120 },
+      "2": { name: "Detective", days: 5.0, multiplier: 1.5, intelCost: 160, wrongPenalty: 160 },
+      "3": { name: "Chief", days: 4.0, multiplier: 2.5, intelCost: 220, wrongPenalty: 220 }
+    };
+
+    const STOLEN_ITEMS = [
+      "A clean project baseline that never slips",
+      "The one spreadsheet that has perfect formatting",
+      "The delete button for unnecessary meetings",
+      "Every left sock in the laundry",
+      "A mythical day with zero emails"
+    ];
+
+    const SIGNATURE_TELLS = [
+      "He asked for a high conviction setup, not a generic answer.",
+      "He wanted a plan with phases, checklists, and clean logic.",
+      "He said no fluff, just the actionable edge.",
+      "He asked what breaks the model, not what confirms it.",
+      "He called out a weak assumption instantly."
+    ];
+
+    const PERSONAL_TELLS = [
+      "He mentioned Bills football like it was a legal requirement.",
+      "He asked if there is a Penn State bar nearby.",
+      "He checked scores first, then asked where the best pizza is.",
+      "He said he is on iPad and still expects it to work.",
+      "He asked for something copy paste ready with no weird formatting."
+    ];
+
+    const LOCATIONS = {
+      "Las Vegas": {
+        clues: [
+          "He asked where to grab food fast because his calendar is stacked.",
+          "He mentioned a pump project like it is common small talk.",
+          "He said he needs a process that people will actually follow."
+        ],
+        flavor: [
+          "A hotel printer is jammed and he is personally offended.",
+          "Someone said dashboard and he asked for KPIs immediately."
+        ]
+      },
+      "New York": {
+        clues: [
+          "He folded his pizza slice and said that is the correct method.",
+          "He asked how fast he can get across town, then asked again.",
+          "He said Broadway is cool, but he has two kids and a schedule."
+        ],
+        flavor: [
+          "A taxi driver said relax and he did not.",
+          "A street vendor tried to upsell and he negotiated like procurement."
+        ]
+      },
+      "London": {
+        clues: [
+          "He tried to pay with pounds and asked for exact change.",
+          "He asked where Big Ben is and why it feels judgemental.",
+          "He complained about rain like it is a project risk."
+        ],
+        flavor: [
+          "He called the underground a workflow and meant it.",
+          "He asked if the pubs have decent WiFi for trading."
+        ]
+      },
+      "Paris": {
+        clues: [
+          "He was carrying a baguette like it was evidence.",
+          "He asked where the Louvre was and how long the line hurts.",
+          "He said bonjour, then asked for the fastest route anyway."
+        ],
+        flavor: [
+          "A cafe server moved slowly and he started doing mental math.",
+          "He asked if there is an easier way to export this data."
+        ]
+      },
+      "Tokyo": {
+        clues: [
+          "He wanted the best sushi and a second opinion.",
+          "He bought a bullet train ticket and called it efficient.",
+          "He asked where the cleanest tech stores are."
+        ],
+        flavor: [
+          "He called a vending machine the perfect automation.",
+          "He asked for live data, not yesterday's data."
+        ]
+      },
+      "Sydney": {
+        clues: [
+          "He asked where to find kangaroos and meant immediately.",
+          "He mentioned the Opera House and asked if it has a schedule.",
+          "He said gday and acted like it is a process improvement."
+        ],
+        flavor: [
+          "He asked if surfing has a learning curve like options greeks.",
+          "He asked what time the market opens back home."
+        ]
+      },
+      "Rio de Janeiro": {
+        clues: [
+          "He asked for Copacabana directions and called it urgent.",
+          "He mentioned Christ the Redeemer and wanted a better angle.",
+          "He bought a ticket for Carnival and called it field research."
+        ],
+        flavor: [
+          "He asked if the music has a tempo like a clean trend day.",
+          "He asked for the fastest exit route, just in case."
+        ]
+      },
+      "Cairo": {
+        clues: [
+          "He asked for pyramid tours and demanded a timeline.",
+          "He complained about heat like it is a contract dispute.",
+          "He said he needs approvals, yesterday."
+        ],
+        flavor: [
+          "He asked where the strongest coffee is, for reasons.",
+          "He asked if anyone here runs dashboards."
+        ]
+      }
+    };
+
+    const STORAGE_KEY = "chris_graham_high_scores_v3";
+
+    const screen = document.getElementById("screen");
+    const controls = document.getElementById("controls");
+    const statusBar = document.getElementById("statusBar");
+    const extraPanel = document.getElementById("extraPanel");
+
+    const locDisplay = document.getElementById("locationDisplay");
+    const timeDisplay = document.getElementById("timeDisplay");
+    const scoreDisplay = document.getElementById("scoreDisplay");
+    const caseDisplay = document.getElementById("caseDisplay");
+
+    let currentCity = "";
+    let path = [];
+    let pathIndex = 0;
+
+    let daysLeft = 0.0;
+    let difficultyKey = "1";
+    let difficultyMult = 1.0;
+
+    let intelTokens = 0;
+    let score = 0;
+
+    let caseItem = "";
+    let caseNumber = 0;
+
+    let noteLog = [];
+
+    function randChoice(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+    function shuffle(array) {
+      const a = array.slice();
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        const tmp = a[i]; a[i] = a[j]; a[j] = tmp;
+      }
+      return a;
+    }
+
+    function safeUpper(s) { return String(s || "").toUpperCase(); }
+
+    function showPanel(html) {
+      extraPanel.classList.remove("hidden");
+      extraPanel.innerHTML = html;
+    }
+
+    function hidePanel() {
+      extraPanel.classList.add("hidden");
+      extraPanel.innerHTML = "";
+    }
+
+    function resetState() {
+      currentCity = "";
+      path = [];
+      pathIndex = 0;
+      daysLeft = 0.0;
+      difficultyMult = 1.0;
+      intelTokens = 0;
+      score = 0;
+      caseItem = "";
+      noteLog = [];
+    }
+
+    function getHighScores() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return [];
+        const parsed = JSON.parse(raw);
+        if (!Array.isArray(parsed)) return [];
+        return parsed;
+      } catch {
+        return [];
+      }
+    }
+
+    function saveHighScore(entry) {
+      const list = getHighScores();
+      list.push(entry);
+      list.sort((a, b) => (b.score || 0) - (a.score || 0));
+      const top = list.slice(0, 5);
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(top)); } catch {}
+    }
+
+    function renderHighScores() {
+      const list = getHighScores();
+      if (!list.length) return "TOP AGENTS\\n\\nNo records yet.\\n";
+      let out = "TOP AGENTS\\n\\n";
+      list.forEach((x, i) => {
+        const n = x.name ? x.name : "UNKNOWN";
+        const d = x.difficulty ? x.difficulty : "UNKNOWN";
+        out += (i + 1) + ". " + n + "  " + x.score + " pts  " + d + "\\n";
+      });
+      return out;
+    }
+
+    function typeWriter(text, callback) {
+      screen.textContent = "";
+      let i = 0;
+      const speed = 8;
+      function type() {
+        if (i < text.length) {
+          screen.textContent += text.charAt(i);
+          i++;
+          setTimeout(type, speed);
+        } else {
+          if (callback) callback();
+        }
+      }
+      type();
+    }
+
+    function updateStatus() {
+      locDisplay.textContent = "LOC: " + safeUpper(currentCity || "UNKNOWN");
+      timeDisplay.textContent = "TIME: " + daysLeft.toFixed(1) + " DAYS";
+      scoreDisplay.textContent = "SCORE: " + score + "  INTEL: " + intelTokens;
+      caseDisplay.textContent = "CASE: " + caseNumber;
+    }
+
+    function boot() {
+      hidePanel();
+      statusBar.classList.add("hidden");
+      controls.innerHTML = "" +
+        '<button onclick="difficultyMenu()">NEW CASE</button>' +
+        '<button onclick="showScores()">HALL OF FAME</button>';
+      typeWriter(
+        "ACME CRIME NET ONLINE\\n\\n" +
+        "Interpol uplink stable.\\n" +
+        "Case database loaded.\\n" +
+        "Suspect file verified.\\n\\n" +
+        "Select NEW CASE to begin.",
+        null
+      );
+    }
+
+    function howTo() {
+      hidePanel();
+      typeWriter(
+        "HOW TO PLAY\\n\\n" +
+        "Goal\\n" +
+        "Catch Chris Graham before time runs out.\\n\\n" +
+        "Actions\\n" +
+        "Investigate costs 0.5 day and gives a clue about the next correct city.\\n" +
+        "Travel costs 1.0 day and offers flight options.\\n" +
+        "Spend Intel for a stronger hint before you fly.\\n\\n" +
+        "Scoring\\n" +
+        "Correct travel gains points.\\n" +
+        "Wrong travel loses points.\\n" +
+        "Catch him with time left for a big bonus.\\n" +
+        "Harder difficulty multiplies your final score.",
+        function() {
+          controls.innerHTML = '<button onclick="boot()">BACK</button><button onclick="difficultyMenu()">NEW CASE</button>';
+        }
+      );
+    }
+
+    function showScores() {
+      hidePanel();
+      typeWriter(renderHighScores(), function() {
+        controls.innerHTML = '<button onclick="boot()">BACK</button><button onclick="difficultyMenu()">NEW CASE</button>';
+      });
+    }
+
+    function difficultyMenu() {
+      hidePanel();
+      typeWriter(
+        "NEW CASE SETUP\\n\\n" +
+        "Select difficulty.\\n\\n" +
+        "1  Intern     7.0 days, score x1.0\\n" +
+        "2  Detective  5.0 days, score x1.5\\n" +
+        "3  Chief      4.0 days, score x2.5",
+        function() {
+          controls.innerHTML = "" +
+            '<button onclick="startGame(\\'1\\')">1 INTERN</button>' +
+            '<button onclick="startGame(\\'2\\')">2 DETECTIVE</button>' +
+            '<button onclick="startGame(\\'3\\')">3 CHIEF</button>' +
+            '<button onclick="boot()">CANCEL</button>';
+        }
+      );
+    }
+
+    function addNote(line) {
+      noteLog.push(line);
+      if (noteLog.length > 12) noteLog.shift();
+    }
+
+    function escapeHtml(s) {
+      return String(s)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function showNotebook() {
+      const lines = noteLog.slice().reverse().map(x => "• " + x).join("\\n");
+      showPanel(
+        '<div class="mono"><div class="small">NOTEBOOK</div>' +
+        '<pre style="margin:8px 0 0 0;white-space:pre-wrap;">' + escapeHtml(lines || "No notes yet.") + "</pre></div>"
+      );
+    }
+
+    function toggleNotes() {
+      if (extraPanel.classList.contains("hidden")) showNotebook();
+      else hidePanel();
+    }
+
+    function startGame(key) {
+      resetState();
+      hidePanel();
+
+      difficultyKey = DIFFICULTY_LEVELS[key] ? key : "1";
+      const level = DIFFICULTY_LEVELS[difficultyKey];
+      daysLeft = level.days;
+      difficultyMult = level.multiplier;
+
+      const cities = shuffle(Object.keys(LOCATIONS));
+      path = cities.slice(0, 5);
+      currentCity = path[0];
+      pathIndex = 0;
+
+      caseItem = randChoice(STOLEN_ITEMS);
+      caseNumber = Math.floor(1000 + Math.random() * 9000);
+
+      intelTokens = 1;
+      score = 0;
+      noteLog = [];
+
+      statusBar.classList.remove("hidden");
+      updateStatus();
+
+      const introText =
+        "URGENT MESSAGE\\n\\n" +
+        "SUSPECT: " + SUSPECT + "\\n" +
+        "THEFT: " + caseItem + "\\n\\n" +
+        "Last confirmed location: " + currentCity + "\\n\\n" +
+        "You have " + daysLeft.toFixed(1) + " days.\\n" +
+        "Difficulty: " + level.name + ", score x" + level.multiplier + "\\n\\n" +
+        "Tip: Chris always leaves tells.\\n" +
+        "Proceed, Detective.";
+
+      typeWriter(introText, function() {
+        addNote("Case opened. Last confirmed location: " + currentCity + ".");
+        showMainOptions();
+      });
+    }
+
+    function showMainOptions() {
+      updateStatus();
+      showNotebook();
+
+      if (daysLeft <= 0) { gameOver(false); return; }
+      if (currentCity === path[path.length - 1]) { gameOver(true); return; }
+
+      controls.innerHTML = "" +
+        '<button onclick="investigate()">1 INVESTIGATE</button>' +
+        '<button onclick="travelMenu()">2 TRAVEL</button>' +
+        '<button onclick="buyIntel()">3 BUY INTEL</button>' +
+        '<button onclick="toggleNotes()">NOTEBOOK</button>';
+    }
+
+    function investigate() {
+      if (daysLeft <= 0) return;
+
+      daysLeft = Math.max(0, daysLeft - 0.5);
+      updateStatus();
+
+      const nextCity = path[pathIndex + 1];
+      const clueList = LOCATIONS[nextCity].clues;
+
+      const clue1 = randChoice(clueList);
+      let clue2 = "";
+      if (Math.random() < 0.45) {
+        clue2 = randChoice(clueList);
+        if (clue2 === clue1) clue2 = randChoice(clueList);
+      }
+
+      const tells = SIGNATURE_TELLS.concat(PERSONAL_TELLS);
+      const tell = (Math.random() < 0.55) ? randChoice(tells) : "";
+
+      const text =
+        "INVESTIGATION REPORT\\n\\n" +
+        "You work the local scene in " + currentCity + ".\\n\\n" +
+        "Witness statement:\\n" +
+        '"' + clue1 + '"' +
+        (clue2 ? "\\n\\nSecond witness:\\n" + '"' + clue2 + '"' : "") +
+        (tell ? "\\n\\nField note:\\n" + '"' + tell + '"' : "") +
+        "\\n\\nTime spent: 0.5 day";
+
+      addNote("Clue likely points toward: " + nextCity + ".");
+      typeWriter(text, function() {
+        controls.innerHTML = '<button onclick="showMainOptions()">CONTINUE</button>';
+      });
+    }
+
+    function buyIntel() {
+      const level = DIFFICULTY_LEVELS[difficultyKey];
+      const cost = level.intelCost;
+
+      if (score < cost) {
+        typeWriter(
+          "INTEL REQUEST DENIED\\n\\n" +
+          "Required score: " + cost + "\\n" +
+          "Current score: " + score + "\\n\\n" +
+          "Earn more points, then try again.",
+          function() { controls.innerHTML = '<button onclick="showMainOptions()">BACK</button>'; }
+        );
+        return;
+      }
+
+      score -= cost;
+      intelTokens += 1;
+      updateStatus();
+      addNote("Intel purchased. Cost: " + cost + ".");
+
+      typeWriter(
+        "INTEL ACQUIRED\\n\\n" +
+        "Score spent: " + cost + "\\n" +
+        "Intel available: " + intelTokens,
+        function() { controls.innerHTML = '<button onclick="showMainOptions()">CONTINUE</button>'; }
+      );
+    }
+
+    function revealIntelHint() {
+      const nextCity = path[pathIndex + 1];
+      const flavor = randChoice(LOCATIONS[nextCity].flavor);
+      const tell = randChoice(SIGNATURE_TELLS.concat(PERSONAL_TELLS));
+      return "High confidence tip:\\n" + flavor + "\\n\\n" +
+             "Analyst note:\\n" + tell + "\\n\\n" +
+             "Recommended destination:\\n" + nextCity;
+    }
+
+    function travelMenu() {
+      if (daysLeft <= 0) return;
+
+      hidePanel();
+
+      const correctNext = path[pathIndex + 1];
+      let options = [correctNext];
+
+      const wrongCities = Object.keys(LOCATIONS).filter(c => c !== correctNext && c !== currentCity);
+      const picks = shuffle(wrongCities).slice(0, 2);
+      options = shuffle(options.concat(picks));
+
+      const intelBlock = (intelTokens > 0)
+        ? "\\n\\nIntel available: " + intelTokens + "\\nTap SPEND INTEL for a stronger hint before you fly."
+        : "\\n\\nIntel available: 0\\nBuy intel later when you have score.";
+
+      screen.textContent =
+        "DEPARTURE BOARD\\n\\n" +
+        "Current: " + currentCity + "\\n" +
+        "Next move required.\\n\\n" +
+        "Select a destination." + intelBlock;
+
+      let buttons = "";
+      options.forEach(function(city) {
+        const safe = city.replaceAll("'", "\\'");
+        buttons += '<button onclick="travelTo(\\'' + safe + '\\')">' + safeUpper(city) + "</button>";
+      });
+
+      const intelBtn = (intelTokens > 0)
+        ? '<button onclick="useIntel()">SPEND INTEL NOW</button>'
+        : '<button disabled>SPEND INTEL NOW</button>';
+
+      buttons += intelBtn + '<button onclick="showMainOptions()">CANCEL</button>';
+      controls.innerHTML = buttons;
+    }
+
+    function useIntel() {
+      if (intelTokens <= 0) return;
+      intelTokens -= 1;
+      updateStatus();
+
+      const hint = revealIntelHint();
+      addNote("Intel used for a strong hint.");
+
+      typeWriter(
+        "INTEL BRIEFING\\n\\n" + hint,
+        function() { controls.innerHTML = '<button onclick="travelMenu()">BACK TO FLIGHTS</button>'; }
+      );
+    }
+
+    function travelTo(city) {
+      if (daysLeft <= 0) return;
+
+      daysLeft = Math.max(0, daysLeft - 1.0);
+      updateStatus();
+
+      screen.textContent = "Booking flight to " + city + "...\\n\\nIn transit...";
+      controls.innerHTML = '<button disabled>FLYING</button><button disabled>FLYING</button>';
+
+      setTimeout(function() {
+        const level = DIFFICULTY_LEVELS[difficultyKey];
+        const correctNext = path[pathIndex + 1];
+
+        if (city === correctNext) {
+          currentCity = city;
+          pathIndex++;
+
+          const gain = 260;
+          score += gain;
+          updateStatus();
+
+          addNote("Correct move to " + city + ". Score +" + gain + ".");
+
+          typeWriter(
+            "ARRIVAL CONFIRMED\\n\\n" +
+            "You land in " + city + ".\\n" +
+            "The trail is warm.\\n\\n" +
+            "Score +" + gain + "\\n" +
+            "Time spent: 1.0 day",
+            showMainOptions
+          );
+        } else {
+          currentCity = city;
+
+          const loss = level.wrongPenalty;
+          score = Math.max(0, score - loss);
+          updateStatus();
+
+          addNote("Wrong move to " + city + ". Score -" + loss + ".");
+
+          typeWriter(
+            "ARRIVAL CONFIRMED\\n\\n" +
+            "You land in " + city + ".\\n" +
+            "No verified sightings.\\n\\n" +
+            "Score -" + loss + "\\n" +
+            "Time spent: 1.0 day",
+            function() { controls.innerHTML = '<button onclick="showMainOptions()">CONTINUE</button>'; }
+          );
+        }
+      }, 900);
+    }
+
+    function gameOver(win) {
+      hidePanel();
+      controls.innerHTML =
+        '<button onclick="difficultyMenu()">NEW CASE</button>' +
+        '<button onclick="showScores()">HALL OF FAME</button>' +
+        '<button onclick="boot()">HOME</button>';
+
+      if (win) {
+        const base = 1200;
+        const timeBonus = Math.floor(daysLeft * 260);
+        const routeBonus = 500;
+        const raw = base + timeBonus + routeBonus + score;
+        const finalScore = Math.floor(raw * difficultyMult);
+
+        typeWriter(
+          "CASE CLOSED\\n\\n" +
+          "You found " + SUSPECT + " in " + currentCity + ".\\n" +
+          "Loot recovered.\\n" +
+          "Case filed.\\n\\n" +
+          "Base score: " + base + "\\n" +
+          "Route bonus: " + routeBonus + "\\n" +
+          "Time bonus: " + timeBonus + "\\n" +
+          "Field score: " + score + "\\n" +
+          "Difficulty multiplier: x" + difficultyMult + "\\n\\n" +
+          "FINAL SCORE: " + finalScore + "\\n\\n" +
+          "Enter your agent name below.",
+          function() { promptNameAndSave(finalScore); }
+        );
+      } else {
+        typeWriter(
+          "MISSION FAILED\\n\\n" +
+          "Time has run out.\\n" +
+          SUSPECT + " escaped.\\n\\n" +
+          "Field score: " + score + "\\n\\n" +
+          "Start a new case when ready.",
+          null
+        );
+      }
+    }
+
+    function promptNameAndSave(finalScore) {
+      const level = DIFFICULTY_LEVELS[difficultyKey];
+      let name = prompt("Agent name:", "Chris");
+      if (name === null) name = "";
+      name = String(name).trim().slice(0, 22);
+
+      saveHighScore({
+        name: name || "UNKNOWN",
+        score: finalScore,
+        difficulty: level.name,
+        date: new Date().toISOString()
+      });
+
+      showScores();
+    }
+
+    // Attach initial button handlers (avoid reliance on inline handlers for the first screen)
+    document.addEventListener("DOMContentLoaded", function() {
+     document.getElementById("startBtn").addEventListener("click", boot);
+      document.getElementById("howBtn").addEventListener("click", howTo);
+    });
+  </script>
+</body>
+</html>
