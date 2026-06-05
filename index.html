@@ -1,366 +1,838 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Where in the World is Chris Graham?</title>
-  <style>
-    :root { --bg:#111; --fg:#33ff33; --panel:#000; --dim:#0a0a0a; }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>RIP CITY — Sports Card Pack Simulator</title>
+<style>
+  :root{
+    --bg:#0a0e17; --bg2:#121826; --panel:#161d2e; --line:#27314a;
+    --fg:#e8ecf5; --dim:#8b97b3; --accent:#ffcb3d; --good:#39d98a; --bad:#ff5d6c;
+    --gold:#ffcb3d;
+  }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; }
+  body{
+    background:
+      radial-gradient(1200px 600px at 50% -10%, #1b2740 0%, transparent 60%),
+      var(--bg);
+    color:var(--fg);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    min-height:100vh;
+    -webkit-text-size-adjust:100%;
+  }
+  .wrap{ max-width:1040px; margin:0 auto; padding:16px 16px 60px; }
 
-    body{
-      background:var(--bg); color:var(--fg);
-      font-family:"Courier New",Courier,monospace;
-      margin:0; padding:20px;
-      display:flex; justify-content:center; align-items:center;
-      min-height:100vh;
-      text-shadow:0 0 5px rgba(51,255,51,.7);
-    }
+  header.top{
+    display:flex; align-items:center; justify-content:space-between;
+    gap:12px; flex-wrap:wrap; margin-bottom:14px;
+  }
+  .brand{ display:flex; align-items:baseline; gap:10px; }
+  .brand h1{
+    font-size:26px; margin:0; letter-spacing:2px; font-weight:900;
+    background:linear-gradient(90deg,#ffcb3d,#ff6ec7,#5ad1ff);
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+  .brand .tag{ color:var(--dim); font-size:12px; letter-spacing:1px; text-transform:uppercase; }
 
-    #game-container{
-      width:920px; max-width:100%;
-      border:2px solid var(--fg);
-      padding:18px;
-      background-color:var(--panel);
-      box-shadow:0 0 20px rgba(51,255,51,.2);
-      overflow:hidden;
+  .wallet{
+    display:flex; gap:8px; flex-wrap:wrap; align-items:center;
+  }
+  .stat{
+    background:var(--panel); border:1px solid var(--line); border-radius:10px;
+    padding:7px 11px; font-size:13px; line-height:1.1; min-width:74px;
+  }
+  .stat b{ display:block; font-size:16px; margin-top:3px; }
+  .stat small{ color:var(--dim); font-size:11px; text-transform:uppercase; letter-spacing:.5px; }
+  .net.pos b{ color:var(--good); } .net.neg b{ color:var(--bad); }
 
-      /* IMPORTANT: scanlines as BACKGROUND, not overlay */
-      background-image:
-        linear-gradient(rgba(18,16,16,0) 50%, rgba(0,0,0,.28) 50%),
-        linear-gradient(90deg, rgba(255,0,0,.05), rgba(0,255,0,.02), rgba(0,0,255,.05));
-      background-size:100% 2px, 3px 100%;
-    }
+  button{
+    font-family:inherit; cursor:pointer; border-radius:10px;
+    border:1px solid var(--line); background:var(--panel); color:var(--fg);
+    padding:10px 14px; font-size:14px; font-weight:600;
+    touch-action:manipulation; -webkit-tap-highlight-color:transparent;
+    transition:transform .06s ease, background .15s ease, border-color .15s ease;
+  }
+  button:hover{ border-color:var(--accent); }
+  button:active{ transform:translateY(1px); }
+  button.primary{ background:linear-gradient(180deg,#ffd95e,#f5a623); color:#1a1300; border:none; font-weight:800; }
+  button.ghost{ background:transparent; }
+  button:disabled{ opacity:.45; cursor:not-allowed; }
 
-    h1{
-      text-align:center;
-      border-bottom:1px dashed var(--fg);
-      padding-bottom:10px;
-      margin:0 0 14px 0;
-      letter-spacing:1px;
-    }
+  .toolbar{ display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px; }
 
-    #screen{
-      min-height:280px;
-      margin-bottom:14px;
-      white-space:pre-wrap;
-      line-height:1.5;
-    }
+  /* Product grid */
+  .sport-group{ margin-bottom:20px; }
+  .sport-group h2{
+    font-size:14px; letter-spacing:2px; text-transform:uppercase; color:var(--dim);
+    border-bottom:1px solid var(--line); padding-bottom:6px; margin:0 0 12px;
+  }
+  .grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:12px; }
+  .product{
+    position:relative; border:1px solid var(--line); border-radius:14px; padding:14px;
+    background:linear-gradient(160deg,var(--bg2),var(--panel));
+    overflow:hidden; cursor:pointer; transition:transform .12s ease, border-color .12s ease;
+  }
+  .product:hover{ transform:translateY(-3px); border-color:var(--accent); }
+  .product .sheen{ position:absolute; inset:0; background:linear-gradient(115deg,transparent 40%,rgba(255,255,255,.06) 50%,transparent 60%); pointer-events:none; }
+  .product .yr{ font-size:11px; color:var(--dim); letter-spacing:1px; }
+  .product h3{ margin:4px 0 2px; font-size:18px; }
+  .product .meta{ font-size:12px; color:var(--dim); margin-top:8px; display:flex; justify-content:space-between; }
+  .product .price{ color:var(--accent); font-weight:800; }
+  .product .stripe{ height:5px; border-radius:4px; margin-top:10px; }
 
-    .status-bar{
-      display:flex; flex-wrap:wrap; gap:10px; justify-content:space-between;
-      border-bottom:1px solid var(--fg);
-      margin-bottom:12px; padding-bottom:6px;
-      font-weight:bold;
-    }
+  /* Opening view */
+  .opener{ }
+  .opener-head{ display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:14px; }
+  .opener-head .ptitle h2{ margin:0; font-size:22px; }
+  .opener-head .ptitle .sub{ color:var(--dim); font-size:13px; }
 
-    .controls{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:10px;
-    }
+  .packstage{
+    border:1px solid var(--line); border-radius:16px; padding:22px;
+    background:radial-gradient(700px 300px at 50% 0%, #1c2742, var(--bg2));
+    min-height:360px;
+  }
 
-    button{
-      background:rgba(0,0,0,.90);
-      color:var(--fg);
-      border:1px solid var(--fg);
-      padding:14px;
-      font-family:"Courier New",Courier,monospace;
-      font-size:16px;
-      text-transform:uppercase;
+  /* Pack art */
+  .packart{
+    width:200px; height:300px; margin:10px auto 18px; border-radius:14px;
+    position:relative; cursor:pointer; user-select:none;
+    box-shadow:0 18px 40px rgba(0,0,0,.5);
+    display:flex; flex-direction:column; align-items:center; justify-content:space-between;
+    padding:18px 14px; text-align:center; overflow:hidden;
+    transition:transform .15s ease;
+  }
+  .packart:hover{ transform:translateY(-4px) rotate(-1deg); }
+  .packart .foilshine{ position:absolute; inset:0; background:linear-gradient(115deg,transparent 35%,rgba(255,255,255,.25) 50%,transparent 65%); mix-blend-mode:screen; animation:shine 3s linear infinite; }
+  @keyframes shine{ 0%{ transform:translateX(-60%);} 100%{ transform:translateX(60%);} }
+  .packart .pbrand{ font-weight:900; font-size:22px; letter-spacing:1px; text-shadow:0 2px 6px rgba(0,0,0,.6); }
+  .packart .psport{ font-size:12px; letter-spacing:3px; text-transform:uppercase; opacity:.9; }
+  .packart .ptap{ font-size:12px; background:rgba(0,0,0,.35); padding:5px 10px; border-radius:20px; }
 
-      /* iPad touch reliability */
-      touch-action:manipulation;
-      -webkit-tap-highlight-color: transparent;
-      user-select:none;
-    }
+  .ripcontrols{ display:flex; gap:10px; justify-content:center; flex-wrap:wrap; }
 
-    button:active{ transform:translateY(1px); }
-    button:hover{ background:var(--fg); color:var(--panel); }
+  /* Card reveal area */
+  .reveal{ display:grid; grid-template-columns:repeat(auto-fill,minmax(132px,1fr)); gap:12px; margin-top:6px; }
+  .card{
+    position:relative; aspect-ratio:5/7; border-radius:10px; cursor:pointer;
+    perspective:800px; background:transparent;
+  }
+  .card .inner{ position:absolute; inset:0; transform-style:preserve-3d; transition:transform .5s cubic-bezier(.2,.8,.2,1); }
+  .card.flipped .inner{ transform:rotateY(180deg); }
+  .card .face{ position:absolute; inset:0; border-radius:10px; backface-visibility:hidden; overflow:hidden; }
+  .card .back{
+    background:
+      repeating-linear-gradient(45deg,#1d2742 0 10px,#222e4d 10px 20px);
+    border:2px solid #2c3a5e;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .card .back span{ font-weight:900; letter-spacing:2px; color:#5b6b96; transform:rotate(-12deg); font-size:18px; }
+  .card .front{
+    transform:rotateY(180deg);
+    border:2px solid var(--line);
+    display:flex; flex-direction:column; padding:8px; color:#fff;
+    background:linear-gradient(160deg,#202a44,#161d2e);
+  }
+  .card .front .pos{ font-size:9px; letter-spacing:1px; opacity:.85; text-transform:uppercase; }
+  .card .front .nm{ font-weight:800; font-size:14px; line-height:1.05; margin-top:auto; text-shadow:0 1px 3px rgba(0,0,0,.7); }
+  .card .front .tm{ font-size:10px; opacity:.85; }
+  .card .front .rar{ font-size:9px; font-weight:800; letter-spacing:.5px; text-transform:uppercase; margin-top:5px; padding:2px 5px; border-radius:5px; display:inline-block; align-self:flex-start; }
+  .card .front .serial{ position:absolute; top:6px; right:7px; font-size:10px; font-weight:800; background:rgba(0,0,0,.55); padding:2px 6px; border-radius:20px; }
+  .card .front .setline{ position:absolute; top:6px; left:7px; font-size:8px; opacity:.7; letter-spacing:.5px; }
+  .card.holo .front::after{
+    content:""; position:absolute; inset:0; pointer-events:none; mix-blend-mode:color-dodge;
+    background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.35) 45%,rgba(120,220,255,.25) 55%,transparent 70%);
+    background-size:250% 250%; animation:holomove 3s linear infinite;
+  }
+  @keyframes holomove{ 0%{ background-position:0% 0%;} 100%{ background-position:100% 100%;} }
+  .card.refractor .front::after{
+    content:""; position:absolute; inset:0; pointer-events:none; mix-blend-mode:screen; opacity:.8;
+    background:linear-gradient(60deg,#ff3d8b,#ffcb3d,#39d98a,#5ad1ff,#b06cff);
+    background-size:300% 300%; animation:holomove 4s linear infinite; filter:saturate(1.4);
+    -webkit-mask-image:linear-gradient(115deg,transparent 35%,#000 50%,transparent 65%);
+            mask-image:linear-gradient(115deg,transparent 35%,#000 50%,transparent 65%);
+  }
+  .card .hitflag{ position:absolute; bottom:6px; right:6px; font-size:13px; }
+  .card.bighit{ box-shadow:0 0 0 2px var(--gold), 0 0 24px rgba(255,203,61,.6); }
+  .card.pop{ animation:pop .4s ease; }
+  @keyframes pop{ 0%{ transform:scale(.6); opacity:0;} 100%{ transform:scale(1); opacity:1;} }
 
-    .hidden{ display:none; }
+  .pull-summary{ margin-top:16px; border-top:1px solid var(--line); padding-top:12px; font-size:14px; }
+  .pull-summary .row{ display:flex; justify-content:space-between; padding:3px 0; }
+  .pull-summary .row b.pos{ color:var(--good);} .pull-summary .row b.neg{ color:var(--bad);}
 
-    .panel{
-      border:1px solid var(--fg);
-      padding:10px;
-      background:rgba(0,0,0,.88);
-      margin-top:10px;
-    }
+  /* Modal */
+  .modal-bg{ position:fixed; inset:0; background:rgba(4,7,14,.78); display:flex; align-items:flex-start; justify-content:center; padding:30px 14px; overflow:auto; z-index:50; }
+  .modal{ width:680px; max-width:100%; background:var(--bg2); border:1px solid var(--line); border-radius:16px; padding:20px; }
+  .modal h2{ margin:0 0 6px; }
+  .modal .close{ float:right; }
+  table.odds{ width:100%; border-collapse:collapse; font-size:13px; margin-top:10px; }
+  table.odds th, table.odds td{ text-align:left; padding:6px 8px; border-bottom:1px solid var(--line); }
+  table.odds th{ color:var(--dim); font-weight:600; text-transform:uppercase; font-size:11px; letter-spacing:.5px; }
+  table.odds td.r{ text-align:right; font-variant-numeric:tabular-nums; }
+  .swatch{ display:inline-block; width:11px; height:11px; border-radius:3px; margin-right:7px; vertical-align:middle; }
 
-    .small{ font-size:14px; opacity:.92; }
-  </style>
+  .colllist{ margin-top:10px; }
+  .collrow{ display:flex; align-items:center; gap:10px; padding:8px; border:1px solid var(--line); border-radius:10px; margin-bottom:7px; background:var(--panel); }
+  .collrow .cl-rar{ width:7px; align-self:stretch; border-radius:4px; }
+  .collrow .cl-main{ flex:1; min-width:0; }
+  .collrow .cl-main .cl-nm{ font-weight:700; }
+  .collrow .cl-main .cl-sub{ font-size:12px; color:var(--dim); }
+  .collrow .cl-val{ font-weight:800; color:var(--accent); white-space:nowrap; }
+  .empty{ color:var(--dim); text-align:center; padding:30px; }
+
+  .hint{ color:var(--dim); font-size:12px; text-align:center; margin-top:10px; }
+  .footer{ text-align:center; color:var(--dim); font-size:11px; margin-top:30px; }
+  .flash{ position:fixed; inset:0; pointer-events:none; z-index:40; opacity:0; }
+  .flash.go{ animation:flashk .6s ease; }
+  @keyframes flashk{ 0%{ opacity:0;} 30%{ opacity:.5;} 100%{ opacity:0;} }
+
+  @media (max-width:520px){
+    .brand h1{ font-size:20px; }
+    .reveal{ grid-template-columns:repeat(auto-fill,minmax(104px,1fr)); }
+  }
+</style>
 </head>
 <body>
-  <div id="game-container">
-    <h1>ACME CRIME NET</h1>
-
-    <div class="status-bar hidden" id="statusBar">
-      <span id="locationDisplay">LOC: UNKNOWN</span>
-      <span id="timeDisplay">TIME: 0.0 DAYS</span>
-      <span id="scoreDisplay">SCORE: 0</span>
-      <span id="caseDisplay">CASE: 0</span>
+<div class="flash" id="flash"></div>
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <h1>RIP CITY</h1>
+      <span class="tag">Pack Simulator</span>
     </div>
+    <div class="wallet" id="wallet"></div>
+  </header>
 
-    <div id="screen">CONNECTING TO INTERPOL DATABASE...
+  <div class="toolbar" id="toolbar"></div>
 
-LOADING SUSPECT PROFILE: CHRIS GRAHAM...
+  <main id="view"></main>
 
-PRESS START TO BEGIN MISSION.</div>
-
-    <div class="controls" id="controls">
-      <button id="startBtn" type="button">START GAME</button>
-      <button id="howBtn" type="button">HOW TO PLAY</button>
-    </div>
-
-    <div class="panel hidden" id="extraPanel"></div>
+  <div class="footer">
+    Simulation only — no real cards, money, or purchases. Odds modeled on published hobby-pack configurations and are approximate.
   </div>
+</div>
 
 <script>
 "use strict";
 
-/* If anything errors, show it on screen instead of silent failure */
 window.onerror = function(msg, src, line, col){
-  const s = document.getElementById("screen");
-  s.textContent = "SCRIPT ERROR\n\n" + msg + "\nLine " + line + " Col " + col;
+  document.getElementById("view").innerHTML =
+    '<div class="packstage"><b>SCRIPT ERROR</b><br>'+msg+'<br>Line '+line+' Col '+col+'</div>';
   return false;
 };
 
-const screen = document.getElementById("screen");
-const controls = document.getElementById("controls");
-const statusBar = document.getElementById("statusBar");
-const locDisplay = document.getElementById("locationDisplay");
-const timeDisplay = document.getElementById("timeDisplay");
-const scoreDisplay = document.getElementById("scoreDisplay");
-const caseDisplay = document.getElementById("caseDisplay");
-const extraPanel = document.getElementById("extraPanel");
-
-const SUSPECT = "Chris Graham";
-
-const DIFFICULTY = {
-  "1": { name:"Intern", days:7.0, mult:1.0 },
-  "2": { name:"Detective", days:5.0, mult:1.5 },
-  "3": { name:"Chief", days:4.0, mult:2.5 }
+/* ============================================================
+   RARITY DEFINITIONS  (color used for label + card accents)
+   ============================================================ */
+const RAR = {
+  base:      { name:"Base",            color:"#7f8db0", holo:false },
+  insert:    { name:"Insert",          color:"#c08cff", holo:true  },
+  parallel:  { name:"Parallel",        color:"#5ad1ff", holo:true  },
+  refractor: { name:"Refractor",       color:"#7fe9ff", refractor:true },
+  silver:    { name:"Silver Prizm",    color:"#cfd6e6", refractor:true },
+  numbered:  { name:"Numbered",        color:"#39d98a", refractor:true },
+  rare:      { name:"Rare /25 or less",color:"#ff9d3d", refractor:true },
+  superrare: { name:"Super Rare /10",  color:"#ff5d6c", refractor:true },
+  gold:      { name:"Gold /10",        color:"#ffcb3d", refractor:true },
+  auto:      { name:"Autograph",       color:"#ff6ec7", refractor:true },
+  oneofone:  { name:"1/1",             color:"#ffffff", refractor:true }
 };
 
-const STOLEN = [
-  "A clean project baseline that never slips",
-  "The one spreadsheet that has perfect formatting",
-  "The delete button for unnecessary meetings",
-  "Every left sock in the laundry",
-  "A mythical day with zero emails"
+/* ============================================================
+   PLAYER POOLS  (real players, recent products)
+   tier: superstar=5, star=3.5, solid=2, rookie=2.8, prospect=2.2, common=1
+   ============================================================ */
+const POOLS = {
+  nba_2425:[
+    ["Victor Wembanyama","SAS","C",5],["Nikola Jokic","DEN","C",5],["Luka Doncic","DAL","G",5],
+    ["Shai Gilgeous-Alexander","OKC","G",4.5],["Giannis Antetokounmpo","MIL","F",4.5],["Jayson Tatum","BOS","F",4],
+    ["Stephen Curry","GSW","G",4.5],["LeBron James","LAL","F",4.5],["Anthony Edwards","MIN","G",4.5],
+    ["Kevin Durant","PHX","F",4],["Joel Embiid","PHI","C",4],["Tyrese Haliburton","IND","G",3.5],
+    ["Devin Booker","PHX","G",3.5],["Ja Morant","MEM","G",3.5],["Jalen Brunson","NYK","G",3.5],
+    ["Zaccharie Risacher","ATL","F",2.8],["Alex Sarr","WAS","C",2.8],["Reed Sheppard","HOU","G",2.8],
+    ["Stephon Castle","SAS","G",3],["Zach Edey","MEM","C",2.8],["Dalton Knecht","LAL","G",2.8],
+    ["Donovan Clingan","POR","C",2.6],["Matas Buzelis","CHI","F",2.6],
+    ["Anthony Davis","LAL","F",3],["Damian Lillard","MIL","G",3],["Kawhi Leonard","LAC","F",3],
+    ["Trae Young","ATL","G",3],["De'Aaron Fox","SAC","G",3],["Paolo Banchero","ORL","F",3.2],
+    ["Chet Holmgren","OKC","C",3.2],["Scottie Barnes","TOR","F",3],["Cade Cunningham","DET","G",3.2]
+  ],
+  nfl_24:[
+    ["Patrick Mahomes","KC","QB",5],["Josh Allen","BUF","QB",4.5],["Lamar Jackson","BAL","QB",4.5],
+    ["Jalen Hurts","PHI","QB",4],["Joe Burrow","CIN","QB",4],["Justin Jefferson","MIN","WR",4],
+    ["Ja'Marr Chase","CIN","WR",4],["CeeDee Lamb","DAL","WR",3.8],["Tyreek Hill","MIA","WR",3.8],
+    ["Christian McCaffrey","SF","RB",3.8],["Micah Parsons","DAL","LB",3.5],["Travis Kelce","KC","TE",3.5],
+    ["Caleb Williams","CHI","QB",3.2],["Jayden Daniels","WAS","QB",3.4],["Drake Maye","NE","QB",3],
+    ["Marvin Harrison Jr.","ARI","WR",3.2],["Malik Nabers","NYG","WR",3.2],["Rome Odunze","CHI","WR",2.9],
+    ["Brock Bowers","LV","TE",3.2],["Bo Nix","DEN","QB",2.9],["Brian Thomas Jr.","JAX","WR",3],
+    ["Xavier Worthy","KC","WR",2.9],["J.J. McCarthy","MIN","QB",2.8],
+    ["Anthony Richardson","IND","QB",3],["C.J. Stroud","HOU","QB",3.6],["Puka Nacua","LA","WR",3.2],
+    ["Sam LaPorta","DET","TE",2.8],["Bijan Robinson","ATL","RB",3.2],["Jahmyr Gibbs","DET","RB",3]
+  ],
+  mlb_24:[
+    ["Shohei Ohtani","LAD","DH",5],["Aaron Judge","NYY","OF",4.5],["Mike Trout","LAA","OF",4],
+    ["Ronald Acuna Jr.","ATL","OF",4.5],["Mookie Betts","LAD","OF",4],["Juan Soto","NYY","OF",4],
+    ["Bobby Witt Jr.","KC","SS",4.2],["Gunnar Henderson","BAL","SS",3.8],["Corbin Carroll","ARI","OF",3.5],
+    ["Julio Rodriguez","SEA","OF",4],["Fernando Tatis Jr.","SD","OF",3.8],["Jose Ramirez","CLE","3B",3.5],
+    ["Freddie Freeman","LAD","1B",3.5],["Yordan Alvarez","HOU","DH",3.5],["Vladimir Guerrero Jr.","TOR","1B",3.5],
+    ["Elly De La Cruz","CIN","SS",4],["Paul Skenes","PIT","P",3.8],["Jackson Holliday","BAL","SS",3.2],
+    ["Wyatt Langford","TEX","OF",3],["Jackson Chourio","MIL","OF",3.2],["Jackson Merrill","SD","OF",3],
+    ["Ceddanne Rafaela","BOS","OF",2.6],["Colton Cowser","BAL","OF",2.7],["Masyn Winn","STL","SS",2.7],
+    ["Junior Caminero","TB","3B",3]
+  ],
+  bowman_prospects:[
+    ["Leo De Vries","SD","SS",3.4],["Sebastian Walcott","TEX","SS",3.3],["Jesus Made","MIL","SS",3.2],
+    ["Ethan Holliday","COL","SS",3.2],["Walker Jenkins","MIN","OF",3.2],["Roman Anthony","BOS","OF",3.4],
+    ["Jasson Dominguez","NYY","OF",3.2],["Druw Jones","ARI","OF",2.8],["Termarr Johnson","PIT","2B",2.8],
+    ["Max Clark","DET","OF",3],["Ethan Salas","SD","C",3.2],["Dylan Crews","WAS","OF",3.4],
+    ["Travis Bazzana","CLE","2B",3],["JJ Wetherholt","STL","SS",2.9],["Paul Skenes","PIT","P",3.8],
+    ["Jackson Holliday","BAL","SS",3.4],["Wyatt Langford","TEX","OF",3.2],["Jackson Chourio","MIL","OF",3.4],
+    ["Konnor Griffin","PIT","SS",2.8],["Charlie Condon","COL","OF",2.9],["Bryce Eldridge","SF","1B",2.8],
+    ["Samuel Basallo","BAL","C",2.9]
+  ]
+};
+
+/* Insert set names per sport for flavor */
+const INSERTS = {
+  basketball:["Color Blast","Sensational Signatures","Far Out!","Fearless","Dominance","Emergent","Get Hyped"],
+  football:["Downtown!","Kaboom!","Color Blast","Rated Rookie","Optic Elite","The Rookies","Stars & Stripes"],
+  baseball:["1989 Topps","Refractor Rookies","Stars of MLB","Diamond Greats","Future Stars","Bowman Spotlight"]
+};
+
+/* ============================================================
+   PRODUCTS
+   Each: id, name, year, sport, brand, price, cardsPerPack,
+   packsPerBox, pool, palette (pack art), and a "slots" model.
+
+   The pull model:
+   - cardsPerPack base cards, but a number of "chase rolls" replace
+     base cards with parallels/inserts based on odds.
+   - oddsPerPack values are probability a given pack yields >=1 of that type.
+   Numbers are approximations of published hobby odds (see ODDS NOTES).
+   ============================================================ */
+function P(o){ return o; }
+
+const PRODUCTS = [
+  // ---- 2024-25 Panini Prizm Basketball: 12 cards/pack, 12 packs/box, ~2 autos & ~22 parallels/box.
+  //      Panini doesn't publish unnumbered Silver/color odds (approx); /N runs are exact.
+  P({ id:"prizm_bk", name:"Prizm Basketball", year:"2024-25", sport:"basketball", brand:"PANINI PRIZM",
+      price:20, cardsPerPack:12, packsPerBox:12, pool:"nba_2425",
+      palette:["#e62b54","#1f6dff","#0a0e17"],
+      chase:[
+        { rar:"silver",    label:"Silver Prizm",            p:1/3.5,    max:1, foilType:"silver" },
+        { rar:"parallel",  label:"Colored Prizm",           p:1/1.6,    max:2, foilType:"refractor", colors:["Hyper","Red Wave","Blue","Pink","Purple","Green"] },
+        { rar:"insert",    label:"Insert",                  p:1/1.8,    max:2, foilType:"holo", names:["Color Blast","Sensational","Emergent","Far Out!","Dominance","Get Hyped"] },
+        { rar:"numbered",  label:"Numbered Prizm",          p:1/4,      max:1, foilType:"refractor", runs:[199,149,125,99,75,49] },
+        { rar:"rare",      label:"Numbered /25 or /15",     p:1/45,     max:1, foilType:"refractor", runs:[25,15] },
+        { rar:"gold",      label:"Gold Prizm /10",          p:1/240,    max:1, foilType:"refractor", runs:[10] },
+        { rar:"superrare", label:"Green Prizm /5",          p:1/600,    max:1, foilType:"refractor", runs:[5] },
+        { rar:"auto",      label:"Autograph",               p:1/6,      max:1, foilType:"refractor" },
+        { rar:"oneofone",  label:"Black Prizm 1/1",         p:1/1728,   max:1, foilType:"refractor" }
+      ]}),
+  // ---- 2024 Panini Prizm Football: 12/pack, 12 packs/box, ~2 autos & ~10 numbered/box.
+  P({ id:"prizm_fb", name:"Prizm Football", year:"2024", sport:"football", brand:"PANINI PRIZM",
+      price:24, cardsPerPack:12, packsPerBox:12, pool:"nfl_24",
+      palette:["#13a05a","#1f6dff","#0a0e17"],
+      chase:[
+        { rar:"silver",    label:"Silver Prizm",            p:1/3.5,    max:1, foilType:"silver" },
+        { rar:"parallel",  label:"Colored Prizm",           p:1/1.6,    max:2, foilType:"refractor", colors:["Red","Blue","Green","Pink","Hyper","No Huddle"] },
+        { rar:"insert",    label:"Insert",                  p:1/1.8,    max:2, foilType:"holo", names:["Color Blast","Manga","Prizmania","Stained Glass","Fireworks","Dawn of a New Era"] },
+        { rar:"numbered",  label:"Numbered Prizm",          p:1/1.4,    max:1, foilType:"refractor", runs:[199,99,75,49] },
+        { rar:"rare",      label:"Numbered /25 (Purple Power)", p:1/30, max:1, foilType:"refractor", runs:[25] },
+        { rar:"gold",      label:"Gold Prizm /10",          p:1/120,    max:1, foilType:"refractor", runs:[10] },
+        { rar:"superrare", label:"Gold Vinyl /5",           p:1/300,    max:1, foilType:"refractor", runs:[5] },
+        { rar:"auto",      label:"Rookie / RPA Autograph",  p:1/6,      max:1, foilType:"refractor" },
+        { rar:"oneofone",  label:"Black Finite 1/1",        p:1/1728,   max:1, foilType:"refractor" }
+      ]}),
+  // ---- 2024 Donruss Optic Football: 11/pack, 20 packs/box, ~1 auto, ~3 Holo, ~9 numbered/box.
+  P({ id:"optic_fb", name:"Donruss Optic Football", year:"2024", sport:"football", brand:"OPTIC",
+      price:13, cardsPerPack:11, packsPerBox:20, pool:"nfl_24",
+      palette:["#ff7b1a","#7a1fff","#0a0e17"],
+      chase:[
+        { rar:"silver",    label:"Holo",                    p:1/6.7,    max:1, foilType:"silver" },
+        { rar:"insert",    label:"Insert",                  p:1/4,      max:1, foilType:"holo", names:["The Rookies","My House","Optic Elite","Rated Rookie","Downtown!"] },
+        { rar:"parallel",  label:"Colored Prizm",           p:1/5,      max:1, foilType:"refractor", colors:["Pink Velocity","Blue","Red","Purple","Ice"] },
+        { rar:"numbered",  label:"Numbered Optic",          p:1/2.2,    max:1, foilType:"refractor", runs:[249,199,99,75,49] },
+        { rar:"rare",      label:"Numbered /25",            p:1/30,     max:1, foilType:"refractor", runs:[25] },
+        { rar:"gold",      label:"Gold /10",                p:1/90,     max:1, foilType:"refractor", runs:[10] },
+        { rar:"auto",      label:"Rated Rookie / RPA Auto", p:1/20,     max:1, foilType:"refractor" },
+        { rar:"oneofone",  label:"Black Pandora 1/1",       p:1/2880,   max:1, foilType:"refractor" }
+      ]}),
+  // ---- 2024 Topps Chrome Baseball: 4/pack, 24 packs/box, 1 auto/box. Topps odds are exact & published.
+  P({ id:"chrome_bb", name:"Topps Chrome Baseball", year:"2024", sport:"baseball", brand:"TOPPS CHROME",
+      price:5, cardsPerPack:4, packsPerBox:24, pool:"mlb_24",
+      palette:["#1f6dff","#ff3d8b","#0a0e17"],
+      chase:[
+        { rar:"refractor", label:"Refractor",               p:1/3,      max:2, foilType:"refractor" },
+        { rar:"insert",    label:"Prism Refractor / Insert",p:1/6,      max:1, foilType:"holo", names:["Chrome All-Etch","Future Stars","Diamond Greats","1989 Topps"] },
+        { rar:"numbered",  label:"Colored Refractor",       p:1/25,     max:1, foilType:"refractor", runs:[199,150,99], colors:["Aqua /199","Blue /150","Green /99"] },
+        { rar:"gold",      label:"Gold Refractor /50",      p:1/120,    max:1, foilType:"refractor", runs:[50] },
+        { rar:"rare",      label:"Orange Refractor /25",    p:1/51399,  max:1, foilType:"refractor", runs:[25] },
+        { rar:"superrare", label:"Black Refractor /10",     p:1/132168, max:1, foilType:"refractor", runs:[10] },
+        { rar:"superrare", label:"Red Refractor /5",        p:1/252321, max:1, foilType:"refractor", runs:[5] },
+        { rar:"auto",      label:"Chrome Autograph",        p:1/24,     max:1, foilType:"refractor" },
+        { rar:"oneofone",  label:"SuperFractor 1/1",        p:1/1387764,max:1, foilType:"refractor" }
+      ]}),
+  // ---- 2024 Topps Finest Baseball: 10/pack, 6 packs/box, 2 autos/box. Hit-dense.
+  P({ id:"finest_bb", name:"Topps Finest Baseball", year:"2024", sport:"baseball", brand:"TOPPS FINEST",
+      price:20, cardsPerPack:10, packsPerBox:6, pool:"mlb_24",
+      palette:["#00d0c0","#1f6dff","#0a0e17"],
+      chase:[
+        { rar:"refractor", label:"Refractor",               p:1/5,      max:2, foilType:"refractor" },
+        { rar:"insert",    label:"Checkerboard Refractor",  p:1/2,      max:1, foilType:"holo", names:["Finest Firsts","Diamond Finest","Fiesta","Future So Bright"] },
+        { rar:"numbered",  label:"Blue Checkerboard /99",   p:1/35,     max:1, foilType:"refractor", runs:[99] },
+        { rar:"gold",      label:"Gold Refractor /50",      p:1/69,     max:1, foilType:"refractor", runs:[50] },
+        { rar:"rare",      label:"Orange Refractor /25",    p:1/137,    max:1, foilType:"refractor", runs:[25] },
+        { rar:"superrare", label:"Refractor /10 or /5",     p:1/400,    max:1, foilType:"refractor", runs:[10,5] },
+        { rar:"auto",      label:"Autograph",               p:1/3,      max:1, foilType:"refractor" },
+        { rar:"oneofone",  label:"SuperFractor 1/1",        p:1/3600,   max:1, foilType:"refractor" }
+      ]}),
+  // ---- 2024 Bowman Chrome Prospects: 4/pack, 24 packs/box, 2 autos/box. 1st Bowman chase.
+  P({ id:"bowman_bb", name:"Bowman Chrome Prospects", year:"2024", sport:"baseball", brand:"BOWMAN", subtitle:"Chrome Prospects",
+      price:8, cardsPerPack:4, packsPerBox:24, pool:"bowman_prospects",
+      palette:["#1e4dd8","#ffcb3d","#0a0e17"],
+      firstBowman:true,
+      chase:[
+        { rar:"refractor", label:"Prospect Refractor /499", p:1/3,      max:2, foilType:"refractor", runs:[499] },
+        { rar:"insert",    label:"My 1st Bowman / Insert",  p:1/6,      max:1, foilType:"holo", names:["My 1st Bowman","Spotlight","International Impact"] },
+        { rar:"numbered",  label:"Colored Refractor",       p:1/20,     max:1, foilType:"refractor", runs:[299,250,199,150], colors:["Fuchsia /299","Purple /250","Blue /150"] },
+        { rar:"gold",      label:"Gold Refractor /50",      p:1/90,     max:1, foilType:"refractor", runs:[50] },
+        { rar:"rare",      label:"Orange Refractor /25",    p:1/200,    max:1, foilType:"refractor", runs:[25] },
+        { rar:"superrare", label:"Black /10 or Red /5",     p:1/800,    max:1, foilType:"refractor", runs:[10,5] },
+        { rar:"auto",      label:"Chrome Prospect Auto",    p:1/12,     max:1, foilType:"refractor" },
+        { rar:"oneofone",  label:"SuperFractor 1/1",        p:1/4500,   max:1, foilType:"refractor" }
+      ]})
 ];
 
-const LOCATIONS = {
-  "Las Vegas": { clues:["He mentioned a pump project like it is normal small talk.","He asked for a process people will actually follow.","He wanted KPIs, immediately."] },
-  "New York": { clues:["He folded his pizza slice like it is policy.","He yelled at a taxi driver in Times Square.","He asked for the fastest route, twice."] },
-  "London": { clues:["He tried to pay with pounds and asked for exact change.","He asked where Big Ben is.","He complained about rain like it is a project risk."] },
-  "Paris": { clues:["He carried a baguette like evidence.","He asked where the Louvre was.","He said bonjour, then asked for the fastest route anyway."] },
-  "Tokyo": { clues:["He wanted the best sushi and a second opinion.","He bought a bullet train ticket.","He asked for live data, not yesterday's data."] },
-  "Sydney": { clues:["He asked where to find kangaroos, immediately.","He mentioned the Opera House.","He asked what time the market opens back home."] }
-};
+/* ============================================================
+   STATE  (persisted to localStorage)
+   ============================================================ */
+const SAVE_KEY = "ripcity_save_v1";
+let state = load();
 
-function r(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
-function shuffle(a){
-  const b=a.slice();
-  for(let i=b.length-1;i>0;i--){
-    const j=Math.floor(Math.random()*(i+1));
-    [b[i],b[j]]=[b[j],b[i]];
+function freshState(){
+  return { balance:100, spent:0, packs:0, pullValue:0, best:null, collection:[] };
+}
+function load(){
+  try{ const s = JSON.parse(localStorage.getItem(SAVE_KEY)); if(s && typeof s.balance==="number") return s; }catch(e){}
+  return freshState();
+}
+function save(){ try{ localStorage.setItem(SAVE_KEY, JSON.stringify(state)); }catch(e){} }
+
+/* ============================================================
+   ENGINE
+   ============================================================ */
+function rnd(a){ return a[Math.floor(Math.random()*a.length)]; }
+function chance(p){ return Math.random() < p; }
+
+function pickPlayer(poolId){ return rnd(POOLS[poolId]); }
+
+// Build a single pack of cards for a product
+function openPack(prod){
+  const pool = prod.pool;
+  const n = prod.cardsPerPack;
+  const cards = [];
+
+  // Roll chases first (the "hits"); collect special cards
+  const specials = [];
+  for(const c of prod.chase){
+    let made = 0;
+    for(let k=0;k<(c.max||1);k++){
+      if(chance(c.p)){
+        specials.push(makeCard(prod, c));
+        made++;
+      }
+    }
   }
-  return b;
+  // Cap specials at pack size - keep best ones if overflow
+  specials.sort((a,b)=> b.value - a.value);
+  const keptSpecials = specials.slice(0, Math.max(1, n-1));
+
+  // Fill the rest with base cards
+  const baseCount = Math.max(0, n - keptSpecials.length);
+  for(let i=0;i<baseCount;i++){
+    cards.push(makeBase(prod));
+  }
+  // Insert specials at random positions, with biggest hit last
+  keptSpecials.sort((a,b)=> a.value - b.value);
+  for(const sp of keptSpecials){ cards.push(sp); }
+
+  return cards;
 }
 
-/* Game state */
-let path=[], idx=0, city="", days=7.0, mult=1.0, score=0, caseNo=0;
-
-function update(){
-  locDisplay.textContent = "LOC: " + (city||"UNKNOWN").toUpperCase();
-  timeDisplay.textContent = "TIME: " + days.toFixed(1) + " DAYS";
-  scoreDisplay.textContent = "SCORE: " + score;
-  caseDisplay.textContent = "CASE: " + caseNo;
+function makeBase(prod){
+  const pl = pickPlayer(prod.pool);
+  return finishCard(prod, pl, "base", RAR.base, { foilType:null, label:"Base" });
 }
 
-function setControls(html){ controls.innerHTML = html; }
+function makeCard(prod, def){
+  const pl = pickPlayer(prod.pool);
+  const rar = RAR[def.rar] || RAR.parallel;
+  let serial = null, colorName = null;
 
-function showHow(){
-  extraPanel.classList.add("hidden");
-  screen.textContent =
-`HOW TO PLAY
+  if(def.runs && def.runs.length){
+    const run = rnd(def.runs);
+    serial = (1 + Math.floor(Math.random()*run)) + "/" + run;
+  }
+  if(def.rar === "oneofone"){ serial = "1/1"; }
+  if(def.colors && def.colors.length){ colorName = rnd(def.colors); }
 
-Investigate costs 0.5 day and gives a clue about the next correct city.
-Travel costs 1.0 day and you pick a destination.
-Reach the final city before time runs out.`;
-  setControls(`<button id="backBtn" type="button">BACK</button>`);
-  bindOnce("backBtn", boot);
+  let label = def.label;
+  if(def.names && def.names.length){ label = rnd(def.names); }
+
+  const opts = { foilType:def.foilType, label:label, serial:serial, colorName:colorName, hitClass:def.rar };
+  return finishCard(prod, pl, def.rar, rar, opts);
 }
 
-function boot(){
-  statusBar.classList.add("hidden");
-  extraPanel.classList.add("hidden");
-  screen.textContent =
-`ACME CRIME NET ONLINE
-
-Select NEW CASE to begin.`;
-  setControls(`
-    <button id="newBtn" type="button">NEW CASE</button>
-    <button id="how2Btn" type="button">HOW TO PLAY</button>
-  `);
-  bindOnce("newBtn", difficultyMenu);
-  bindOnce("how2Btn", showHow);
+function finishCard(prod, pl, rarKey, rar, opts){
+  const [name, team, pos, tier] = pl;
+  const value = cardValue(rarKey, opts, tier);
+  const isHit = (rarKey!=="base");
+  const big = ["auto","gold","superrare","oneofone","rare"].includes(rarKey);
+  return {
+    name, team, pos, tier,
+    set: prod.brand, year: prod.year, sport: prod.sport,
+    rarKey, rarName: rar.name, color: rar.color,
+    label: opts.label, serial: opts.serial||null, colorName: opts.colorName||null,
+    foilType: opts.foilType||null,
+    auto: rarKey==="auto",
+    firstBowman: prod.firstBowman && Math.random()<0.5,
+    isHit, big, value
+  };
 }
 
-function difficultyMenu(){
-  screen.textContent =
-`NEW CASE SETUP
-
-1 Intern     7.0 days
-2 Detective  5.0 days
-3 Chief      4.0 days`;
-  setControls(`
-    <button id="d1" type="button">1 INTERN</button>
-    <button id="d2" type="button">2 DETECTIVE</button>
-    <button id="d3" type="button">3 CHIEF</button>
-    <button id="cancel" type="button">CANCEL</button>
-  `);
-  bindOnce("d1", ()=>start("1"));
-  bindOnce("d2", ()=>start("2"));
-  bindOnce("d3", ()=>start("3"));
-  bindOnce("cancel", boot);
+// Approximate secondary-market-style value (in sim dollars).
+// Calibrated so a pack's EV sits realistically BELOW its price — most
+// cards are near-worthless, the occasional hit chases the cost back, and
+// only rare big hits put a pack into the green. Ripping is -EV long term.
+function cardValue(rarKey, opts, tier){
+  const t = tier || 1.5;
+  let v;
+  switch(rarKey){
+    case "base":      v = 0.06 * t; break;   // junk wax
+    case "insert":    v = 0.6 * t; break;
+    case "parallel":  v = 0.8 * t; break;
+    case "refractor": v = 0.6 * t; break;
+    case "silver":    v = 1.2 * t; break;
+    case "numbered":  v = 1.0 * t; break;     // scaled further by print run below
+    case "gold":      v = 8 * t; break;
+    case "rare":      v = 6 * t; break;
+    case "superrare": v = 14 * t; break;
+    case "auto":      v = 4 * t; break;       // most autos are commons; stars carry the tail
+    case "oneofone":  v = 55 * t; break;
+    default:          v = 0.10;
+  }
+  // serial number scarcity bump (lower print run = pricier)
+  if(opts && opts.serial){
+    const m = /\/(\d+)/.exec(opts.serial);
+    if(m){ const run = parseInt(m[1],10); v *= Math.min(7, Math.max(1, 220/run)); }
+  }
+  // long-tail randomness: occasional outlier "hot" copies, like a real market
+  let mult = 0.55 + Math.random()*0.7;
+  if(rarKey!=="base" && Math.random()<0.04) mult *= 1.9; // rare spike
+  v *= mult;
+  return Math.max(0.05, Math.round(v*100)/100);
 }
 
-function start(k){
-  const level = DIFFICULTY[k] || DIFFICULTY["1"];
-  days = level.days; mult = level.mult;
-  score = 0;
-  caseNo = Math.floor(1000 + Math.random()*9000);
+/* ============================================================
+   RENDERING
+   ============================================================ */
+const view = document.getElementById("view");
+const walletEl = document.getElementById("wallet");
+const toolbarEl = document.getElementById("toolbar");
 
-  const cities = shuffle(Object.keys(LOCATIONS));
-  path = cities.slice(0, 4);
-  idx = 0;
-  city = path[0];
+function money(n){ return "$" + n.toLocaleString(undefined,{minimumFractionDigits:2, maximumFractionDigits:2}); }
 
-  const item = r(STOLEN);
+function renderWallet(){
+  const net = state.pullValue - state.spent;
+  walletEl.innerHTML =
+    statBox("Balance", money(state.balance)) +
+    statBox("Packs", state.packs) +
+    statBox("Spent", money(state.spent)) +
+    statBox("Pulled", money(state.pullValue)) +
+    '<div class="stat net '+(net>=0?"pos":"neg")+'"><small>Net</small><b>'+(net>=0?"+":"")+money(net)+'</b></div>';
+}
+function statBox(label, val){ return '<div class="stat"><small>'+label+'</small><b>'+val+'</b></div>'; }
 
-  statusBar.classList.remove("hidden");
-  update();
-
-  screen.textContent =
-`URGENT MESSAGE
-
-SUSPECT: ${SUSPECT}
-THEFT: ${item}
-
-Last confirmed location: ${city}
-You have ${days.toFixed(1)} days.
-
-Tap INVESTIGATE or TRAVEL.`;
-
-  mainMenu();
+function renderToolbar(showBack){
+  let html = "";
+  if(showBack) html += '<button class="ghost" id="tbBack">‹ All Products</button>';
+  html += '<button class="ghost" id="tbColl">📒 Collection ('+state.collection.length+')</button>';
+  html += '<button class="ghost" id="tbAdd">＋ Add $100</button>';
+  html += '<button class="ghost" id="tbReset">↺ Reset</button>';
+  toolbarEl.innerHTML = html;
+  if(showBack) byId("tbBack").onclick = ()=>renderHome();
+  byId("tbColl").onclick = showCollection;
+  byId("tbAdd").onclick = ()=>{ state.balance += 100; save(); rerender(); };
+  byId("tbReset").onclick = ()=>{
+    if(confirm("Reset wallet and collection? This clears all pulls.")){ state = freshState(); save(); renderHome(); }
+  };
 }
 
-function mainMenu(){
-  update();
-  if(days <= 0){ return fail(); }
-  if(city === path[path.length-1]){ return win(); }
+function byId(id){ return document.getElementById(id); }
 
-  setControls(`
-    <button id="inv" type="button">INVESTIGATE</button>
-    <button id="trav" type="button">TRAVEL</button>
-  `);
-  bindOnce("inv", investigate);
-  bindOnce("trav", travelMenu);
-}
+// Re-render hook for the currently active screen (used after wallet changes)
+let rerender = renderHome;
 
-function investigate(){
-  days = Math.max(0, days - 0.5);
-  update();
-
-  const next = path[idx+1];
-  const clue = r(LOCATIONS[next].clues);
-
-  screen.textContent =
-`INVESTIGATION REPORT
-
-A witness says:
-"${clue}"
-
-Time spent: 0.5 day`;
-
-  setControls(`<button id="cont" type="button">CONTINUE</button>`);
-  bindOnce("cont", mainMenu);
-}
-
-function travelMenu(){
-  const correct = path[idx+1];
-  const all = Object.keys(LOCATIONS).filter(c => c !== city);
-  const wrong = shuffle(all.filter(c=>c!==correct)).slice(0,2);
-  const options = shuffle([correct].concat(wrong));
-
-  screen.textContent = "DEPARTURE BOARD\n\nPick a destination:";
-  setControls(options.map((c,i)=>`<button class="dest" data-city="${c}" type="button">${c.toUpperCase()}</button>`).join("") +
-              `<button id="cancel2" type="button">CANCEL</button>`);
-
-  /* Event delegation, pointerup is more reliable on iPad Edge */
-  controls.querySelectorAll(".dest").forEach(btn=>{
-    btn.addEventListener("pointerup", ()=>travelTo(btn.dataset.city), { passive:true });
-    btn.addEventListener("click", ()=>travelTo(btn.dataset.city), { passive:true });
+function renderHome(){
+  rerender = renderHome;
+  renderWallet(); renderToolbar(false);
+  const sports = { basketball:"🏀 Basketball", football:"🏈 Football", baseball:"⚾ Baseball" };
+  let html = "";
+  for(const sp of Object.keys(sports)){
+    const list = PRODUCTS.filter(p=>p.sport===sp);
+    if(!list.length) continue;
+    html += '<div class="sport-group"><h2>'+sports[sp]+'</h2><div class="grid">';
+    for(const p of list){
+      const grad = "linear-gradient(90deg,"+p.palette[0]+","+p.palette[1]+")";
+      html += '<div class="product" data-id="'+p.id+'">'+
+        '<div class="sheen"></div>'+
+        '<div class="yr">'+p.year+' • '+p.packsPerBox+' packs/box</div>'+
+        '<h3>'+p.name+'</h3>'+
+        (p.subtitle?'<div class="yr">'+p.subtitle+'</div>':'')+
+        '<div class="meta"><span>'+p.cardsPerPack+' cards/pack</span><span class="price">'+money(p.price)+'</span></div>'+
+        '<div class="stripe" style="background:'+grad+'"></div>'+
+      '</div>';
+    }
+    html += '</div></div>';
+  }
+  view.innerHTML = html;
+  view.querySelectorAll(".product").forEach(el=>{
+    el.onclick = ()=> renderOpener(el.dataset.id);
   });
-  bindOnce("cancel2", mainMenu);
 }
 
-function travelTo(dest){
-  days = Math.max(0, days - 1.0);
-  update();
+let currentPack = null; // cards awaiting reveal
 
-  const correct = path[idx+1];
+function renderOpener(prodId){
+  const prod = PRODUCTS.find(p=>p.id===prodId);
+  if(!prod) return renderHome();
+  rerender = ()=>renderOpener(prodId);
+  renderWallet(); renderToolbar(true);
+  const grad = "linear-gradient(160deg,"+prod.palette[0]+","+prod.palette[1]+" 60%,"+prod.palette[2]+")";
+  const canAfford = state.balance >= prod.price;
 
-  if(dest === correct){
-    city = dest; idx++;
-    score += 250;
-    screen.textContent = `ARRIVAL CONFIRMED\n\nCorrect. Trail is warm in ${dest}.\n\nScore +250`;
-  } else {
-    city = dest;
-    score = Math.max(0, score - 150);
-    screen.textContent = `ARRIVAL CONFIRMED\n\nWrong city: ${dest}.\n\nScore -150`;
+  view.innerHTML =
+    '<div class="opener">'+
+      '<div class="opener-head"><div class="ptitle">'+
+        '<h2>'+prod.brand+'</h2>'+
+        '<div class="sub">'+prod.year+' '+prod.name+' • '+prod.cardsPerPack+' cards • '+money(prod.price)+'/pack</div>'+
+      '</div>'+
+      '<button class="ghost" id="oddsBtn">📊 Pull Odds</button></div>'+
+      '<div class="packstage" id="stage">'+
+        '<div class="packart" id="packart" style="background:'+grad+'">'+
+          '<div class="foilshine"></div>'+
+          '<div class="psport">'+prod.sport+'</div>'+
+          '<div class="pbrand">'+prod.brand+'</div>'+
+          '<div class="ptap">TAP TO RIP</div>'+
+        '</div>'+
+        '<div class="ripcontrols">'+
+          '<button class="primary" id="ripBtn" '+(canAfford?"":"disabled")+'>RIP PACK · '+money(prod.price)+'</button>'+
+          '<button id="ripBoxBtn" '+(state.balance>=prod.price*prod.packsPerBox?"":"disabled")+'>RIP BOX · '+prod.packsPerBox+' packs · '+money(prod.price*prod.packsPerBox)+'</button>'+
+        '</div>'+
+        (canAfford?'':'<div class="hint">Not enough balance — use “Add $100”.</div>')+
+      '</div>'+
+    '</div>';
+
+  byId("oddsBtn").onclick = ()=> showOdds(prod);
+  byId("packart").onclick = ()=> doRip(prod);
+  byId("ripBtn").onclick = ()=> doRip(prod);
+  byId("ripBoxBtn").onclick = ()=> doRipBox(prod);
+}
+
+function doRip(prod){
+  if(state.balance < prod.price) return;
+  state.balance -= prod.price; state.spent += prod.price; state.packs += 1;
+  const cards = openPack(prod);
+  currentPack = cards;
+  registerPulls(prod, cards);
+  save(); renderWallet();
+  showReveal(prod, cards);
+}
+
+function doRipBox(prod){
+  const total = prod.price*prod.packsPerBox;
+  if(state.balance < total) return;
+  let all = [];
+  for(let i=0;i<prod.packsPerBox;i++){
+    state.balance -= prod.price; state.spent += prod.price; state.packs += 1;
+    const cards = openPack(prod);
+    registerPulls(prod, cards);
+    all = all.concat(cards);
   }
-
-  setControls(`<button id="cont2" type="button">CONTINUE</button>`);
-  bindOnce("cont2", mainMenu);
+  save(); renderWallet();
+  showReveal(prod, all, true);
 }
 
-function win(){
-  const final = Math.floor((1000 + score + Math.floor(days*250)) * mult);
-  screen.textContent = `CASE CLOSED\n\nYou found ${SUSPECT} in ${city}.\n\nFINAL SCORE: ${final}`;
-  setControls(`<button id="again" type="button">NEW CASE</button>`);
-  bindOnce("again", difficultyMenu);
+function registerPulls(prod, cards){
+  for(const c of cards){
+    state.pullValue += c.value;
+    if(c.isHit){
+      state.collection.push(slimCard(c));
+      if(!state.best || c.value > state.best.value){ state.best = slimCard(c); }
+    }
+  }
+  // Keep the binder (and localStorage) healthy: retain the 600 best hits.
+  if(state.collection.length > 800){
+    state.collection.sort((a,b)=> b.value - a.value);
+    state.collection.length = 600;
+  }
+}
+function slimCard(c){
+  return { name:c.name, team:c.team, pos:c.pos, set:c.set, year:c.year, sport:c.sport,
+           rarKey:c.rarKey, rarName:c.rarName, color:c.color, label:c.label,
+           serial:c.serial, colorName:c.colorName, auto:c.auto, value:c.value, firstBowman:c.firstBowman };
 }
 
-function fail(){
-  screen.textContent = `MISSION FAILED\n\nTime ran out.\n${SUSPECT} escaped.`;
-  setControls(`<button id="again2" type="button">NEW CASE</button>`);
-  bindOnce("again2", difficultyMenu);
+function cardFrontHTML(c){
+  const teamColorBar = '';
+  let cls = "card";
+  if(c.foilType==="holo") cls += " holo";
+  if(c.foilType==="refractor"||c.foilType==="silver") cls += " refractor";
+  if(c.big) cls += " bighit";
+  const accent = c.color;
+  const rarLabel = (c.colorName? c.colorName+" " : "") + c.label + (c.serial? " · "+c.serial : "");
+  const hitFlag = c.auto ? '<div class="hitflag">✍️</div>' : (c.big? '<div class="hitflag">🔥</div>':'');
+  const fb = c.firstBowman ? '1st • ' : '';
+  return '<div class="'+cls+'" data-v="'+c.value+'">'+
+    '<div class="inner">'+
+      '<div class="face back"><span>RIP</span></div>'+
+      '<div class="face front" style="border-color:'+accent+'">'+
+        '<div class="setline">'+fb+c.set+' '+c.year+'</div>'+
+        (c.serial?'<div class="serial" style="color:'+accent+'">#'+c.serial+'</div>':'')+
+        '<div class="pos">'+c.pos+'</div>'+
+        '<div class="nm">'+c.name+'</div>'+
+        '<div class="tm">'+c.team+'</div>'+
+        '<div class="rar" style="background:'+accent+'22;color:'+accent+';border:1px solid '+accent+'66">'+rarLabel+'</div>'+
+        hitFlag+
+      '</div>'+
+    '</div>'+
+  '</div>';
 }
 
-/* Helper: bind once using pointerup + click */
-function bindOnce(id, fn){
-  const el = document.getElementById(id);
-  if(!el) return;
-  el.addEventListener("pointerup", fn, { passive:true });
-  el.addEventListener("click", fn, { passive:true });
+function showReveal(prod, cards, isBox){
+  renderToolbar(true);
+  const hits = cards.filter(c=>c.isHit);
+  const packVal = cards.reduce((s,c)=>s+c.value,0);
+  const cost = isBox ? prod.price*prod.packsPerBox : prod.price;
+  const profit = packVal - cost;
+
+  let html = '<div class="opener">'+
+    '<div class="opener-head"><div class="ptitle"><h2>'+(isBox?"BOX BREAK":"PACK")+' — '+prod.name+'</h2>'+
+    '<div class="sub">Tap cards to flip · '+cards.length+' cards</div></div>'+
+    '<button id="flipAll">Flip All</button></div>'+
+    '<div class="packstage">'+
+      '<div class="reveal" id="reveal">'+ cards.map(cardFrontHTML).join("") +'</div>'+
+      '<div class="pull-summary">'+
+        '<div class="row"><span>Cards revealed</span><b>'+cards.length+'</b></div>'+
+        '<div class="row"><span>Hits (parallels / inserts / autos)</span><b>'+hits.length+'</b></div>'+
+        '<div class="row"><span>Est. pull value</span><b>'+money(packVal)+'</b></div>'+
+        '<div class="row"><span>Cost</span><b>'+money(cost)+'</b></div>'+
+        '<div class="row"><span>This '+(isBox?"box":"pack")+'</span><b class="'+(profit>=0?"pos":"neg")+'">'+(profit>=0?"+":"")+money(profit)+'</b></div>'+
+      '</div>'+
+      '<div class="ripcontrols" style="margin-top:14px">'+
+        '<button class="primary" id="again">RIP ANOTHER · '+money(prod.price)+'</button>'+
+        '<button id="backToList">Other Products</button>'+
+      '</div>'+
+    '</div>'+
+  '</div>';
+  view.innerHTML = html;
+
+  const revealEl = byId("reveal");
+  const cardEls = Array.from(revealEl.children);
+  cardEls.forEach((el,i)=>{
+    const c = cards[i];
+    el.onclick = ()=>{
+      if(el.classList.contains("flipped")) return;
+      el.classList.add("flipped");
+      if(c.big){ triggerFlash(c.color); }
+    };
+  });
+  byId("flipAll").onclick = ()=>{
+    let big = null;
+    cardEls.forEach((el,i)=>{ el.classList.add("flipped"); if(cards[i].big && (!big||cards[i].value>big.value)) big=cards[i]; });
+    if(big) triggerFlash(big.color);
+  };
+  byId("again").onclick = ()=>{ if(state.balance>=prod.price){ doRip(prod);} else { renderOpener(prod.id); } };
+  byId("backToList").onclick = ()=> renderOpener(prod.id);
+
+  renderWallet();
 }
 
-/* Initial bindings */
-function init(){
-  // Instant tap test: if this does not change text, taps are being blocked by browser/overlay.
-  const startBtn = document.getElementById("startBtn");
-  const howBtn = document.getElementById("howBtn");
-
-  startBtn.addEventListener("pointerup", ()=>{ screen.textContent = "INPUT RECEIVED. LOADING..."; boot(); }, { passive:true });
-  startBtn.addEventListener("click", ()=>{ screen.textContent = "INPUT RECEIVED. LOADING..."; boot(); }, { passive:true });
-
-  howBtn.addEventListener("pointerup", showHow, { passive:true });
-  howBtn.addEventListener("click", showHow, { passive:true });
+function triggerFlash(color){
+  const f = byId("flash");
+  f.style.background = "radial-gradient(circle at 50% 40%,"+color+"66,transparent 60%)";
+  f.classList.remove("go"); void f.offsetWidth; f.classList.add("go");
 }
 
-init();
+/* ============================================================
+   ODDS MODAL
+   ============================================================ */
+function modal(html){
+  const bg = document.createElement("div");
+  bg.className = "modal-bg";
+  bg.innerHTML = '<div class="modal">'+html+'</div>';
+  bg.onclick = (e)=>{ if(e.target===bg) document.body.removeChild(bg); };
+  document.body.appendChild(bg);
+  const c = bg.querySelector(".close"); if(c) c.onclick = ()=>document.body.removeChild(bg);
+  return bg;
+}
+
+function odds1in(p){
+  if(p>=1) return "1 : 1";
+  const x = Math.round(1/p);
+  return "1 : " + x.toLocaleString();
+}
+
+function showOdds(prod){
+  let rows = '<tr><th>Type</th><th class="r">Approx. odds</th></tr>';
+  rows += '<tr><td><span class="swatch" style="background:'+RAR.base.color+'"></span>Base / Common</td><td class="r">most cards</td></tr>';
+  for(const c of prod.chase){
+    const r = RAR[c.rar];
+    let extra = "";
+    if(c.runs) extra = ' <span style="color:var(--dim)">('+c.runs.map(x=>"/"+x).join(", ")+')</span>';
+    rows += '<tr><td><span class="swatch" style="background:'+r.color+'"></span>'+c.label+extra+'</td><td class="r">'+odds1in(c.p)+' packs</td></tr>';
+  }
+  modal(
+    '<button class="close ghost" style="float:right">✕</button>'+
+    '<h2>'+prod.name+' — Pull Odds</h2>'+
+    '<div style="color:var(--dim);font-size:13px">'+prod.year+' • '+prod.cardsPerPack+' cards/pack • '+prod.packsPerBox+' packs/box • '+money(prod.price)+'/pack</div>'+
+    '<table class="odds">'+rows+'</table>'+
+    '<p style="color:var(--dim);font-size:12px;margin-top:12px">Odds are modeled on published hobby-pack configurations and rounded for simulation. Real-world odds vary by box and configuration.</p>'
+  );
+}
+
+/* ============================================================
+   COLLECTION MODAL
+   ============================================================ */
+function showCollection(){
+  const coll = state.collection.slice().sort((a,b)=> b.value - a.value);
+  let inner;
+  if(!coll.length){
+    inner = '<div class="empty">No hits yet. Rip some packs! Base cards aren’t tracked — only parallels, inserts, numbered, and autos land in your binder.</div>';
+  } else {
+    const totalVal = coll.reduce((s,c)=>s+c.value,0);
+    inner = '<div style="color:var(--dim);font-size:13px;margin-bottom:6px">'+coll.length+' hits · est. '+money(totalVal)+
+            (state.best?' · best: '+state.best.name+' '+money(state.best.value):'')+'</div><div class="colllist">';
+    for(const c of coll){
+      const sub = [c.colorName, c.label, c.serial?("#"+c.serial):null, c.auto?"AUTO":null, c.firstBowman?"1st Bowman":null].filter(Boolean).join(" · ");
+      inner += '<div class="collrow">'+
+        '<div class="cl-rar" style="background:'+c.color+'"></div>'+
+        '<div class="cl-main"><div class="cl-nm">'+c.name+' <span style="color:var(--dim);font-weight:400">'+c.team+'</span></div>'+
+        '<div class="cl-sub">'+c.set+' '+c.year+' · '+sub+'</div></div>'+
+        '<div class="cl-val">'+money(c.value)+'</div>'+
+      '</div>';
+    }
+    inner += '</div>';
+  }
+  modal(
+    '<button class="close ghost" style="float:right">✕</button>'+
+    '<h2>📒 My Collection</h2>'+ inner
+  );
+}
+
+/* boot */
+renderHome();
 </script>
 </body>
 </html>
