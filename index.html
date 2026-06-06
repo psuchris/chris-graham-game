@@ -133,12 +133,24 @@
     display:flex; flex-direction:column; padding:8px; color:#fff;
     background:linear-gradient(160deg,#202a44,#161d2e);
   }
-  .card .front .pos{ font-size:9px; letter-spacing:1px; opacity:.85; text-transform:uppercase; }
-  .card .front .nm{ font-weight:800; font-size:14px; line-height:1.05; margin-top:auto; text-shadow:0 1px 3px rgba(0,0,0,.7); }
-  .card .front .tm{ font-size:10px; opacity:.85; }
+  .card .front .photo{
+    position:absolute; inset:0; background-color:#0e1424;
+    background-size:cover; background-position:center 16%; background-repeat:no-repeat;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .card .front .photo .initials{ font-size:32px; font-weight:800; color:#36456a; letter-spacing:1px; }
+  .photo.has-img .initials, .clthumb.has-img span{ display:none; }
+  .card .front .shade{
+    position:absolute; inset:0; pointer-events:none;
+    background:linear-gradient(180deg, rgba(10,14,23,.02) 30%, rgba(10,14,23,.45) 60%, rgba(10,14,23,.92) 100%);
+  }
+  .card .front .info{ position:relative; z-index:2; margin-top:auto; }
+  .card .front .pos{ font-size:9px; letter-spacing:1px; opacity:.9; text-transform:uppercase; text-shadow:0 1px 3px rgba(0,0,0,.8); }
+  .card .front .nm{ font-weight:800; font-size:14px; line-height:1.05; text-shadow:0 1px 4px rgba(0,0,0,.9); }
+  .card .front .tm{ font-size:10px; opacity:.9; text-shadow:0 1px 3px rgba(0,0,0,.8); }
   .card .front .rar{ font-size:9px; font-weight:800; letter-spacing:.5px; text-transform:uppercase; margin-top:5px; padding:2px 5px; border-radius:5px; display:inline-block; align-self:flex-start; }
-  .card .front .serial{ position:absolute; top:6px; right:7px; font-size:10px; font-weight:800; background:rgba(0,0,0,.55); padding:2px 6px; border-radius:20px; }
-  .card .front .setline{ position:absolute; top:6px; left:7px; font-size:8px; opacity:.7; letter-spacing:.5px; }
+  .card .front .serial{ position:absolute; z-index:3; top:6px; right:7px; font-size:10px; font-weight:800; background:rgba(0,0,0,.6); padding:2px 6px; border-radius:20px; }
+  .card .front .setline{ position:absolute; z-index:3; top:6px; left:7px; font-size:8px; font-weight:600; background:rgba(0,0,0,.5); padding:2px 5px; border-radius:5px; letter-spacing:.5px; }
   .card.holo .front::after{
     content:""; position:absolute; inset:0; pointer-events:none; mix-blend-mode:color-dodge;
     background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.35) 45%,rgba(120,220,255,.25) 55%,transparent 70%);
@@ -175,6 +187,9 @@
   .colllist{ margin-top:10px; }
   .collrow{ display:flex; align-items:center; gap:10px; padding:8px; border:1px solid var(--line); border-radius:10px; margin-bottom:7px; background:var(--panel); }
   .collrow .cl-rar{ width:7px; align-self:stretch; border-radius:4px; }
+  .collrow .clthumb{ width:38px; height:38px; border-radius:8px; flex:0 0 auto;
+    background:#0e1424 center 14%/cover no-repeat; display:flex; align-items:center; justify-content:center;
+    font-size:13px; font-weight:800; color:#36456a; border:1px solid var(--line); }
   .collrow .cl-main{ flex:1; min-width:0; }
   .collrow .cl-main .cl-nm{ font-weight:700; }
   .collrow .cl-main .cl-sub{ font-size:12px; color:var(--dim); }
@@ -558,11 +573,13 @@ function renderToolbar(showBack){
   let html = "";
   if(showBack) html += '<button class="ghost" id="tbBack">‹ All Products</button>';
   html += '<button class="ghost" id="tbColl">📒 Collection ('+state.collection.length+')</button>';
+  html += '<button class="ghost" id="tbPhotos">📷 Photos: '+(state.photos===false?"Off":"On")+'</button>';
   html += '<button class="ghost" id="tbAdd">＋ Add $100</button>';
   html += '<button class="ghost" id="tbReset">↺ Reset</button>';
   toolbarEl.innerHTML = html;
   if(showBack) byId("tbBack").onclick = ()=>renderHome();
   byId("tbColl").onclick = showCollection;
+  byId("tbPhotos").onclick = ()=>{ state.photos = (state.photos===false); save(); rerender(); };
   byId("tbAdd").onclick = ()=>{ state.balance += 100; save(); rerender(); };
   byId("tbReset").onclick = ()=>{
     if(confirm("Reset wallet and collection? This clears all pulls.")){ state = freshState(); save(); renderHome(); }
@@ -684,6 +701,69 @@ function slimCard(c){
            serial:c.serial, colorName:c.colorName, auto:c.auto, value:c.value, firstBowman:c.firstBowman };
 }
 
+/* ============================================================
+   PLAYER PHOTOS  (Wikipedia REST summary thumbnails, cached)
+   ============================================================ */
+const PHOTO_KEY = "ripcity_photos_v1";
+let photoMap = (function(){ try{ return JSON.parse(localStorage.getItem(PHOTO_KEY)) || {}; }catch(e){ return {}; } })();
+const photoPromises = {};
+function savePhotos(){ try{ localStorage.setItem(PHOTO_KEY, JSON.stringify(photoMap)); }catch(e){} }
+
+// Disambiguation / accented-title overrides for Wikipedia lookups
+const TITLE_OVERRIDE = {
+  "Nikola Jokic":"Nikola Jokić", "Luka Doncic":"Luka Dončić", "Alex Sarr":"Alexandre Sarr",
+  "Ronald Acuna Jr.":"Ronald Acuña Jr.", "Julio Rodriguez":"Julio Rodríguez (baseball)",
+  "Jose Ramirez":"José Ramírez (baseball)", "Fernando Tatis Jr.":"Fernando Tatís Jr.",
+  "Yordan Alvarez":"Yordan Álvarez", "Jasson Dominguez":"Jasson Domínguez",
+  "Max Clark":"Max Clark (baseball)", "Jesus Made":"Jesús Made", "Roman Anthony":"Roman Anthony (baseball)",
+  "Charlie Condon":"Charlie Condon (baseball)", "Dylan Crews":"Dylan Crews",
+  "Travis Bazzana":"Travis Bazzana", "Ethan Salas":"Ethan Salas"
+};
+function wikiTitle(name){ return TITLE_OVERRIDE[name] || name; }
+
+function ensurePhoto(name){
+  if(name in photoMap) return Promise.resolve(photoMap[name]);
+  if(typeof fetch !== "function"){ return Promise.resolve(""); }
+  if(photoPromises[name]) return photoPromises[name];
+  // MediaWiki Action API in anonymous-CORS mode (origin=*); redirects=1 resolves
+  // accented/alt spellings automatically. Returns an upload.wikimedia.org thumbnail.
+  const u = "https://en.wikipedia.org/w/api.php?action=query&format=json&redirects=1"
+          + "&prop=pageimages&piprop=thumbnail&pithumbsize=400&titles="
+          + encodeURIComponent(wikiTitle(name)) + "&origin=*";
+  photoPromises[name] = fetch(u)
+    .then(r=> r.ok ? r.json() : null)
+    .then(j=>{
+      let img = "";
+      try{
+        const pages = j && j.query && j.query.pages;
+        if(pages){
+          const pg = pages[Object.keys(pages)[0]];
+          if(pg && pg.thumbnail && pg.thumbnail.source) img = pg.thumbnail.source;
+        }
+      }catch(e){}
+      photoMap[name] = img; savePhotos(); // cache definitive answer (incl. "no photo")
+      return img;
+    })
+    .catch(()=>{ delete photoPromises[name]; return ""; }); // network error: allow retry later
+  return photoPromises[name];
+}
+
+function hydratePhotos(scope){
+  if(state.photos === false) return;
+  scope.querySelectorAll(".photo[data-player]").forEach(el=>{
+    const name = el.getAttribute("data-player");
+    ensurePhoto(name).then(src=>{
+      if(src){ el.style.backgroundImage = 'url("'+src+'")'; el.classList.add("has-img"); }
+    });
+  });
+}
+
+function esc(s){ return String(s).replace(/[&<>"']/g, ch=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[ch])); }
+function initials(name){
+  const parts = String(name).split(/\s+/).filter(Boolean);
+  return ((parts[0]||"")[0]||"") + ((parts[1]||"")[0]||"");
+}
+
 function cardFrontHTML(c){
   const teamColorBar = '';
   let cls = "card";
@@ -698,12 +778,16 @@ function cardFrontHTML(c){
     '<div class="inner">'+
       '<div class="face back"><span>RIP</span></div>'+
       '<div class="face front" style="border-color:'+accent+'">'+
+        '<div class="photo" data-player="'+esc(c.name)+'"><span class="initials">'+initials(c.name)+'</span></div>'+
+        '<div class="shade"></div>'+
         '<div class="setline">'+fb+c.set+' '+c.year+'</div>'+
         (c.serial?'<div class="serial" style="color:'+accent+'">#'+c.serial+'</div>':'')+
-        '<div class="pos">'+c.pos+'</div>'+
-        '<div class="nm">'+c.name+'</div>'+
-        '<div class="tm">'+c.team+'</div>'+
-        '<div class="rar" style="background:'+accent+'22;color:'+accent+';border:1px solid '+accent+'66">'+rarLabel+'</div>'+
+        '<div class="info">'+
+          '<div class="pos">'+c.pos+'</div>'+
+          '<div class="nm">'+c.name+'</div>'+
+          '<div class="tm">'+c.team+'</div>'+
+          '<div class="rar" style="background:'+accent+'22;color:'+accent+';border:1px solid '+accent+'66">'+rarLabel+'</div>'+
+        '</div>'+
         hitFlag+
       '</div>'+
     '</div>'+
@@ -739,6 +823,7 @@ function showReveal(prod, cards, isBox){
   view.innerHTML = html;
 
   const revealEl = byId("reveal");
+  hydratePhotos(revealEl);
   const cardEls = Array.from(revealEl.children);
   cardEls.forEach((el,i)=>{
     const c = cards[i];
@@ -818,6 +903,7 @@ function showCollection(){
       const sub = [c.colorName, c.label, c.serial?("#"+c.serial):null, c.auto?"AUTO":null, c.firstBowman?"1st Bowman":null].filter(Boolean).join(" · ");
       inner += '<div class="collrow">'+
         '<div class="cl-rar" style="background:'+c.color+'"></div>'+
+        '<div class="photo clthumb" data-player="'+esc(c.name)+'"><span>'+initials(c.name)+'</span></div>'+
         '<div class="cl-main"><div class="cl-nm">'+c.name+' <span style="color:var(--dim);font-weight:400">'+c.team+'</span></div>'+
         '<div class="cl-sub">'+c.set+' '+c.year+' · '+sub+'</div></div>'+
         '<div class="cl-val">'+money(c.value)+'</div>'+
@@ -825,10 +911,11 @@ function showCollection(){
     }
     inner += '</div>';
   }
-  modal(
+  const bg = modal(
     '<button class="close ghost" style="float:right">✕</button>'+
     '<h2>📒 My Collection</h2>'+ inner
   );
+  hydratePhotos(bg);
 }
 
 /* boot */
