@@ -149,8 +149,70 @@
   .card .front .nm{ font-weight:800; font-size:14px; line-height:1.05; text-shadow:0 1px 4px rgba(0,0,0,.9); }
   .card .front .tm{ font-size:10px; opacity:.9; text-shadow:0 1px 3px rgba(0,0,0,.8); }
   .card .front .rar{ font-size:9px; font-weight:800; letter-spacing:.5px; text-transform:uppercase; margin-top:5px; padding:2px 5px; border-radius:5px; display:inline-block; align-self:flex-start; }
-  .card .front .serial{ position:absolute; z-index:3; top:6px; right:7px; font-size:10px; font-weight:800; background:rgba(0,0,0,.6); padding:2px 6px; border-radius:20px; }
+  .card .front .serial{ position:absolute; z-index:4; top:6px; right:7px; font-size:10px; font-weight:800; background:rgba(0,0,0,.6); padding:2px 6px; border-radius:20px; }
   .card .front .setline{ position:absolute; z-index:3; top:6px; left:7px; font-size:8px; font-weight:600; background:rgba(0,0,0,.5); padding:2px 5px; border-radius:5px; letter-spacing:.5px; }
+
+  /* ---- Brand design system -------------------------------------------------
+     .bgfx = per-brand foil/pattern overlay (sits over the photo, under text)
+     .brandmark = the product wordmark printed on the card face
+     Each .br-<brand> repaints the frame, pattern and wordmark color.        */
+  .card .front .bgfx{ position:absolute; inset:0; z-index:1; pointer-events:none; }
+  .card .front .brandmark{
+    position:absolute; z-index:3; top:6px; left:7px; line-height:1;
+    display:flex; flex-direction:column; gap:1px;
+    text-shadow:0 1px 4px rgba(0,0,0,.85);
+  }
+  .card .front .brandmark small{ font-size:6px; letter-spacing:1.5px; opacity:.85; font-weight:700; }
+  .card .front .brandmark b{ font-size:11px; letter-spacing:1.5px; font-weight:900; }
+  .rc{ display:inline-block; font-size:8px; font-weight:900; line-height:1; vertical-align:middle;
+       background:linear-gradient(180deg,#ffe06a,#f5a623); color:#231600; padding:2px 3px;
+       border-radius:3px; margin-left:5px; box-shadow:0 1px 3px rgba(0,0,0,.5); }
+  .fbshield{ position:absolute; z-index:4; bottom:54px; right:6px; transform:rotate(0deg);
+       font-size:7px; font-weight:900; letter-spacing:.5px; color:#15233f;
+       background:linear-gradient(180deg,#ffe89a,#f3b008); padding:3px 5px; border-radius:5px;
+       box-shadow:0 1px 5px rgba(0,0,0,.6); border:1px solid rgba(255,255,255,.5); }
+  .fbshield i{ font-style:normal; font-size:5px; vertical-align:top; }
+
+  /* PANINI PRIZM — chrome silver frame + fine prizm sparkle */
+  .br-prizm .front{ background:linear-gradient(160deg,#2b3450,#0b1020); }
+  .br-prizm .bgfx{ opacity:.3; mix-blend-mode:screen;
+    background-image:radial-gradient(rgba(255,255,255,.55) .7px, transparent 1.2px); background-size:7px 7px; }
+  .br-prizm .brandmark b{ color:#e6ecfb; } .br-prizm .brandmark small{ color:#9fb0d6; }
+  .br-prizm.bighit .front{ border-width:3px; }
+
+  /* DONRUSS OPTIC — black holo dots + purple shimmer */
+  .br-optic .front{ background:linear-gradient(160deg,#181c28,#05070d); }
+  .br-optic .bgfx{ opacity:.55; mix-blend-mode:screen;
+    background-image:
+      repeating-linear-gradient(115deg, rgba(255,255,255,.06) 0 1px, transparent 1px 7px),
+      radial-gradient(rgba(176,108,255,.4) 1px, transparent 1.7px);
+    background-size:auto, 9px 9px; }
+  .br-optic .brandmark b{ color:#dccbff; } .br-optic .brandmark small{ color:#ff7b1a; }
+
+  /* TOPPS CHROME — bright chrome wash + vertical streaks */
+  .br-chrome .front{ background:linear-gradient(160deg,#26405e,#0a1320); }
+  .br-chrome .bgfx{ opacity:.6; mix-blend-mode:screen;
+    background-image:
+      linear-gradient(180deg, rgba(255,255,255,.22), transparent 38%),
+      repeating-linear-gradient(90deg, rgba(255,255,255,.06) 0 1px, transparent 1px 5px); }
+  .br-chrome .brandmark b{ color:#cfe8ff; } .br-chrome .brandmark small{ color:#ff5d8f; }
+
+  /* TOPPS FINEST — smoked teal chrome + futuristic lines */
+  .br-finest .front{ background:linear-gradient(160deg,#0f2c2c,#04141a); }
+  .br-finest .bgfx{ opacity:.7; mix-blend-mode:screen;
+    background-image:
+      radial-gradient(130% 65% at 50% -10%, rgba(0,224,212,.32), transparent 60%),
+      repeating-linear-gradient(90deg, rgba(0,224,212,.14) 0 1px, transparent 1px 6px); }
+  .br-finest .brandmark b{ color:#9bfaf0; letter-spacing:3px; } .br-finest .brandmark small{ color:#7fd9d2; }
+  .br-finest .front{ border-radius:10px; }
+
+  /* BOWMAN CHROME — signature blue chrome + diagonal weave */
+  .br-bowman .front{ background:linear-gradient(160deg,#123a82,#060f24); }
+  .br-bowman .bgfx{ opacity:.65; mix-blend-mode:screen;
+    background-image:
+      radial-gradient(130% 75% at 50% -10%, rgba(54,118,238,.45), transparent 62%),
+      repeating-linear-gradient(125deg, rgba(255,255,255,.07) 0 1px, transparent 1px 8px); }
+  .br-bowman .brandmark b{ color:#dbe7ff; } .br-bowman .brandmark small{ color:#ffcb3d; }
   .card.holo .front::after{
     content:""; position:absolute; inset:0; pointer-events:none; mix-blend-mode:color-dodge;
     background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.35) 45%,rgba(120,220,255,.25) 55%,transparent 70%);
@@ -168,6 +230,39 @@
   .card.bighit{ box-shadow:0 0 0 2px var(--gold), 0 0 24px rgba(255,203,61,.6); }
   .card.pop{ animation:pop .4s ease; }
   @keyframes pop{ 0%{ transform:scale(.6); opacity:0;} 100%{ transform:scale(1); opacity:1;} }
+
+  /* ---- Pack opening (tear) animation ---- */
+  .tearstage{ min-height:380px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px; }
+  .tearpack{ position:relative; width:212px; height:304px; border-radius:14px; overflow:hidden; cursor:pointer;
+    box-shadow:0 18px 44px rgba(0,0,0,.55); }
+  .tearpack.go{ animation:packshake .45s ease both; }
+  @keyframes packshake{ 0%,100%{ transform:rotate(0);} 20%{ transform:rotate(-3deg);} 40%{ transform:rotate(3deg);} 60%{ transform:rotate(-2deg);} 80%{ transform:rotate(2deg);} }
+  .tearpack .pbrand{ font-weight:900; font-size:21px; letter-spacing:1px; color:#fff; text-shadow:0 2px 6px rgba(0,0,0,.6); }
+  .tearpack .psport{ font-size:12px; letter-spacing:3px; text-transform:uppercase; color:#fff; opacity:.92; text-shadow:0 1px 4px rgba(0,0,0,.6); }
+  .tearpack .tearlid{ position:absolute; top:0; left:0; right:0; height:34%; z-index:3;
+    display:flex; align-items:center; justify-content:center;
+    background:rgba(0,0,0,.16); border-bottom:2px dashed rgba(255,255,255,.55); transform-origin:top center; }
+  .tearpack.go .tearlid{ animation:lidrip .6s .42s forwards cubic-bezier(.4,0,.2,1); }
+  @keyframes lidrip{ to{ transform:translateY(-130%) rotate(-8deg); opacity:0; } }
+  .tearpack .tearbody{ position:absolute; inset:0; z-index:2; display:flex; align-items:flex-end; justify-content:center; padding-bottom:20px; }
+  .tearpack .burst{ position:absolute; inset:0; z-index:4; opacity:0; pointer-events:none;
+    background:radial-gradient(circle at 50% 36%, rgba(255,255,255,.96), rgba(255,255,255,0) 55%); }
+  .tearpack.go .burst{ animation:burstk .65s .48s forwards; }
+  @keyframes burstk{ 0%{ opacity:0;} 45%{ opacity:.95;} 100%{ opacity:0;} }
+
+  /* ---- Swipe-to-reveal stack ---- */
+  .stackstage{ display:flex; flex-direction:column; align-items:center; }
+  .swipewrap{ position:relative; width:240px; height:336px; margin:8px auto 0; touch-action:pan-y; user-select:none; }
+  .swipewrap .card{ position:absolute; left:0; top:0; width:240px; height:336px; aspect-ratio:auto;
+    cursor:grab; will-change:transform; box-shadow:0 14px 30px rgba(0,0,0,.5); }
+  .swipewrap .card:active{ cursor:grabbing; }
+  .swipehint{ text-align:center; color:var(--dim); font-size:12px; letter-spacing:2px; margin-top:14px; }
+  .stackbar{ display:flex; align-items:center; gap:16px; justify-content:center; margin-top:10px; }
+  .stackcount{ font-size:13px; color:var(--dim); min-width:66px; text-align:center; }
+  .stackcount b{ color:var(--fg); font-size:17px; } .stackcount span{ font-size:13px; }
+  @media (max-width:520px){
+    .swipewrap{ width:210px; height:294px; } .swipewrap .card{ width:210px; height:294px; }
+  }
 
   .pull-summary{ margin-top:16px; border-top:1px solid var(--line); padding-top:12px; font-size:14px; }
   .pull-summary .row{ display:flex; justify-content:space-between; padding:3px 0; }
@@ -256,54 +351,84 @@ const RAR = {
 
 /* ============================================================
    PLAYER POOLS  (real players, recent products)
-   tier: superstar=5, star=3.5, solid=2, rookie=2.8, prospect=2.2, common=1
+   Entry: [name, team, pos, tier, rookie?]
+   tier  = hobby "heat" anchor that drives card value:
+           5 = elite / face-of-hobby, 4 = star, 3 = quality starter,
+           2 = solid regular, 1 = role player / common.
+   rookie= true flags a current-class RC (adds a rookie premium
+           and an "RC" badge on the card).
    ============================================================ */
 const POOLS = {
   nba_2425:[
-    ["Victor Wembanyama","SAS","C",5],["Nikola Jokic","DEN","C",5],["Luka Doncic","DAL","G",5],
-    ["Shai Gilgeous-Alexander","OKC","G",4.5],["Giannis Antetokounmpo","MIL","F",4.5],["Jayson Tatum","BOS","F",4],
-    ["Stephen Curry","GSW","G",4.5],["LeBron James","LAL","F",4.5],["Anthony Edwards","MIN","G",4.5],
-    ["Kevin Durant","PHX","F",4],["Joel Embiid","PHI","C",4],["Tyrese Haliburton","IND","G",3.5],
-    ["Devin Booker","PHX","G",3.5],["Ja Morant","MEM","G",3.5],["Jalen Brunson","NYK","G",3.5],
-    ["Zaccharie Risacher","ATL","F",2.8],["Alex Sarr","WAS","C",2.8],["Reed Sheppard","HOU","G",2.8],
-    ["Stephon Castle","SAS","G",3],["Zach Edey","MEM","C",2.8],["Dalton Knecht","LAL","G",2.8],
-    ["Donovan Clingan","POR","C",2.6],["Matas Buzelis","CHI","F",2.6],
-    ["Anthony Davis","LAL","F",3],["Damian Lillard","MIL","G",3],["Kawhi Leonard","LAC","F",3],
-    ["Trae Young","ATL","G",3],["De'Aaron Fox","SAC","G",3],["Paolo Banchero","ORL","F",3.2],
-    ["Chet Holmgren","OKC","C",3.2],["Scottie Barnes","TOR","F",3],["Cade Cunningham","DET","G",3.2]
+    // — Face of the hobby —
+    ["Victor Wembanyama","SAS","C",5],["Nikola Jokic","DEN","C",4.8],["Luka Doncic","LAL","G",4.9],
+    ["Shai Gilgeous-Alexander","OKC","G",4.7],["Giannis Antetokounmpo","MIL","F",4.5],["Anthony Edwards","MIN","G",4.6],
+    ["Stephen Curry","GSW","G",4.4],["LeBron James","LAL","F",4.6],["Jayson Tatum","BOS","F",4.2],
+    ["Kevin Durant","PHX","F",3.9],["Joel Embiid","PHI","C",3.8],["Kawhi Leonard","LAC","F",3.2],
+    // — Stars / starters —
+    ["Tyrese Haliburton","IND","G",3.4],["Devin Booker","PHX","G",3.6],["Ja Morant","MEM","G",3.6],
+    ["Jalen Brunson","NYK","G",3.5],["Anthony Davis","DAL","F",3.3],["Damian Lillard","MIL","G",3.1],
+    ["Trae Young","ATL","G",3.1],["De'Aaron Fox","SAS","G",3.1],["Paolo Banchero","ORL","F",3.4],
+    ["Chet Holmgren","OKC","C",3.3],["Scottie Barnes","TOR","F",3],["Cade Cunningham","DET","G",3.5],
+    ["Donovan Mitchell","CLE","G",3.2],["Tyrese Maxey","PHI","G",3.3],["Jaylen Brown","BOS","G",3.1],
+    ["Jimmy Butler","GSW","F",2.9],["Jamal Murray","DEN","G",2.8],["Bam Adebayo","MIA","C",2.7],
+    ["Kyrie Irving","DAL","G",3],["Karl-Anthony Towns","NYK","C",2.8],["Zion Williamson","NOP","F",3],
+    // — 2024-25 rookies —
+    ["Zaccharie Risacher","ATL","F",2.9,true],["Alex Sarr","WAS","C",2.9,true],["Reed Sheppard","HOU","G",2.8,true],
+    ["Stephon Castle","SAS","G",3.4,true],["Zach Edey","MEM","C",2.9,true],["Dalton Knecht","LAL","G",2.8,true],
+    ["Donovan Clingan","POR","C",2.7,true],["Matas Buzelis","CHI","F",2.8,true],["Jared McCain","PHI","G",3.2,true],
+    ["Bub Carrington","WAS","G",2.6,true],["Kel'el Ware","MIA","C",2.7,true],["Ron Holland","DET","F",2.6,true],
+    ["Tristan da Silva","ORL","F",2.4,true],["Yves Missi","NOP","C",2.4,true],["Devin Carter","SAC","G",2.4,true],
+    ["Isaiah Collier","UTA","G",2.4,true]
   ],
   nfl_24:[
-    ["Patrick Mahomes","KC","QB",5],["Josh Allen","BUF","QB",4.5],["Lamar Jackson","BAL","QB",4.5],
-    ["Jalen Hurts","PHI","QB",4],["Joe Burrow","CIN","QB",4],["Justin Jefferson","MIN","WR",4],
-    ["Ja'Marr Chase","CIN","WR",4],["CeeDee Lamb","DAL","WR",3.8],["Tyreek Hill","MIA","WR",3.8],
-    ["Christian McCaffrey","SF","RB",3.8],["Micah Parsons","DAL","LB",3.5],["Travis Kelce","KC","TE",3.5],
-    ["Caleb Williams","CHI","QB",3.2],["Jayden Daniels","WAS","QB",3.4],["Drake Maye","NE","QB",3],
-    ["Marvin Harrison Jr.","ARI","WR",3.2],["Malik Nabers","NYG","WR",3.2],["Rome Odunze","CHI","WR",2.9],
-    ["Brock Bowers","LV","TE",3.2],["Bo Nix","DEN","QB",2.9],["Brian Thomas Jr.","JAX","WR",3],
-    ["Xavier Worthy","KC","WR",2.9],["J.J. McCarthy","MIN","QB",2.8],
-    ["Anthony Richardson","IND","QB",3],["C.J. Stroud","HOU","QB",3.6],["Puka Nacua","LA","WR",3.2],
-    ["Sam LaPorta","DET","TE",2.8],["Bijan Robinson","ATL","RB",3.2],["Jahmyr Gibbs","DET","RB",3]
+    // — Franchise QBs / superstars —
+    ["Patrick Mahomes","KC","QB",4.8],["Josh Allen","BUF","QB",4.5],["Lamar Jackson","BAL","QB",4.4],
+    ["Joe Burrow","CIN","QB",4.1],["Jalen Hurts","PHI","QB",3.8],["Justin Jefferson","MIN","WR",4],
+    ["Ja'Marr Chase","CIN","WR",4.1],["CeeDee Lamb","DAL","WR",3.6],["Tyreek Hill","MIA","WR",3.5],
+    ["Christian McCaffrey","SF","RB",3.6],["Micah Parsons","DAL","LB",3.2],["Travis Kelce","KC","TE",3.3],
+    ["C.J. Stroud","HOU","QB",3.7],["Puka Nacua","LA","WR",3.3],["Saquon Barkley","PHI","RB",3.4],
+    ["Amon-Ra St. Brown","DET","WR",3],["A.J. Brown","PHI","WR",3],["Jared Goff","DET","QB",2.7],
+    ["Dak Prescott","DAL","QB",2.8],["Brock Purdy","SF","QB",2.9],["Bijan Robinson","ATL","RB",3.3],
+    ["Jahmyr Gibbs","DET","RB",3.1],["Sam LaPorta","DET","TE",2.7],["Anthony Richardson","IND","QB",2.9],
+    ["Garrett Wilson","NYJ","WR",2.8],["Nico Collins","HOU","WR",2.7],["Myles Garrett","CLE","DE",2.6],
+    // — 2024 rookies —
+    ["Caleb Williams","CHI","QB",3.4,true],["Jayden Daniels","WAS","QB",4,true],["Drake Maye","NE","QB",3.2,true],
+    ["Marvin Harrison Jr.","ARI","WR",3.3,true],["Malik Nabers","NYG","WR",3.5,true],["Rome Odunze","CHI","WR",2.9,true],
+    ["Brock Bowers","LV","TE",3.6,true],["Bo Nix","DEN","QB",3.1,true],["Brian Thomas Jr.","JAX","WR",3.4,true],
+    ["Xavier Worthy","KC","WR",3,true],["J.J. McCarthy","MIN","QB",2.8,true],["Ladd McConkey","LAC","WR",3.1,true],
+    ["Jayden Reed","GB","WR",2.5],["Keon Coleman","BUF","WR",2.6,true],["Trey Benson","ARI","RB",2.4,true],
+    ["Jonathon Brooks","CAR","RB",2.3,true],["Jaylen Wright","MIA","RB",2.3,true],["Ricky Pearsall","SF","WR",2.4,true]
   ],
   mlb_24:[
-    ["Shohei Ohtani","LAD","DH",5],["Aaron Judge","NYY","OF",4.5],["Mike Trout","LAA","OF",4],
-    ["Ronald Acuna Jr.","ATL","OF",4.5],["Mookie Betts","LAD","OF",4],["Juan Soto","NYY","OF",4],
-    ["Bobby Witt Jr.","KC","SS",4.2],["Gunnar Henderson","BAL","SS",3.8],["Corbin Carroll","ARI","OF",3.5],
-    ["Julio Rodriguez","SEA","OF",4],["Fernando Tatis Jr.","SD","OF",3.8],["Jose Ramirez","CLE","3B",3.5],
-    ["Freddie Freeman","LAD","1B",3.5],["Yordan Alvarez","HOU","DH",3.5],["Vladimir Guerrero Jr.","TOR","1B",3.5],
-    ["Elly De La Cruz","CIN","SS",4],["Paul Skenes","PIT","P",3.8],["Jackson Holliday","BAL","SS",3.2],
-    ["Wyatt Langford","TEX","OF",3],["Jackson Chourio","MIL","OF",3.2],["Jackson Merrill","SD","OF",3],
-    ["Ceddanne Rafaela","BOS","OF",2.6],["Colton Cowser","BAL","OF",2.7],["Masyn Winn","STL","SS",2.7],
-    ["Junior Caminero","TB","3B",3]
+    // — Superstars —
+    ["Shohei Ohtani","LAD","DH",5],["Aaron Judge","NYY","OF",4.4],["Mike Trout","LAA","OF",3.6],
+    ["Ronald Acuna Jr.","ATL","OF",4.2],["Mookie Betts","LAD","OF",3.7],["Juan Soto","NYM","OF",4],
+    ["Bobby Witt Jr.","KC","SS",4.3],["Gunnar Henderson","BAL","SS",3.8],["Corbin Carroll","ARI","OF",3.3],
+    ["Julio Rodriguez","SEA","OF",3.9],["Fernando Tatis Jr.","SD","OF",3.5],["Jose Ramirez","CLE","3B",3.2],
+    ["Freddie Freeman","LAD","1B",3.2],["Yordan Alvarez","HOU","DH",3.3],["Vladimir Guerrero Jr.","TOR","1B",3.4],
+    ["Elly De La Cruz","CIN","SS",4],["Francisco Lindor","NYM","SS",3],["Kyle Tucker","CHC","OF",3],
+    ["Adley Rutschman","BAL","C",2.9],["Spencer Strider","ATL","P",2.8],["Tarik Skubal","DET","P",2.9],
+    ["Pete Alonso","NYM","1B",2.7],["Rafael Devers","BOS","3B",2.8],["William Contreras","MIL","C",2.5],
+    // — 2024 rookies —
+    ["Paul Skenes","PIT","P",4.2,true],["Jackson Holliday","BAL","SS",3.4,true],["Wyatt Langford","TEX","OF",3.1,true],
+    ["Jackson Chourio","MIL","OF",3.3,true],["Jackson Merrill","SD","OF",3.3,true],["Junior Caminero","TB","3B",3.1,true],
+    ["Colton Cowser","BAL","OF",2.7,true],["Masyn Winn","STL","SS",2.7,true],["Ceddanne Rafaela","BOS","OF",2.5,true],
+    ["Shota Imanaga","CHC","P",2.6,true],["Joey Ortiz","MIL","SS",2.3,true],["Jordan Lawlar","ARI","SS",2.6,true]
   ],
   bowman_prospects:[
-    ["Leo De Vries","SD","SS",3.4],["Sebastian Walcott","TEX","SS",3.3],["Jesus Made","MIL","SS",3.2],
-    ["Ethan Holliday","COL","SS",3.2],["Walker Jenkins","MIN","OF",3.2],["Roman Anthony","BOS","OF",3.4],
-    ["Jasson Dominguez","NYY","OF",3.2],["Druw Jones","ARI","OF",2.8],["Termarr Johnson","PIT","2B",2.8],
-    ["Max Clark","DET","OF",3],["Ethan Salas","SD","C",3.2],["Dylan Crews","WAS","OF",3.4],
-    ["Travis Bazzana","CLE","2B",3],["JJ Wetherholt","STL","SS",2.9],["Paul Skenes","PIT","P",3.8],
-    ["Jackson Holliday","BAL","SS",3.4],["Wyatt Langford","TEX","OF",3.2],["Jackson Chourio","MIL","OF",3.4],
-    ["Konnor Griffin","PIT","SS",2.8],["Charlie Condon","COL","OF",2.9],["Bryce Eldridge","SF","1B",2.8],
-    ["Samuel Basallo","BAL","C",2.9]
+    // — Top prospects (1st Bowman chase) —
+    ["Leo De Vries","SD","SS",3.6],["Sebastian Walcott","TEX","SS",3.4],["Jesus Made","MIL","SS",3.5],
+    ["Ethan Holliday","COL","SS",3.5],["Walker Jenkins","MIN","OF",3.3],["Roman Anthony","BOS","OF",3.7],
+    ["Jasson Dominguez","NYY","OF",3.2],["Druw Jones","ARI","OF",2.7],["Termarr Johnson","PIT","2B",2.7],
+    ["Max Clark","DET","OF",3.1],["Ethan Salas","SD","C",3.3],["Dylan Crews","WAS","OF",3.5,true],
+    ["Travis Bazzana","CLE","2B",3],["JJ Wetherholt","STL","SS",2.9],["Konnor Griffin","PIT","SS",3.1],
+    ["Charlie Condon","COL","OF",3],["Bryce Eldridge","SF","1B",3],["Samuel Basallo","BAL","C",3.1],
+    ["Paul Skenes","PIT","P",4,true],["Jackson Holliday","BAL","SS",3.3,true],["Wyatt Langford","TEX","OF",3,true],
+    ["Jackson Chourio","MIL","OF",3.3,true],["Coby Mayo","BAL","3B",2.6],["Kristian Campbell","BOS","2B",2.8],
+    ["Owen Caissie","CHC","OF",2.5],["Carson Williams","TB","SS",2.6],["Cam Smith","CHC","3B",2.6],
+    ["Chase Burns","CIN","P",2.7],["Bubba Chandler","PIT","P",2.7],["Jac Caglianone","KC","1B",3.1],
+    ["Nick Kurtz","ATH","1B",2.9],["Braden Montgomery","CWS","OF",2.5],["George Lombard Jr.","NYY","SS",2.6]
   ]
 };
 
@@ -332,6 +457,7 @@ const PRODUCTS = [
   //      Panini doesn't publish unnumbered Silver/color odds (approx); /N runs are exact.
   P({ id:"prizm_bk", name:"Prizm Basketball", year:"2024-25", sport:"basketball", brand:"PANINI PRIZM",
       price:20, cardsPerPack:12, packsPerBox:12, pool:"nba_2425",
+      design:"prizm", valMult:1.15,
       palette:["#e62b54","#1f6dff","#0a0e17"],
       chase:[
         { rar:"silver",    label:"Silver Prizm",            p:1/3.5,    max:1, foilType:"silver" },
@@ -347,12 +473,13 @@ const PRODUCTS = [
   // ---- 2024 Panini Prizm Football: 12/pack, 12 packs/box, ~2 autos & ~10 numbered/box.
   P({ id:"prizm_fb", name:"Prizm Football", year:"2024", sport:"football", brand:"PANINI PRIZM",
       price:24, cardsPerPack:12, packsPerBox:12, pool:"nfl_24",
+      design:"prizm", valMult:1.12,
       palette:["#13a05a","#1f6dff","#0a0e17"],
       chase:[
         { rar:"silver",    label:"Silver Prizm",            p:1/3.5,    max:1, foilType:"silver" },
         { rar:"parallel",  label:"Colored Prizm",           p:1/1.6,    max:2, foilType:"refractor", colors:["Red","Blue","Green","Pink","Hyper","No Huddle"] },
         { rar:"insert",    label:"Insert",                  p:1/1.8,    max:2, foilType:"holo", names:["Color Blast","Manga","Prizmania","Stained Glass","Fireworks","Dawn of a New Era"] },
-        { rar:"numbered",  label:"Numbered Prizm",          p:1/1.4,    max:1, foilType:"refractor", runs:[199,99,75,49] },
+        { rar:"numbered",  label:"Numbered Prizm",          p:1/3.5,    max:1, foilType:"refractor", runs:[199,99,75,49] },
         { rar:"rare",      label:"Numbered /25 (Purple Power)", p:1/30, max:1, foilType:"refractor", runs:[25] },
         { rar:"gold",      label:"Gold Prizm /10",          p:1/120,    max:1, foilType:"refractor", runs:[10] },
         { rar:"superrare", label:"Gold Vinyl /5",           p:1/300,    max:1, foilType:"refractor", runs:[5] },
@@ -362,6 +489,7 @@ const PRODUCTS = [
   // ---- 2024 Donruss Optic Football: 11/pack, 20 packs/box, ~1 auto, ~3 Holo, ~9 numbered/box.
   P({ id:"optic_fb", name:"Donruss Optic Football", year:"2024", sport:"football", brand:"OPTIC",
       price:13, cardsPerPack:11, packsPerBox:20, pool:"nfl_24",
+      design:"optic", valMult:0.9,
       palette:["#ff7b1a","#7a1fff","#0a0e17"],
       chase:[
         { rar:"silver",    label:"Holo",                    p:1/6.7,    max:1, foilType:"silver" },
@@ -376,6 +504,7 @@ const PRODUCTS = [
   // ---- 2024 Topps Chrome Baseball: 4/pack, 24 packs/box, 1 auto/box. Topps odds are exact & published.
   P({ id:"chrome_bb", name:"Topps Chrome Baseball", year:"2024", sport:"baseball", brand:"TOPPS CHROME",
       price:5, cardsPerPack:4, packsPerBox:24, pool:"mlb_24",
+      design:"chrome", valMult:1.1,
       palette:["#1f6dff","#ff3d8b","#0a0e17"],
       chase:[
         { rar:"refractor", label:"Refractor",               p:1/3,      max:2, foilType:"refractor" },
@@ -391,6 +520,7 @@ const PRODUCTS = [
   // ---- 2024 Topps Finest Baseball: 10/pack, 6 packs/box, 2 autos/box. Hit-dense.
   P({ id:"finest_bb", name:"Topps Finest Baseball", year:"2024", sport:"baseball", brand:"TOPPS FINEST",
       price:20, cardsPerPack:10, packsPerBox:6, pool:"mlb_24",
+      design:"finest", valMult:1.05,
       palette:["#00d0c0","#1f6dff","#0a0e17"],
       chase:[
         { rar:"refractor", label:"Refractor",               p:1/5,      max:2, foilType:"refractor" },
@@ -405,6 +535,7 @@ const PRODUCTS = [
   // ---- 2024 Bowman Chrome Prospects: 4/pack, 24 packs/box, 2 autos/box. 1st Bowman chase.
   P({ id:"bowman_bb", name:"Bowman Chrome Prospects", year:"2024", sport:"baseball", brand:"BOWMAN", subtitle:"Chrome Prospects",
       price:8, cardsPerPack:4, packsPerBox:24, pool:"bowman_prospects",
+      design:"bowman", valMult:1.0,
       palette:["#1e4dd8","#ffcb3d","#0a0e17"],
       firstBowman:true,
       chase:[
@@ -500,52 +631,73 @@ function makeCard(prod, def){
 }
 
 function finishCard(prod, pl, rarKey, rar, opts){
-  const [name, team, pos, tier] = pl;
-  const value = cardValue(rarKey, opts, tier);
+  const [name, team, pos, tier, rookie] = pl;
+  // 1st Bowman cards are, by definition, the player's rookie-eligible prospect card
+  const isRookie = !!rookie || !!prod.firstBowman;
+  const value = cardValue(rarKey, opts, tier, prod, isRookie);
   const isHit = (rarKey!=="base");
   const big = ["auto","gold","superrare","oneofone","rare"].includes(rarKey);
   return {
-    name, team, pos, tier,
-    set: prod.brand, year: prod.year, sport: prod.sport,
+    name, team, pos, tier, rookie: isRookie,
+    set: prod.brand, year: prod.year, sport: prod.sport, design: prod.design||"generic",
     rarKey, rarName: rar.name, color: rar.color,
     label: opts.label, serial: opts.serial||null, colorName: opts.colorName||null,
     foilType: opts.foilType||null,
     auto: rarKey==="auto",
-    firstBowman: prod.firstBowman && Math.random()<0.5,
+    firstBowman: prod.firstBowman===true,
     isHit, big, value
   };
 }
 
-// Approximate secondary-market-style value (in sim dollars).
-// Calibrated so a pack's EV sits realistically BELOW its price — most
-// cards are near-worthless, the occasional hit chases the cost back, and
-// only rare big hits put a pack into the green. Ripping is -EV long term.
-function cardValue(rarKey, opts, tier){
+// ---- Value model ------------------------------------------------------------
+// Approximate secondary-market value (in sim dollars). The goal is *realism*
+// of the spread, not a flat payout:
+//   • Player matters most. A star's auto dwarfs a bench player's auto — value
+//     scales on a star^2 curve so the hobby's heavy top-end is reproduced.
+//   • Rarity tier sets the multiplier band (base pennies → 1/1 four figures).
+//   • Serial print run compounds scarcity (a /5 is worth far more than a /199).
+//   • Rookies/1st-Bowman carry a premium — that's where the market chases.
+//   • A brand premium (Prizm/Chrome sell at a markup) nudges the whole product.
+//   • Market noise adds spread plus an occasional "hot copy" spike.
+// Calibrated so a pack's EV sits a bit BELOW its price: most cards are near
+// worthless, the rare big hit chases the cost back. Ripping is -EV long term.
+const MARKET = 0.7; // global damping so a sealed pack/box EV lands under cost
+function cardValue(rarKey, opts, tier, prod, rookie){
   const t = tier || 1.5;
-  let v;
+  const star = Math.pow(t, 2.1) / 6;   // t1≈0.17, t3≈1.6, t4≈3.0, t4.5≈3.9, t5≈5.1
+  // base bands: a tiny flat floor + a star-scaled term, so role players are
+  // pennies-to-a-buck and only the top of the pool carries real value.
+  let base;
   switch(rarKey){
-    case "base":      v = 0.06 * t; break;   // junk wax
-    case "insert":    v = 0.6 * t; break;
-    case "parallel":  v = 0.8 * t; break;
-    case "refractor": v = 0.6 * t; break;
-    case "silver":    v = 1.2 * t; break;
-    case "numbered":  v = 1.0 * t; break;     // scaled further by print run below
-    case "gold":      v = 8 * t; break;
-    case "rare":      v = 6 * t; break;
-    case "superrare": v = 14 * t; break;
-    case "auto":      v = 4 * t; break;       // most autos are commons; stars carry the tail
-    case "oneofone":  v = 55 * t; break;
-    default:          v = 0.10;
+    case "base":      base = 0.05 + 0.10*star; break;  // commons: pennies
+    case "insert":    base = 0.3  + 0.7*star;  break;
+    case "parallel":  base = 0.4  + 1.0*star;  break;  // colored prizms
+    case "refractor": base = 0.3  + 0.9*star;  break;
+    case "silver":    base = 0.6  + 1.6*star;  break;  // Silver Prizm / Holo
+    case "numbered":  base = 0.8  + 2.0*star;  break;  // further scaled by run
+    case "rare":      base = 4    + 8*star;    break;  // /25-ish
+    case "gold":      base = 6    + 12*star;   break;  // /10
+    case "superrare": base = 9    + 18*star;   break;  // /5
+    case "auto":      base = 3    + 8*star;    break;  // star on-card autos carry the tail
+    case "oneofone":  base = 40   + 90*star;   break;  // 1/1 SuperFractor / Black
+    default:          base = 0.15;
   }
-  // serial number scarcity bump (lower print run = pricier)
+  let v = base * ((prod && prod.valMult) || 1);
+
+  // rookie / 1st-Bowman premium (the part of the market that chases)
+  if(rookie && rarKey!=="base") v *= 1.45;
+  else if(rookie) v *= 1.15;
+
+  // serial print-run scarcity: lower run = pricier (capped so it stays sane)
   if(opts && opts.serial){
     const m = /\/(\d+)/.exec(opts.serial);
-    if(m){ const run = parseInt(m[1],10); v *= Math.min(7, Math.max(1, 220/run)); }
+    if(m){ const run = parseInt(m[1],10); v *= Math.min(6, Math.max(1, 200/run)); }
   }
-  // long-tail randomness: occasional outlier "hot" copies, like a real market
-  let mult = 0.55 + Math.random()*0.7;
-  if(rarKey!=="base" && Math.random()<0.04) mult *= 1.9; // rare spike
-  v *= mult;
+
+  // market noise + occasional outlier "hot" copy
+  let mult = 0.6 + Math.random()*0.7;
+  if(rarKey!=="base" && Math.random()<0.05) mult *= 2.2;
+  v *= mult * MARKET;
   return Math.max(0.05, Math.round(v*100)/100);
 }
 
@@ -664,7 +816,7 @@ function doRip(prod){
   currentPack = cards;
   registerPulls(prod, cards);
   save(); renderWallet();
-  showReveal(prod, cards);
+  playPackOpening(prod, cards, false);
 }
 
 function doRipBox(prod){
@@ -678,7 +830,7 @@ function doRipBox(prod){
     all = all.concat(cards);
   }
   save(); renderWallet();
-  showReveal(prod, all, true);
+  playPackOpening(prod, all, true);
 }
 
 function registerPulls(prod, cards){
@@ -697,8 +849,9 @@ function registerPulls(prod, cards){
 }
 function slimCard(c){
   return { name:c.name, team:c.team, pos:c.pos, set:c.set, year:c.year, sport:c.sport,
-           rarKey:c.rarKey, rarName:c.rarName, color:c.color, label:c.label,
-           serial:c.serial, colorName:c.colorName, auto:c.auto, value:c.value, firstBowman:c.firstBowman };
+           rarKey:c.rarKey, rarName:c.rarName, color:c.color, label:c.label, design:c.design,
+           serial:c.serial, colorName:c.colorName, auto:c.auto, value:c.value,
+           firstBowman:c.firstBowman, rookie:c.rookie };
 }
 
 /* ============================================================
@@ -764,34 +917,206 @@ function initials(name){
   return ((parts[0]||"")[0]||"") + ((parts[1]||"")[0]||"");
 }
 
+/* Brand wordmark + tagline shown on the card face (drives the visual design) */
+const BRANDS = {
+  prizm:   { mark:"PRIZM",  sub:"PANINI" },
+  optic:   { mark:"OPTIC",  sub:"DONRUSS" },
+  chrome:  { mark:"CHROME", sub:"TOPPS" },
+  finest:  { mark:"FINEST", sub:"TOPPS" },
+  bowman:  { mark:"BOWMAN", sub:"CHROME" },
+  generic: { mark:"", sub:"" }
+};
+
 function cardFrontHTML(c){
-  const teamColorBar = '';
-  let cls = "card";
+  const design = c.design || "generic";
+  let cls = "card br-"+design;
   if(c.foilType==="holo") cls += " holo";
   if(c.foilType==="refractor"||c.foilType==="silver") cls += " refractor";
   if(c.big) cls += " bighit";
   const accent = c.color;
   const rarLabel = (c.colorName? c.colorName+" " : "") + c.label + (c.serial? " · "+c.serial : "");
   const hitFlag = c.auto ? '<div class="hitflag">✍️</div>' : (c.big? '<div class="hitflag">🔥</div>':'');
-  const fb = c.firstBowman ? '1st • ' : '';
+  const bm = BRANDS[design] || BRANDS.generic;
+  const brandmark = bm.mark
+    ? '<div class="brandmark">'+(bm.sub?'<small>'+bm.sub+'</small>':'')+'<b>'+bm.mark+'</b></div>'
+    : '<div class="brandmark"><b>'+esc(c.set)+'</b></div>';
+  const rc  = c.rookie ? '<span class="rc">RC</span>' : '';
+  const fb  = c.firstBowman ? '<div class="fbshield">1<i>ST</i> BOWMAN</div>' : '';
   return '<div class="'+cls+'" data-v="'+c.value+'">'+
     '<div class="inner">'+
       '<div class="face back"><span>RIP</span></div>'+
       '<div class="face front" style="border-color:'+accent+'">'+
         '<div class="photo" data-player="'+esc(c.name)+'"><span class="initials">'+initials(c.name)+'</span></div>'+
+        '<div class="bgfx"></div>'+
         '<div class="shade"></div>'+
-        '<div class="setline">'+fb+c.set+' '+c.year+'</div>'+
+        brandmark + fb +
         (c.serial?'<div class="serial" style="color:'+accent+'">#'+c.serial+'</div>':'')+
         '<div class="info">'+
           '<div class="pos">'+c.pos+'</div>'+
-          '<div class="nm">'+c.name+'</div>'+
-          '<div class="tm">'+c.team+'</div>'+
+          '<div class="nm">'+c.name+rc+'</div>'+
+          '<div class="tm">'+c.team+' · '+c.year+'</div>'+
           '<div class="rar" style="background:'+accent+'22;color:'+accent+';border:1px solid '+accent+'66">'+rarLabel+'</div>'+
         '</div>'+
         hitFlag+
       '</div>'+
     '</div>'+
   '</div>';
+}
+
+/* ============================================================
+   PACK OPENING ANIMATION  → then swipe-stack (pack) or grid (box)
+   ============================================================ */
+function playPackOpening(prod, cards, isBox){
+  renderToolbar(true); renderWallet();
+  const goReveal = ()=> isBox ? showReveal(prod, cards, true) : showStack(prod, cards, false);
+  rerender = goReveal; // if state changes mid-anim, just land on the reveal
+  const grad = "linear-gradient(160deg,"+prod.palette[0]+","+prod.palette[1]+" 60%,"+prod.palette[2]+")";
+  view.innerHTML =
+    '<div class="opener"><div class="packstage tearstage">'+
+      '<div class="tearpack" id="tearpack" style="background:'+grad+'">'+
+        '<div class="foilshine"></div>'+
+        '<div class="tearlid"><div class="psport">'+prod.sport+'</div></div>'+
+        '<div class="tearbody"><div class="pbrand">'+prod.brand+'</div></div>'+
+        '<div class="burst"></div>'+
+      '</div>'+
+      '<div class="hint" id="tearhint">Ripping…</div>'+
+    '</div></div>';
+  const tp = byId("tearpack");
+  // let the user skip the animation by tapping
+  tp.onclick = ()=>{ done(); };
+  let finished = false;
+  function done(){ if(finished) return; finished = true; goReveal(); }
+  requestAnimationFrame(()=>{ tp.classList.add("go"); });
+  setTimeout(done, 1200);
+}
+
+/* ---- Swipe-to-reveal stack (single pack) ---------------------------------- */
+function showStack(prod, cards, isBox){
+  renderToolbar(true); renderWallet();
+  rerender = ()=>showStack(prod, cards, isBox);
+  const total = cards.length;
+  view.innerHTML =
+    '<div class="opener">'+
+      '<div class="opener-head"><div class="ptitle"><h2>'+prod.name+'</h2>'+
+        '<div class="sub">Swipe → (or tap Next) to reveal each card</div></div>'+
+        '<button id="toGrid">▦ View all</button></div>'+
+      '<div class="packstage stackstage">'+
+        '<div class="swipewrap" id="swipe">'+ cards.map(cardFrontHTML).join("") +'</div>'+
+        '<div class="swipehint" id="swipehint">← swipe →</div>'+
+        '<div class="stackbar" id="stackbar">'+
+          '<button class="ghost" id="prevC">‹ Back</button>'+
+          '<div class="stackcount"><b id="cidx">1</b> <span>/ '+total+'</span></div>'+
+          '<button class="primary" id="nextC">Next ›</button>'+
+        '</div>'+
+        '<div class="pull-summary" id="stacksum" style="display:none"></div>'+
+        '<div class="ripcontrols" id="stackdone" style="display:none;margin-top:14px">'+
+          '<button class="primary" id="againS">RIP ANOTHER · '+money(prod.price)+'</button>'+
+          '<button id="backS">Other Products</button>'+
+        '</div>'+
+      '</div>'+
+    '</div>';
+
+  const wrap = byId("swipe");
+  hydratePhotos(wrap);
+  const els = Array.from(wrap.querySelectorAll(".card"));
+  let idx = 0, dragging = false, startX = 0, dx = 0;
+
+  function layout(){
+    els.forEach((el,i)=>{
+      const d = i - idx;
+      el.style.transition = "transform .35s cubic-bezier(.2,.8,.2,1), opacity .3s ease";
+      if(d < 0){            // already swiped away (to the right)
+        el.style.transform = "translateX(135%) rotate(14deg)";
+        el.style.opacity = "0"; el.style.pointerEvents = "none"; el.style.zIndex = 0;
+      } else if(d === 0){   // active
+        el.style.transform = "translateX(0) rotate(0)";
+        el.style.opacity = "1"; el.style.pointerEvents = "auto"; el.style.zIndex = 30;
+      } else if(d <= 2){    // peeking behind
+        el.style.transform = "translateY("+(d*9)+"px) scale("+(1 - d*0.045)+")";
+        el.style.opacity = "1"; el.style.pointerEvents = "none"; el.style.zIndex = 30 - d;
+      } else {              // hidden deep in the deck
+        el.style.transform = "translateY(20px) scale(.9)";
+        el.style.opacity = "0"; el.style.pointerEvents = "none"; el.style.zIndex = 0;
+      }
+    });
+  }
+  function revealActive(){
+    const el = els[idx]; if(!el) return;
+    if(!el.classList.contains("flipped")){
+      setTimeout(()=>{
+        el.classList.add("flipped");
+        if(cards[idx] && cards[idx].big) triggerFlash(cards[idx].color);
+      }, 150);
+    }
+  }
+  function setIdx(i){
+    idx = Math.max(0, Math.min(total, i));
+    byId("cidx").textContent = Math.min(idx+1, total);
+    if(idx >= total){ finish(); return; }
+    layout(); revealActive();
+  }
+  function next(){ if(idx >= total-1){ setIdx(total); } else { setIdx(idx+1); } }
+  function prev(){ if(idx > 0) setIdx(idx-1); }
+
+  function finish(){
+    byId("stackbar").style.display = "none";
+    byId("swipehint").style.display = "none";
+    const packVal = cards.reduce((s,c)=>s+c.value,0);
+    const hits = cards.filter(c=>c.isHit).length;
+    const cost = prod.price, profit = packVal - cost;
+    const sum = byId("stacksum");
+    sum.style.display = "block";
+    sum.innerHTML =
+      '<div class="row"><span>Cards revealed</span><b>'+total+'</b></div>'+
+      '<div class="row"><span>Hits</span><b>'+hits+'</b></div>'+
+      '<div class="row"><span>Est. pull value</span><b>'+money(packVal)+'</b></div>'+
+      '<div class="row"><span>Cost</span><b>'+money(cost)+'</b></div>'+
+      '<div class="row"><span>This pack</span><b class="'+(profit>=0?"pos":"neg")+'">'+(profit>=0?"+":"")+money(profit)+'</b></div>';
+    byId("stackdone").style.display = "flex";
+    renderWallet();
+  }
+
+  // pointer / touch drag on the active card
+  function onDown(e){
+    if(idx >= total) return;
+    const p = e.touches ? e.touches[0] : e;
+    dragging = true; startX = p.clientX; dx = 0;
+    const el = els[idx]; if(el) el.style.transition = "none";
+  }
+  function onMove(e){
+    if(!dragging) return;
+    const p = e.touches ? e.touches[0] : e;
+    dx = p.clientX - startX;
+    const el = els[idx]; if(el) el.style.transform = "translateX("+dx+"px) rotate("+(dx*0.05)+"deg)";
+  }
+  function onUp(){
+    if(!dragging) return; dragging = false;
+    if(dx > 70){ next(); }
+    else if(dx < -70){ prev(); }
+    else if(Math.abs(dx) < 6){ next(); }  // a simple tap also advances
+    else { layout(); }                     // half-swipe: snap back
+  }
+  // tear down any drag listeners left by a previous stack, then wire fresh ones
+  if(window._stackCleanup) window._stackCleanup();
+  wrap.addEventListener("mousedown", onDown);
+  window.addEventListener("mousemove", onMove);
+  window.addEventListener("mouseup", onUp);
+  wrap.addEventListener("touchstart", onDown, {passive:true});
+  wrap.addEventListener("touchmove", onMove, {passive:true});
+  wrap.addEventListener("touchend", onUp);
+  window._stackCleanup = function(){
+    window.removeEventListener("mousemove", onMove);
+    window.removeEventListener("mouseup", onUp);
+    window._stackCleanup = null;
+  };
+
+  byId("nextC").onclick = next;
+  byId("prevC").onclick = prev;
+  byId("toGrid").onclick = ()=> showReveal(prod, cards, isBox);
+  byId("againS").onclick = ()=>{ if(state.balance>=prod.price){ doRip(prod);} else { renderOpener(prod.id); } };
+  byId("backS").onclick = ()=> renderOpener(prod.id);
+
+  layout(); revealActive();
 }
 
 function showReveal(prod, cards, isBox){
