@@ -138,7 +138,7 @@
     background-size:cover; background-position:center 16%; background-repeat:no-repeat;
     display:flex; align-items:center; justify-content:center;
   }
-  .card .front .photo .initials{ font-size:32px; font-weight:800; color:#36456a; letter-spacing:1px; }
+  .card .front .photo .initials{ font-size:40px; font-weight:900; color:rgba(255,255,255,.92); letter-spacing:1px; text-shadow:0 2px 10px rgba(0,0,0,.45); }
   .photo.has-img .initials, .clthumb.has-img span{ display:none; }
   .card .front .shade{
     position:absolute; inset:0; pointer-events:none;
@@ -284,7 +284,7 @@
   .collrow .cl-rar{ width:7px; align-self:stretch; border-radius:4px; }
   .collrow .clthumb{ width:38px; height:38px; border-radius:8px; flex:0 0 auto;
     background:#0e1424 center 14%/cover no-repeat; display:flex; align-items:center; justify-content:center;
-    font-size:13px; font-weight:800; color:#36456a; border:1px solid var(--line); }
+    font-size:13px; font-weight:800; color:rgba(255,255,255,.9); text-shadow:0 1px 4px rgba(0,0,0,.5); border:1px solid var(--line); }
   .collrow .cl-main{ flex:1; min-width:0; }
   .collrow .cl-main .cl-nm{ font-weight:700; }
   .collrow .cl-main .cl-sub{ font-size:12px; color:var(--dim); }
@@ -573,6 +573,26 @@ function chance(p){ return Math.random() < p; }
 
 function pickPlayer(poolId){ return rnd(POOLS[poolId]); }
 
+// Weighted hit-subject selection. Real auto/insert checklists are dominated by
+// commons & rookies — stars are short-printed or absent — so a star "hit" is
+// genuinely rare. We bias selection toward LOWER tiers by weight 1/tier^k.
+// Bigger k = stronger bias to commons (used for autos & top-end hits), which
+// keeps EV sane while letting the occasional star hit be worth real money.
+const HIT_BIAS = {
+  auto:4.2, oneofone:3.0, superrare:3.2, gold:3.0, rare:3.0,
+  numbered:2.0, silver:1.8, parallel:0.7, insert:0.7, refractor:0.7
+};
+function pickHitPlayer(poolId, rarKey){
+  const arr = POOLS[poolId];
+  const k = HIT_BIAS[rarKey] || 0;
+  if(!k) return rnd(arr);
+  let tot = 0; const w = new Array(arr.length);
+  for(let i=0;i<arr.length;i++){ w[i] = 1/Math.pow(arr[i][3]||1.5, k); tot += w[i]; }
+  let r = Math.random()*tot;
+  for(let i=0;i<arr.length;i++){ r -= w[i]; if(r<=0) return arr[i]; }
+  return arr[arr.length-1];
+}
+
 // Build a single pack of cards for a product
 function openPack(prod){
   const pool = prod.pool;
@@ -612,7 +632,7 @@ function makeBase(prod){
 }
 
 function makeCard(prod, def){
-  const pl = pickPlayer(prod.pool);
+  const pl = pickHitPlayer(prod.pool, def.rar);
   const rar = RAR[def.rar] || RAR.parallel;
   let serial = null, colorName = null;
 
@@ -661,42 +681,49 @@ function finishCard(prod, pl, rarKey, rar, opts){
 //   • Market noise adds spread plus an occasional "hot copy" spike.
 // Calibrated so a pack's EV sits a bit BELOW its price: most cards are near
 // worthless, the rare big hit chases the cost back. Ripping is -EV long term.
-const MARKET = 0.7; // global damping so a sealed pack/box EV lands under cost
+const MARKET = 0.37; // global damping that sets the rip-vs-singles gap (EV≈75% of price)
 function cardValue(rarKey, opts, tier, prod, rookie){
   const t = tier || 1.5;
-  const star = Math.pow(t, 2.1) / 6;   // t1≈0.17, t3≈1.6, t4≈3.0, t4.5≈3.9, t5≈5.1
-  // base bands: a tiny flat floor + a star-scaled term, so role players are
-  // pennies-to-a-buck and only the top of the pool carries real value.
+  const star = Math.pow(t, 2.1) / 6;     // t1≈0.17, t3≈1.6, t4≈3.0, t4.6≈4.1, t5≈5.1
+  const sp   = Math.pow(star, 1.4);      // star-power: steep curve so commons are
+                                         // cheap and only true stars carry value
+                                         // (t1.5≈0.24, t2.4≈1.1, t3≈1.9, t4.6≈7.2, t5≈9.8)
+  // small flat floor + star-power term. Star hits are RARE (pickHitPlayer biases
+  // away from them), so the top end can be priced like the real market: a common
+  // rookie auto ≈ $10-25, an Edwards/Wembanyama auto ≈ several hundred.
   let base;
   switch(rarKey){
-    case "base":      base = 0.05 + 0.10*star; break;  // commons: pennies
-    case "insert":    base = 0.3  + 0.7*star;  break;
-    case "parallel":  base = 0.4  + 1.0*star;  break;  // colored prizms
-    case "refractor": base = 0.3  + 0.9*star;  break;
-    case "silver":    base = 0.6  + 1.6*star;  break;  // Silver Prizm / Holo
-    case "numbered":  base = 0.8  + 2.0*star;  break;  // further scaled by run
-    case "rare":      base = 4    + 8*star;    break;  // /25-ish
-    case "gold":      base = 6    + 12*star;   break;  // /10
-    case "superrare": base = 9    + 18*star;   break;  // /5
-    case "auto":      base = 3    + 8*star;    break;  // star on-card autos carry the tail
-    case "oneofone":  base = 40   + 90*star;   break;  // 1/1 SuperFractor / Black
+    case "base":      base = 0.05 + 0.15*sp;  break;  // commons: pennies
+    case "insert":    base = 0.3  + 0.8*sp;   break;
+    case "parallel":  base = 0.4  + 1.1*sp;   break;  // colored prizms
+    case "refractor": base = 0.3  + 0.9*sp;   break;
+    case "silver":    base = 0.5  + 2.2*sp;   break;  // Silver Prizm / Holo
+    case "numbered":  base = 0.8  + 3.5*sp;   break;  // further scaled by run
+    case "rare":      base = 4    + 18*sp;    break;  // /25-ish
+    case "gold":      base = 6    + 30*sp;    break;  // /10
+    case "superrare": base = 10   + 50*sp;    break;  // /5
+    case "auto":      base = 4    + 38*sp;    break;  // star autos carry the tail
+    case "oneofone":  base = 40   + 140*sp;   break;  // 1/1 SuperFractor / Black
     default:          base = 0.15;
   }
   let v = base * ((prod && prod.valMult) || 1);
 
-  // rookie / 1st-Bowman premium (the part of the market that chases)
-  if(rookie && rarKey!=="base") v *= 1.45;
+  // rookie / 1st-Bowman premium (the part of the market that chases hardest)
+  if(rookie && rarKey!=="base") v *= 1.5;
   else if(rookie) v *= 1.15;
 
-  // serial print-run scarcity: lower run = pricier (capped so it stays sane)
-  if(opts && opts.serial){
+  // serial print-run scarcity — ONLY for variable-run parallels (a /199 vs a
+  // /49 of the same player). The fixed-run rarities (rare=/25, gold=/10,
+  // superrare=/5, oneofone=1/1) already price their run into the base above,
+  // so applying a serial multiplier there would double-count it.
+  if(opts && opts.serial && (rarKey==="numbered"||rarKey==="refractor"||rarKey==="silver"||rarKey==="parallel")){
     const m = /\/(\d+)/.exec(opts.serial);
     if(m){ const run = parseInt(m[1],10); v *= Math.min(6, Math.max(1, 200/run)); }
   }
 
   // market noise + occasional outlier "hot" copy
   let mult = 0.6 + Math.random()*0.7;
-  if(rarKey!=="base" && Math.random()<0.05) mult *= 2.2;
+  if(rarKey!=="base" && Math.random()<0.05) mult *= 2.4;
   v *= mult * MARKET;
   return Math.max(0.05, Math.round(v*100)/100);
 }
@@ -916,6 +943,14 @@ function initials(name){
   const parts = String(name).split(/\s+/).filter(Boolean);
   return ((parts[0]||"")[0]||"") + ((parts[1]||"")[0]||"");
 }
+// Deterministic vibrant gradient per player — used as the photo backdrop so a
+// card always looks designed, whether or not its Wikipedia photo resolves.
+function nameGrad(name){
+  let hsh = 0; const s = String(name);
+  for(let i=0;i<s.length;i++) hsh = (hsh*31 + s.charCodeAt(i)) >>> 0;
+  const h1 = hsh % 360, h2 = (h1 + 40) % 360;
+  return "linear-gradient(150deg,hsl("+h1+",54%,42%),hsl("+h2+",58%,19%))";
+}
 
 /* Brand wordmark + tagline shown on the card face (drives the visual design) */
 const BRANDS = {
@@ -946,7 +981,7 @@ function cardFrontHTML(c){
     '<div class="inner">'+
       '<div class="face back"><span>RIP</span></div>'+
       '<div class="face front" style="border-color:'+accent+'">'+
-        '<div class="photo" data-player="'+esc(c.name)+'"><span class="initials">'+initials(c.name)+'</span></div>'+
+        '<div class="photo" data-player="'+esc(c.name)+'" style="background-image:'+nameGrad(c.name)+'"><span class="initials">'+initials(c.name)+'</span></div>'+
         '<div class="bgfx"></div>'+
         '<div class="shade"></div>'+
         brandmark + fb +
@@ -1228,7 +1263,7 @@ function showCollection(){
       const sub = [c.colorName, c.label, c.serial?("#"+c.serial):null, c.auto?"AUTO":null, c.firstBowman?"1st Bowman":null].filter(Boolean).join(" · ");
       inner += '<div class="collrow">'+
         '<div class="cl-rar" style="background:'+c.color+'"></div>'+
-        '<div class="photo clthumb" data-player="'+esc(c.name)+'"><span>'+initials(c.name)+'</span></div>'+
+        '<div class="photo clthumb" data-player="'+esc(c.name)+'" style="background-image:'+nameGrad(c.name)+'"><span>'+initials(c.name)+'</span></div>'+
         '<div class="cl-main"><div class="cl-nm">'+c.name+' <span style="color:var(--dim);font-weight:400">'+c.team+'</span></div>'+
         '<div class="cl-sub">'+c.set+' '+c.year+' · '+sub+'</div></div>'+
         '<div class="cl-val">'+money(c.value)+'</div>'+
