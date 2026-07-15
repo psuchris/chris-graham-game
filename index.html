@@ -122,13 +122,12 @@
   .fmt .fx{ color:var(--dim); font-size:10px; }
   @media (max-width:520px){ .fmtrow{ grid-template-columns:1fr; } .fmt{ flex-direction:row; flex-wrap:wrap; align-items:baseline; gap:8px; } }
 
-  /* ---- Graham family Legend cards ---- */
-  .card.legendcard:not(.flipped){ animation:legendpulse 1s ease-in-out infinite; }
+  /* ---- Graham family Legend cards (glow only AFTER the flip) ---- */
+  .card.legendcard.flipped{ animation:legendpulse 1.6s ease-in-out infinite; }
   @keyframes legendpulse{
     0%,100%{ box-shadow:0 0 0 2px #39ffa0, 0 0 18px rgba(57,255,160,.5); }
-    50%   { box-shadow:0 0 0 3px #39ffa0, 0 0 42px rgba(57,255,160,1); }
+    50%   { box-shadow:0 0 0 3px #39ffa0, 0 0 40px rgba(57,255,160,.95); }
   }
-  .card.legendcard.flipped{ box-shadow:0 0 0 2px #39ffa0, 0 0 26px rgba(57,255,160,.65); }
   .card.legendcard .front .photowrap{ background:linear-gradient(135deg,#39ffa0,#fff,#ffcb3d,#39ffa0); }
 
   /* Card reveal area */
@@ -297,6 +296,18 @@
   .br-finest .front .bmark{ color:#9bfaf0; letter-spacing:3px; }
   .br-finest .front .bmark small{ color:#7fd9d2; }
 
+  /* TOPPS CHROME FOOTBALL — pennant-cut window + yard-line grid */
+  .br-chromefb .front .photowrap, .br-chromefb .front .photowrap .photo{
+    clip-path:polygon(0 4%, 46% 0, 54% 0, 100% 4%, 100% 100%, 54% 96%, 46% 100%, 0 96%); }
+  .br-chromefb .front .nameplate{ clip-path:polygon(3% 0, 97% 0, 100% 50%, 97% 100%, 3% 100%, 0 50%); text-align:center; }
+  .br-chromefb .front .bgfx{ opacity:.5; mix-blend-mode:screen;
+    background-image:
+      repeating-linear-gradient(0deg, rgba(255,255,255,.09) 0 1px, transparent 1px 14px),
+      repeating-linear-gradient(90deg, rgba(200,16,46,.16) 0 2px, transparent 2px 26px),
+      linear-gradient(180deg, rgba(255,255,255,.16), transparent 40%); }
+  .br-chromefb .front .bmark{ color:#ffd9de; }
+  .br-chromefb .front .bmark small{ color:#9db8f0; }
+
   /* BOWMAN CHROME — clean frame, blue weave, blocky left-bar nameplate */
   .br-bowman .front .nameplate{ clip-path:none; border-left:5px solid var(--ac); }
   .br-bowman .front .bgfx{ opacity:.55; mix-blend-mode:screen;
@@ -305,32 +316,33 @@
       repeating-linear-gradient(125deg, rgba(255,255,255,.07) 0 1px, transparent 1px 8px); }
   .br-bowman .front .bmark{ color:#dbe7ff; }
   .br-bowman .front .bmark small{ color:#ffcb3d; }
+  /* Foil rarity = animated BORDER ring, not a sheen over the whole card.
+     The ring is drawn with a padding+mask trick so only the frame shows. */
+  .card.refractor .front::after,
   .card.holo .front::after{
-    content:""; position:absolute; inset:0; pointer-events:none; mix-blend-mode:color-dodge; z-index:4;
-    background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.35) 45%,rgba(120,220,255,.25) 55%,transparent 70%);
-    background-size:250% 250%; animation:holomove 3s linear infinite;
+    content:""; position:absolute; inset:0; border-radius:8px; padding:3.5px;
+    pointer-events:none; z-index:6;
+    -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite:xor;
+            mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+            mask-composite:exclude;
   }
-  @keyframes holomove{ 0%{ background-position:0% 0%;} 100%{ background-position:100% 100%;} }
   .card.refractor .front::after{
-    content:""; position:absolute; inset:0; pointer-events:none; mix-blend-mode:screen; opacity:.8; z-index:4;
-    background:linear-gradient(60deg,#ff3d8b,#ffcb3d,#39d98a,#5ad1ff,#b06cff);
-    background-size:300% 300%; animation:holomove 4s linear infinite; filter:saturate(1.4);
-    -webkit-mask-image:linear-gradient(115deg,transparent 35%,#000 50%,transparent 65%);
-            mask-image:linear-gradient(115deg,transparent 35%,#000 50%,transparent 65%);
+    background:linear-gradient(120deg,#ff3d8b,#ffcb3d,#39d98a,#5ad1ff,#b06cff,#ff3d8b);
+    background-size:400% 400%; animation:borderflow 5s linear infinite; filter:saturate(1.3);
   }
+  .card.holo .front::after{
+    background:linear-gradient(120deg,#8fa8d8,#eef4ff,#7fd0ff,#c0cff0,#8fa8d8);
+    background-size:400% 400%; animation:borderflow 6s linear infinite;
+  }
+  @keyframes borderflow{ 0%{ background-position:0% 50%;} 100%{ background-position:400% 50%;} }
   .card .hitflag{ position:absolute; bottom:6px; right:6px; font-size:13px; z-index:6; }
-  .card.bighit{ box-shadow:0 0 0 2px var(--gold), 0 0 24px rgba(255,203,61,.6); }
+  .card.bighit.flipped{ box-shadow:0 0 0 2px var(--gold), 0 0 24px rgba(255,203,61,.6); }
   .card.pop{ animation:pop .4s ease; }
   @keyframes pop{ 0%{ transform:scale(.6); opacity:0;} 100%{ transform:scale(1); opacity:1;} }
 
   /* ---- Card animation juice ---- */
-  /* unflipped big hits tease with a breathing gold glow */
-  .card.bighit:not(.flipped){ animation:hotpulse 1.15s ease-in-out infinite; }
-  .card.bighit:not(.flipped) .back{ border-color:var(--gold); }
-  @keyframes hotpulse{
-    0%,100%{ box-shadow:0 0 0 2px var(--gold), 0 0 16px rgba(255,203,61,.4); }
-    50%   { box-shadow:0 0 0 3px var(--gold), 0 0 36px rgba(255,203,61,.9); }
-  }
+  /* (no pre-flip tells: every card back looks identical until revealed) */
   /* big hits flip slow & dramatic */
   .card.bigflip .inner{ transition:transform 1.05s cubic-bezier(.3,.9,.25,1); }
   /* cards dealt into the grid with a stagger (delay set inline) */
@@ -669,6 +681,24 @@ const PRODUCTS = [
         { rar:"gold",      label:"Gold /10",                p:1/90,     max:1, foilType:"refractor", runs:[10] },
         { rar:"auto",      label:"Rated Rookie / RPA Auto", p:1/20,     max:1, foilType:"refractor" },
         { rar:"oneofone",  label:"Black Pandora 1/1",       p:1/2880,   max:1, foilType:"refractor" }
+      ]}),
+  // ---- 2026 Topps Chrome Football: Topps' NFL return. 4/pack, 24 packs/box.
+  P({ id:"chrome_fb", name:"Topps Chrome Football", year:"2026", sport:"football", brand:"TOPPS CHROME",
+      price:7, cardsPerPack:4, packsPerBox:24, pool:"nfl_24",
+      design:"chromefb", valMult:1.2,
+      excl:{ hobby:{label:"Gold RayWave", rar:"rare", p:1/60, runs:[50]},
+             mega:{label:"Orange RayWave", rar:"numbered", p:1/12, runs:[199]},
+             blaster:{label:"Pink Prism", rar:"parallel", p:1/5} },
+      palette:["#c8102e","#0b2265","#0a0e17"],
+      chase:[
+        { rar:"refractor", label:"Refractor",               p:1/3,      max:2, foilType:"refractor" },
+        { rar:"insert",    label:"Insert",                  p:1/5,      max:1, foilType:"holo", names:["1986 Topps","Chrome All-Pro","Gridiron Kings","Rookie Premiere","Future Legends"] },
+        { rar:"numbered",  label:"Colored Refractor",       p:1/22,     max:1, foilType:"refractor", runs:[199,150,99], colors:["Aqua /199","Blue /150","Green /99"] },
+        { rar:"gold",      label:"Gold Refractor /50",      p:1/110,    max:1, foilType:"refractor", runs:[50] },
+        { rar:"rare",      label:"Orange Refractor /25",    p:1/450,    max:1, foilType:"refractor", runs:[25] },
+        { rar:"superrare", label:"Black or Red /10, /5",    p:1/1400,   max:1, foilType:"refractor", runs:[10,5] },
+        { rar:"auto",      label:"Rookie Chrome Auto",      p:1/22,     max:1, foilType:"refractor" },
+        { rar:"oneofone",  label:"SuperFractor 1/1",        p:1/9000,   max:1, foilType:"refractor" }
       ]}),
   // ---- 2024 Topps Chrome Baseball: 4/pack, 24 packs/box, 1 auto/box. Topps odds are exact & published.
   P({ id:"chrome_bb", name:"Topps Chrome Baseball", year:"2024", sport:"baseball", brand:"TOPPS CHROME",
@@ -1447,6 +1477,7 @@ function cardGrad(c){
 /* Brand wordmark + tagline shown on the card face (drives the visual design) */
 const BRANDS = {
   prizm:   { mark:"PRIZM",  sub:"PANINI" },
+  chromefb:{ mark:"CHROME", sub:"TOPPS · NFL" },
   optic:   { mark:"OPTIC",  sub:"DONRUSS" },
   chrome:  { mark:"CHROME", sub:"TOPPS" },
   finest:  { mark:"FINEST", sub:"TOPPS" },
@@ -1674,25 +1705,37 @@ function showStack(prod, cards, isBox, fmt){
     renderWallet();
   }
 
-  // pointer / touch drag on the active card
+  // pointer / touch drag on the active card.
+  // usedTouch guard: iOS fires synthetic mouse events (mousedown/up/click)
+  // ~300ms after every tap — without the guard one tap advanced TWICE.
+  let usedTouch = false;
   function onDown(e){
+    if(e.type==="mousedown" && usedTouch) return;
+    if(e.touches) usedTouch = true;
     if(idx >= total) return;
     const p = e.touches ? e.touches[0] : e;
     dragging = true; startX = p.clientX; dx = 0;
     const el = els[idx]; if(el) el.style.transition = "none";
   }
   function onMove(e){
+    if(e.type==="mousemove" && usedTouch) return;
     if(!dragging) return;
     const p = e.touches ? e.touches[0] : e;
     dx = p.clientX - startX;
     const el = els[idx]; if(el) el.style.transform = "translateX("+dx+"px) rotate("+(dx*0.05)+"deg)";
   }
-  function onUp(){
+  function onUp(e){
+    if(e && e.type==="mouseup" && usedTouch) return;
     if(!dragging) return; dragging = false;
     if(dx > 70){ next(); }
     else if(dx < -70){ prev(); }
-    else if(Math.abs(dx) < 6){ next(); }  // a simple tap also advances
-    else { layout(); }                     // half-swipe: snap back
+    else if(Math.abs(dx) < 6){
+      // tap: flip the active card if it's face-down, otherwise advance
+      const el = els[idx];
+      if(el && !el.classList.contains("flipped")){ revealCard(el, cards[idx]); layout(); }
+      else next();
+    }
+    else { layout(); }  // half-swipe: snap back
   }
   // tear down any drag listeners left by a previous stack, then wire fresh ones
   if(window._stackCleanup) window._stackCleanup();
