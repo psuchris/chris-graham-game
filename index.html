@@ -170,13 +170,23 @@
   }
   /* foil-framed photo window (outer div paints the metallic edge) */
   .card .front .photowrap{
-    position:absolute; top:9.5%; left:7%; right:7%; height:56%; z-index:1;
+    position:absolute; top:8.5%; left:8.5%; right:5.5%; height:60%; z-index:1;
     padding:2px;
     background:linear-gradient(135deg, var(--ac), rgba(255,255,255,.85) 45%, var(--ac));
     box-shadow:0 4px 14px rgba(0,0,0,.55);
   }
+  /* team-color rail down the left edge — reads like a printed spine */
+  .card .front .rail{
+    position:absolute; top:8.5%; bottom:12%; left:4%; width:2.5%; z-index:1;
+    background:linear-gradient(180deg, var(--ac), var(--tc) 30%, var(--tc2));
+    box-shadow:0 0 6px rgba(0,0,0,.4);
+  }
+  .card .front .photowrap .photo::after{
+    content:""; position:absolute; inset:0; pointer-events:none;
+    box-shadow:inset 0 -18px 26px rgba(5,8,14,.55), inset 0 4px 14px rgba(255,255,255,.07);
+  }
   .card .front .photowrap .photo{
-    width:100%; height:100%; background-color:#0c1220;
+    position:relative; width:100%; height:100%; background-color:#0c1220;
     background-size:cover; background-position:center 18%; background-repeat:no-repeat;
     display:flex; align-items:center; justify-content:center;
   }
@@ -203,19 +213,25 @@
   .card .front .topline{
     position:absolute; top:3%; left:8%; right:8%; z-index:3;
     display:flex; justify-content:space-between; align-items:baseline;
-    font-size:9px; font-weight:900; letter-spacing:1.6px;
-    text-shadow:0 1px 3px rgba(0,0,0,.85);
+    font-size:10px; font-weight:900; letter-spacing:2px;
+    text-shadow:0 1px 1px rgba(0,0,0,.9), 0 2px 6px rgba(0,0,0,.6);
   }
   .card .front .topline .bmark small{ font-size:6.5px; letter-spacing:1px; opacity:.8; margin-right:3px; font-weight:700; }
-  .card .front .topline .ser{ color:var(--ac); font-weight:800; letter-spacing:.5px; }
+  .card .front .topline .ser{
+    color:var(--ac); font-weight:900; letter-spacing:.5px;
+    border:1px solid; border-color:inherit; padding:1px 5px; border-radius:3px;
+    background:rgba(0,0,0,.45); box-shadow:0 0 8px rgba(0,0,0,.4);
+    border-color:color-mix(in srgb, currentColor 60%, transparent);
+  }
   .card .front .topline .ser.yr{ color:rgba(255,255,255,.75); font-size:8px; }
   /* team-color nameplate */
   .card .front .nameplate{
-    position:absolute; left:7%; right:7%; bottom:12.5%; z-index:3;
+    position:absolute; left:8.5%; right:5.5%; bottom:12%; z-index:3;
     padding:4px 8px 5px;
     background:linear-gradient(115deg, var(--tc) 55%, var(--tc2));
     clip-path:polygon(0 0, 100% 0, 95% 100%, 0 100%);
-    box-shadow:inset 0 1px 0 rgba(255,255,255,.35), 0 2px 10px rgba(0,0,0,.5);
+    box-shadow:inset 0 1.5px 0 rgba(255,255,255,.45), inset 0 -8px 14px rgba(0,0,0,.25), 0 2px 10px rgba(0,0,0,.5);
+    border-bottom:2px solid var(--ac);
   }
   .card .front .np-name{
     font-weight:900; font-size:12px; line-height:1.02; font-style:italic;
@@ -226,7 +242,7 @@
   .card .front .np-sub{ font-size:7.5px; letter-spacing:1.4px; text-transform:uppercase; opacity:.95; margin-top:2px; text-shadow:0 1px 2px rgba(0,0,0,.7); }
   /* rarity line along the bottom edge */
   .card .front .rarline{
-    position:absolute; left:7%; right:7%; bottom:3.2%; z-index:3;
+    position:absolute; left:8.5%; right:5.5%; bottom:3.4%; z-index:3;
     font-size:7.5px; font-weight:800; letter-spacing:.8px; text-transform:uppercase;
     color:var(--ac); text-shadow:0 1px 2px rgba(0,0,0,.8);
     white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
@@ -491,7 +507,7 @@
 
   <div class="footer">
     Simulation only — no real cards, money, or purchases. Odds modeled on published hobby-pack configurations and are approximate.
-    <div style="margin-top:4px;opacity:.7">build v8</div>
+    <div style="margin-top:4px;opacity:.7">build v9</div>
   </div>
 </div>
 
@@ -518,6 +534,7 @@ const RAR = {
   superrare: { name:"Super Rare /10",  color:"#ff5d6c", refractor:true },
   gold:      { name:"Gold /10",        color:"#ffcb3d", refractor:true },
   auto:      { name:"Autograph",       color:"#ff6ec7", refractor:true },
+  casehit:   { name:"Case Hit",        color:"#ff4fd8", refractor:true },
   oneofone:  { name:"1/1",             color:"#ffffff", refractor:true },
   legend:    { name:"RIP City Legend", color:"#39ffa0", refractor:true }
 };
@@ -537,22 +554,36 @@ const POOLS = {
     ["Victor Wembanyama","SAS","C",5],["Nikola Jokic","DEN","C",4.8],["Luka Doncic","LAL","G",4.9],
     ["Shai Gilgeous-Alexander","OKC","G",4.7],["Giannis Antetokounmpo","MIL","F",4.5],["Anthony Edwards","MIN","G",4.6],
     ["Stephen Curry","GSW","G",4.4],["LeBron James","LAL","F",4.6],["Jayson Tatum","BOS","F",4.2],
-    ["Kevin Durant","PHX","F",3.9],["Joel Embiid","PHI","C",3.8],["Kawhi Leonard","LAC","F",3.2],
+    ["Kevin Durant","HOU","F",3.9],["Joel Embiid","PHI","C",3.8],["Kawhi Leonard","LAC","F",3.2],
     // — Stars / starters —
     ["Tyrese Haliburton","IND","G",3.4],["Devin Booker","PHX","G",3.6],["Ja Morant","MEM","G",3.6],
-    ["Jalen Brunson","NYK","G",3.5],["Anthony Davis","DAL","F",3.3],["Damian Lillard","MIL","G",3.1],
+    ["Jalen Brunson","NYK","G",3.5],["Anthony Davis","DAL","F",3.3],["Damian Lillard","POR","G",3.1],
     ["Trae Young","ATL","G",3.1],["De'Aaron Fox","SAS","G",3.1],["Paolo Banchero","ORL","F",3.4],
     ["Chet Holmgren","OKC","C",3.3],["Scottie Barnes","TOR","F",3],["Cade Cunningham","DET","G",3.5],
     ["Donovan Mitchell","CLE","G",3.2],["Tyrese Maxey","PHI","G",3.3],["Jaylen Brown","BOS","G",3.1],
     ["Jimmy Butler","GSW","F",2.9],["Jamal Murray","DEN","G",2.8],["Bam Adebayo","MIA","C",2.7],
     ["Kyrie Irving","DAL","G",3],["Karl-Anthony Towns","NYK","C",2.8],["Zion Williamson","NOP","F",3],
-    // — 2024-25 rookies —
-    ["Zaccharie Risacher","ATL","F",2.9,true],["Alex Sarr","WAS","C",2.9,true],["Reed Sheppard","HOU","G",2.8,true],
-    ["Stephon Castle","SAS","G",3.4,true],["Zach Edey","MEM","C",2.9,true],["Dalton Knecht","LAL","G",2.8,true],
-    ["Donovan Clingan","POR","C",2.7,true],["Matas Buzelis","CHI","F",2.8,true],["Jared McCain","PHI","G",3.2,true],
-    ["Bub Carrington","WAS","G",2.6,true],["Kel'el Ware","MIA","C",2.7,true],["Ron Holland","DET","F",2.6,true],
-    ["Tristan da Silva","ORL","F",2.4,true],["Yves Missi","NOP","C",2.4,true],["Devin Carter","SAC","G",2.4,true],
-    ["Isaiah Collier","UTA","G",2.4,true]
+    // — 2024-25 rookies (no longer RCs) —
+    ["Zaccharie Risacher","ATL","F",2.9],["Alex Sarr","WAS","C",2.9],["Reed Sheppard","HOU","G",2.8],
+    ["Stephon Castle","SAS","G",3.4],["Zach Edey","MEM","C",2.9],["Dalton Knecht","LAL","G",2.8],
+    ["Donovan Clingan","POR","C",2.7],["Matas Buzelis","CHI","F",2.8],["Jared McCain","PHI","G",3.2],
+    ["Bub Carrington","WAS","G",2.6],["Kel'el Ware","MIA","C",2.7],["Ron Holland","DET","F",2.6],
+    ["Tristan da Silva","ORL","F",2.4],["Yves Missi","NOP","C",2.4],["Devin Carter","SAC","G",2.4],
+    ["Isaiah Collier","UTA","G",2.4],
+    // — 2025-26 rookies —
+    ["Cooper Flagg","DAL","F",4.8,true],["Dylan Harper","SAS","G",3.8,true],["Ace Bailey","UTA","F",3.4,true],
+    ["VJ Edgecombe","PHI","G",3.3,true],["Kon Knueppel","CHA","G",3.1,true],["Tre Johnson","WAS","G",3.1,true],
+    ["Jeremiah Fears","NOP","G",3.1,true],["Khaman Maluach","PHX","C",3.0,true],["Derik Queen","NOP","C",2.9,true],
+    ["Egor Demin","BKN","G",2.8,true],["Kasparas Jakucionis","MIA","G",2.8,true],["Carter Bryant","SAS","F",2.7,true],
+    ["Cedric Coward","MEM","F",2.7,true],["Yang Hansen","POR","C",2.7,true],["Collin Murray-Boyles","TOR","F",2.6,true],
+    ["Jase Richardson","ORL","G",2.6,true],["Noa Essengue","CHI","F",2.6,true],["Walter Clayton Jr.","UTA","G",2.6,true],
+    ["Asa Newell","ATL","F",2.5,true],["Thomas Sorber","OKC","C",2.5,true],["Nique Clifford","SAC","G",2.5,true],
+    ["Joan Beringer","MIN","C",2.4,true],["Hugo Gonzalez","BOS","G",2.4,true],["Danny Wolf","BKN","F",2.4,true],
+    // — Additional veterans —
+    ["Desmond Bane","ORL","G",2.9],["Domantas Sabonis","SAC","C",2.8],["Jalen Williams","OKC","F",3.3],
+    ["Evan Mobley","CLE","C",3.1],["Franz Wagner","ORL","F",3.0],["Alperen Sengun","HOU","C",3.1],
+    ["Lauri Markkanen","UTA","F",2.7],["Jaren Jackson Jr.","MEM","F",2.8],["Darius Garland","CLE","G",2.7],
+    ["Amen Thompson","HOU","F",3.2],["Austin Reaves","LAL","G",2.8],["Josh Giddey","CHI","G",2.6]
   ],
   nfl_24:[
     // — Franchise QBs / superstars —
@@ -565,13 +596,27 @@ const POOLS = {
     ["Dak Prescott","DAL","QB",2.8],["Brock Purdy","SF","QB",2.9],["Bijan Robinson","ATL","RB",3.3],
     ["Jahmyr Gibbs","DET","RB",3.1],["Sam LaPorta","DET","TE",2.7],["Anthony Richardson","IND","QB",2.9],
     ["Garrett Wilson","NYJ","WR",2.8],["Nico Collins","HOU","WR",2.7],["Myles Garrett","CLE","DE",2.6],
-    // — 2024 rookies —
-    ["Caleb Williams","CHI","QB",3.4,true],["Jayden Daniels","WAS","QB",4,true],["Drake Maye","NE","QB",3.2,true],
-    ["Marvin Harrison Jr.","ARI","WR",3.3,true],["Malik Nabers","NYG","WR",3.5,true],["Rome Odunze","CHI","WR",2.9,true],
-    ["Brock Bowers","LV","TE",3.6,true],["Bo Nix","DEN","QB",3.1,true],["Brian Thomas Jr.","JAX","WR",3.4,true],
-    ["Xavier Worthy","KC","WR",3,true],["J.J. McCarthy","MIN","QB",2.8,true],["Ladd McConkey","LAC","WR",3.1,true],
-    ["Jayden Reed","GB","WR",2.5],["Keon Coleman","BUF","WR",2.6,true],["Trey Benson","ARI","RB",2.4,true],
-    ["Jonathon Brooks","CAR","RB",2.3,true],["Jaylen Wright","MIA","RB",2.3,true],["Ricky Pearsall","SF","WR",2.4,true]
+    // — 2024 rookies (no longer RCs) —
+    ["Caleb Williams","CHI","QB",3.4],["Jayden Daniels","WAS","QB",4],["Drake Maye","NE","QB",3.2],
+    ["Marvin Harrison Jr.","ARI","WR",3.3],["Malik Nabers","NYG","WR",3.5],["Rome Odunze","CHI","WR",2.9],
+    ["Brock Bowers","LV","TE",3.6],["Bo Nix","DEN","QB",3.1],["Brian Thomas Jr.","JAX","WR",3.4],
+    ["Xavier Worthy","KC","WR",3],["J.J. McCarthy","MIN","QB",2.8],["Ladd McConkey","LAC","WR",3.1],
+    ["Jayden Reed","GB","WR",2.5],["Keon Coleman","BUF","WR",2.6],["Trey Benson","ARI","RB",2.4],
+    ["Jonathon Brooks","CAR","RB",2.3],["Jaylen Wright","MIA","RB",2.3],["Ricky Pearsall","SF","WR",2.4],
+    // — 2025 rookies —
+    ["Cam Ward","TEN","QB",3.6,true],["Travis Hunter","JAX","WR",4.2,true],["Ashton Jeanty","LV","RB",3.9,true],
+    ["Jaxon Dart","NYG","QB",3.4,true],["Shedeur Sanders","CLE","QB",3.3,true],["Tetairoa McMillan","CAR","WR",3.3,true],
+    ["Emeka Egbuka","TB","WR",3.2,true],["Omarion Hampton","LAC","RB",3.1,true],["Matthew Golden","GB","WR",3.1,true],
+    ["Tyler Warren","IND","TE",3.1,true],["TreVeyon Henderson","NE","RB",3.0,true],["Quinshon Judkins","CLE","RB",2.9,true],
+    ["Colston Loveland","CHI","TE",2.9,true],["Jalen Milroe","SEA","QB",2.9,true],["Luther Burden III","CHI","WR",2.8,true],
+    ["Abdul Carter","NYG","LB",2.8,true],["Kaleb Johnson","PIT","RB",2.7,true],["Jayden Higgins","HOU","WR",2.7,true],
+    ["Tyler Shough","NO","QB",2.7,true],["Tre Harris","LAC","WR",2.6,true],["Jack Bech","LV","WR",2.6,true],
+    ["Dillon Gabriel","CLE","QB",2.5,true],["Mason Graham","CLE","DT",2.4,true],
+    // — Additional veterans —
+    ["Joe Flacco","IND","QB",1.8],["Jordan Love","GB","QB",3.0],["Trevor Lawrence","JAX","QB",2.8],
+    ["Kyler Murray","ARI","QB",2.7],["Tua Tagovailoa","MIA","QB",2.6],["DK Metcalf","PIT","WR",2.7],
+    ["Davante Adams","LA","WR",2.6],["Derrick Henry","BAL","RB",3.0],["Josh Jacobs","GB","RB",2.7],
+    ["De'Von Achane","MIA","RB",2.8],["Trey McBride","ARI","TE",2.7],["T.J. Watt","PIT","LB",2.6]
   ],
   mlb_24:[
     // — Superstars —
@@ -583,11 +628,22 @@ const POOLS = {
     ["Elly De La Cruz","CIN","SS",4],["Francisco Lindor","NYM","SS",3],["Kyle Tucker","CHC","OF",3],
     ["Adley Rutschman","BAL","C",2.9],["Spencer Strider","ATL","P",2.8],["Tarik Skubal","DET","P",2.9],
     ["Pete Alonso","NYM","1B",2.7],["Rafael Devers","BOS","3B",2.8],["William Contreras","MIL","C",2.5],
-    // — 2024 rookies —
-    ["Paul Skenes","PIT","P",4.2,true],["Jackson Holliday","BAL","SS",3.4,true],["Wyatt Langford","TEX","OF",3.1,true],
-    ["Jackson Chourio","MIL","OF",3.3,true],["Jackson Merrill","SD","OF",3.3,true],["Junior Caminero","TB","3B",3.1,true],
-    ["Colton Cowser","BAL","OF",2.7,true],["Masyn Winn","STL","SS",2.7,true],["Ceddanne Rafaela","BOS","OF",2.5,true],
-    ["Shota Imanaga","CHC","P",2.6,true],["Joey Ortiz","MIL","SS",2.3,true],["Jordan Lawlar","ARI","SS",2.6,true]
+    // — 2024 rookies (no longer RCs) —
+    ["Paul Skenes","PIT","P",4.2],["Jackson Holliday","BAL","SS",3.4],["Wyatt Langford","TEX","OF",3.1],
+    ["Jackson Chourio","MIL","OF",3.3],["Jackson Merrill","SD","OF",3.3],["Junior Caminero","TB","3B",3.1],
+    ["Colton Cowser","BAL","OF",2.7],["Masyn Winn","STL","SS",2.7],["Ceddanne Rafaela","BOS","OF",2.5],
+    ["Shota Imanaga","CHC","P",2.6],["Joey Ortiz","MIL","SS",2.3],["Jordan Lawlar","ARI","SS",2.6],
+    // — 2025 rookies —
+    ["Roman Anthony","BOS","OF",4.0,true],["Nick Kurtz","ATH","1B",3.6,true],["Roki Sasaki","LAD","P",3.6,true],
+    ["Jac Caglianone","KC","OF",3.3,true],["Jacob Wilson","ATH","SS",3.2,true],["Cam Smith","HOU","OF",3.2,true],
+    ["Bubba Chandler","PIT","P",3.0,true],["Kristian Campbell","BOS","2B",3.0,true],["Drake Baldwin","ATL","C",2.9,true],
+    ["Agustin Ramirez","MIA","C",2.8,true],["Jackson Jobe","DET","P",2.8,true],["Matt Shaw","CHC","3B",2.7,true],
+    ["Chandler Simpson","TB","OF",2.7,true],["Coby Mayo","BAL","1B",2.5,true],
+    // — Additional veterans —
+    ["Cal Raleigh","SEA","C",3.4],["Kyle Schwarber","PHI","DH",2.7],["James Wood","WAS","OF",3.3],
+    ["Pete Crow-Armstrong","CHC","OF",3.4],["Logan Webb","SF","P",2.6],["Garrett Crochet","BOS","P",2.8],
+    ["Zack Wheeler","PHI","P",2.7],["Ketel Marte","ARI","2B",2.7],["Jarren Duran","BOS","OF",2.6],
+    ["Corey Seager","TEX","SS",2.9]
   ],
   bowman_prospects:[
     // — Top prospects (1st Bowman chase) —
@@ -595,13 +651,18 @@ const POOLS = {
     ["Ethan Holliday","COL","SS",3.5],["Walker Jenkins","MIN","OF",3.3],["Roman Anthony","BOS","OF",3.7],
     ["Jasson Dominguez","NYY","OF",3.2],["Druw Jones","ARI","OF",2.7],["Termarr Johnson","PIT","2B",2.7],
     ["Max Clark","DET","OF",3.1],["Ethan Salas","SD","C",3.3],["Dylan Crews","WAS","OF",3.5,true],
-    ["Travis Bazzana","CLE","2B",3],["JJ Wetherholt","STL","SS",2.9],["Konnor Griffin","PIT","SS",3.1],
+    ["Travis Bazzana","CLE","2B",3],["JJ Wetherholt","STL","SS",2.9],["Konnor Griffin","PIT","SS",3.6],
     ["Charlie Condon","COL","OF",3],["Bryce Eldridge","SF","1B",3],["Samuel Basallo","BAL","C",3.1],
     ["Paul Skenes","PIT","P",4,true],["Jackson Holliday","BAL","SS",3.3,true],["Wyatt Langford","TEX","OF",3,true],
     ["Jackson Chourio","MIL","OF",3.3,true],["Coby Mayo","BAL","3B",2.6],["Kristian Campbell","BOS","2B",2.8],
     ["Owen Caissie","CHC","OF",2.5],["Carson Williams","TB","SS",2.6],["Cam Smith","CHC","3B",2.6],
     ["Chase Burns","CIN","P",2.7],["Bubba Chandler","PIT","P",2.7],["Jac Caglianone","KC","1B",3.1],
-    ["Nick Kurtz","ATH","1B",2.9],["Braden Montgomery","CWS","OF",2.5],["George Lombard Jr.","NYY","SS",2.6]
+    ["Nick Kurtz","ATH","1B",2.9],["Braden Montgomery","CWS","OF",2.5],["George Lombard Jr.","NYY","SS",2.6],
+    // — 2025 draft / new prospects —
+    ["Eli Willits","WAS","SS",3.4],["Seth Hernandez","PIT","P",3.2],["Kade Anderson","SEA","P",3.0],
+    ["Trey Yesavage","TOR","P",3.0],["JoJo Parker","TOR","SS",2.9],["Bryce Rainer","DET","SS",2.9],
+    ["Josue De Paula","LAD","OF",3.0],["Aidan Miller","PHI","SS",2.8],["Travis Sykora","WAS","P",2.7],
+    ["Steele Hall","CIN","SS",2.6],["Kayson Cunningham","ARI","SS",2.6],["Billy Carlson","CWS","SS",2.5]
   ]
 };
 
@@ -628,7 +689,7 @@ function P(o){ return o; }
 const PRODUCTS = [
   // ---- 2024-25 Panini Prizm Basketball: 12 cards/pack, 12 packs/box, ~2 autos & ~22 parallels/box.
   //      Panini doesn't publish unnumbered Silver/color odds (approx); /N runs are exact.
-  P({ id:"prizm_bk", name:"Prizm Basketball", year:"2024-25", sport:"basketball", brand:"PANINI PRIZM",
+  P({ id:"prizm_bk", name:"Prizm Basketball", year:"2025-26", sport:"basketball", brand:"PANINI PRIZM",
       price:20, cardsPerPack:12, packsPerBox:12, pool:"nba_2425",
       design:"prizm", valMult:1.15,
       excl:{ hobby:{label:"Gold Shimmer", rar:"rare", p:1/50, runs:[10]},
@@ -638,16 +699,17 @@ const PRODUCTS = [
       chase:[
         { rar:"silver",    label:"Silver Prizm",            p:1/3.5,    max:1, foilType:"silver" },
         { rar:"parallel",  label:"Colored Prizm",           p:1/1.6,    max:2, foilType:"refractor", colors:["Hyper","Red Wave","Blue","Pink","Purple","Green"] },
-        { rar:"insert",    label:"Insert",                  p:1/1.8,    max:2, foilType:"holo", names:["Color Blast","Sensational","Emergent","Far Out!","Dominance","Get Hyped"] },
+        { rar:"insert",    label:"Insert",                  p:1/1.8,    max:2, foilType:"holo", names:["Sensational","Emergent","Far Out!","Dominance","Get Hyped"] },
         { rar:"numbered",  label:"Numbered Prizm",          p:1/4,      max:1, foilType:"refractor", runs:[199,149,125,99,75,49] },
         { rar:"rare",      label:"Numbered /25 or /15",     p:1/45,     max:1, foilType:"refractor", runs:[25,15] },
         { rar:"gold",      label:"Gold Prizm /10",          p:1/240,    max:1, foilType:"refractor", runs:[10] },
         { rar:"superrare", label:"Green Prizm /5",          p:1/600,    max:1, foilType:"refractor", runs:[5] },
         { rar:"auto",      label:"Autograph",               p:1/6,      max:1, foilType:"refractor" },
+        { rar:"casehit",   label:"Case Hit",                p:1/288,    max:1, foilType:"refractor", names:["Color Blast","Explosion"] },
         { rar:"oneofone",  label:"Black Prizm 1/1",         p:1/1728,   max:1, foilType:"refractor" }
       ]}),
   // ---- 2024 Panini Prizm Football: 12/pack, 12 packs/box, ~2 autos & ~10 numbered/box.
-  P({ id:"prizm_fb", name:"Prizm Football", year:"2024", sport:"football", brand:"PANINI PRIZM",
+  P({ id:"prizm_fb", name:"Prizm Football", year:"2025", sport:"football", brand:"PANINI PRIZM",
       price:24, cardsPerPack:12, packsPerBox:12, pool:"nfl_24",
       design:"prizm", valMult:1.12,
       excl:{ hobby:{label:"Black Shimmer", rar:"rare", p:1/60, runs:[10]},
@@ -657,16 +719,17 @@ const PRODUCTS = [
       chase:[
         { rar:"silver",    label:"Silver Prizm",            p:1/3.5,    max:1, foilType:"silver" },
         { rar:"parallel",  label:"Colored Prizm",           p:1/1.6,    max:2, foilType:"refractor", colors:["Red","Blue","Green","Pink","Hyper","No Huddle"] },
-        { rar:"insert",    label:"Insert",                  p:1/1.8,    max:2, foilType:"holo", names:["Color Blast","Manga","Prizmania","Stained Glass","Fireworks","Dawn of a New Era"] },
+        { rar:"insert",    label:"Insert",                  p:1/1.8,    max:2, foilType:"holo", names:["Prizmania","Fireworks","Dawn of a New Era","No Huddle"] },
         { rar:"numbered",  label:"Numbered Prizm",          p:1/3.5,    max:1, foilType:"refractor", runs:[199,99,75,49] },
         { rar:"rare",      label:"Numbered /25 (Purple Power)", p:1/30, max:1, foilType:"refractor", runs:[25] },
         { rar:"gold",      label:"Gold Prizm /10",          p:1/120,    max:1, foilType:"refractor", runs:[10] },
         { rar:"superrare", label:"Gold Vinyl /5",           p:1/300,    max:1, foilType:"refractor", runs:[5] },
         { rar:"auto",      label:"Rookie / RPA Autograph",  p:1/6,      max:1, foilType:"refractor" },
+        { rar:"casehit",   label:"Case Hit",                p:1/220,    max:1, foilType:"refractor", names:["Manga","Color Blast","Stained Glass"] },
         { rar:"oneofone",  label:"Black Finite 1/1",        p:1/1728,   max:1, foilType:"refractor" }
       ]}),
   // ---- 2024 Donruss Optic Football: 11/pack, 20 packs/box, ~1 auto, ~3 Holo, ~9 numbered/box.
-  P({ id:"optic_fb", name:"Donruss Optic Football", year:"2024", sport:"football", brand:"OPTIC",
+  P({ id:"optic_fb", name:"Donruss Optic Football", year:"2025", sport:"football", brand:"OPTIC",
       price:13, cardsPerPack:11, packsPerBox:20, pool:"nfl_24",
       design:"optic", valMult:0.9,
       excl:{ hobby:{label:"Black Velocity", rar:"rare", p:1/70, runs:[25]},
@@ -675,12 +738,13 @@ const PRODUCTS = [
       palette:["#ff7b1a","#7a1fff","#0a0e17"],
       chase:[
         { rar:"silver",    label:"Holo",                    p:1/6.7,    max:1, foilType:"silver" },
-        { rar:"insert",    label:"Insert",                  p:1/4,      max:1, foilType:"holo", names:["The Rookies","My House","Optic Elite","Rated Rookie","Downtown!"] },
+        { rar:"insert",    label:"Insert",                  p:1/4,      max:1, foilType:"holo", names:["The Rookies","My House","Optic Elite","Rated Rookie"] },
         { rar:"parallel",  label:"Colored Prizm",           p:1/5,      max:1, foilType:"refractor", colors:["Pink Velocity","Blue","Red","Purple","Ice"] },
         { rar:"numbered",  label:"Numbered Optic",          p:1/2.2,    max:1, foilType:"refractor", runs:[249,199,99,75,49] },
         { rar:"rare",      label:"Numbered /25",            p:1/30,     max:1, foilType:"refractor", runs:[25] },
         { rar:"gold",      label:"Gold /10",                p:1/90,     max:1, foilType:"refractor", runs:[10] },
         { rar:"auto",      label:"Rated Rookie / RPA Auto", p:1/20,     max:1, foilType:"refractor" },
+        { rar:"casehit",   label:"Downtown!",               p:1/256,    max:1, foilType:"refractor", names:["Downtown!"] },
         { rar:"oneofone",  label:"Black Pandora 1/1",       p:1/2880,   max:1, foilType:"refractor" }
       ]}),
   // ---- 2026 Topps Chrome Football: Topps' NFL return. 4/pack, 24 packs/box.
@@ -699,10 +763,11 @@ const PRODUCTS = [
         { rar:"rare",      label:"Orange Refractor /25",    p:1/450,    max:1, foilType:"refractor", runs:[25] },
         { rar:"superrare", label:"Black or Red /10, /5",    p:1/1400,   max:1, foilType:"refractor", runs:[10,5] },
         { rar:"auto",      label:"Rookie Chrome Auto",      p:1/22,     max:1, foilType:"refractor" },
+        { rar:"casehit",   label:"1986 Gold Chrome",        p:1/400,    max:1, foilType:"refractor", names:["1986 Gold Chrome"] },
         { rar:"oneofone",  label:"SuperFractor 1/1",        p:1/9000,   max:1, foilType:"refractor" }
       ]}),
   // ---- 2024 Topps Chrome Baseball: 4/pack, 24 packs/box, 1 auto/box. Topps odds are exact & published.
-  P({ id:"chrome_bb", name:"Topps Chrome Baseball", year:"2024", sport:"baseball", brand:"TOPPS CHROME",
+  P({ id:"chrome_bb", name:"Topps Chrome Baseball", year:"2025", sport:"baseball", brand:"TOPPS CHROME",
       price:5, cardsPerPack:4, packsPerBox:24, pool:"mlb_24",
       design:"chrome", valMult:1.1,
       excl:{ hobby:{label:"X-Fractor", rar:"refractor", p:1/6},
@@ -718,10 +783,11 @@ const PRODUCTS = [
         { rar:"superrare", label:"Black Refractor /10",     p:1/132168, max:1, foilType:"refractor", runs:[10] },
         { rar:"superrare", label:"Red Refractor /5",        p:1/252321, max:1, foilType:"refractor", runs:[5] },
         { rar:"auto",      label:"Chrome Autograph",        p:1/24,     max:1, foilType:"refractor" },
+        { rar:"casehit",   label:"Expressionists",          p:1/400,    max:1, foilType:"refractor", names:["Expressionists"] },
         { rar:"oneofone",  label:"SuperFractor 1/1",        p:1/1387764,max:1, foilType:"refractor" }
       ]}),
   // ---- 2024 Topps Finest Baseball: 10/pack, 6 packs/box, 2 autos/box. Hit-dense.
-  P({ id:"finest_bb", name:"Topps Finest Baseball", year:"2024", sport:"baseball", brand:"TOPPS FINEST",
+  P({ id:"finest_bb", name:"Topps Finest Baseball", year:"2025", sport:"baseball", brand:"TOPPS FINEST",
       price:20, cardsPerPack:10, packsPerBox:6, pool:"mlb_24",
       design:"finest", valMult:1.05,
       excl:{ hobby:{label:"Black Mini-Diamond", rar:"rare", p:1/80, runs:[25]},
@@ -736,10 +802,11 @@ const PRODUCTS = [
         { rar:"rare",      label:"Orange Refractor /25",    p:1/137,    max:1, foilType:"refractor", runs:[25] },
         { rar:"superrare", label:"Refractor /10 or /5",     p:1/400,    max:1, foilType:"refractor", runs:[10,5] },
         { rar:"auto",      label:"Autograph",               p:1/3,      max:1, foilType:"refractor" },
+        { rar:"casehit",   label:"Finest Fusions",          p:1/300,    max:1, foilType:"refractor", names:["Finest Fusions"] },
         { rar:"oneofone",  label:"SuperFractor 1/1",        p:1/3600,   max:1, foilType:"refractor" }
       ]}),
   // ---- 2024 Bowman Chrome Prospects: 4/pack, 24 packs/box, 2 autos/box. 1st Bowman chase.
-  P({ id:"bowman_bb", name:"Bowman Chrome Prospects", year:"2024", sport:"baseball", brand:"BOWMAN", subtitle:"Chrome Prospects",
+  P({ id:"bowman_bb", name:"Bowman Chrome Prospects", year:"2025", sport:"baseball", brand:"BOWMAN", subtitle:"Chrome Prospects",
       price:8, cardsPerPack:4, packsPerBox:24, pool:"bowman_prospects",
       design:"bowman", valMult:1.0,
       excl:{ hobby:{label:"Gold Shimmer", rar:"rare", p:1/90, runs:[50]},
@@ -755,6 +822,7 @@ const PRODUCTS = [
         { rar:"rare",      label:"Orange Refractor /25",    p:1/200,    max:1, foilType:"refractor", runs:[25] },
         { rar:"superrare", label:"Black /10 or Red /5",     p:1/800,    max:1, foilType:"refractor", runs:[10,5] },
         { rar:"auto",      label:"Chrome Prospect Auto",    p:1/12,     max:1, foilType:"refractor" },
+        { rar:"casehit",   label:"Bowman Heroes",           p:1/350,    max:1, foilType:"refractor", names:["Bowman Heroes"] },
         { rar:"oneofone",  label:"SuperFractor 1/1",        p:1/4500,   max:1, foilType:"refractor" }
       ]})
 ];
@@ -893,7 +961,7 @@ function pickPlayer(poolId){ return rnd(POOLS[poolId]); }
 // Bigger k = stronger bias to commons (used for autos & top-end hits), which
 // keeps EV sane while letting the occasional star hit be worth real money.
 const HIT_BIAS = {
-  auto:4.2, oneofone:3.0, superrare:3.2, gold:3.0, rare:3.0,
+  auto:4.2, oneofone:3.0, superrare:3.2, gold:3.0, rare:3.0, casehit:1.2,
   numbered:2.0, silver:1.8, parallel:0.7, insert:0.7, refractor:0.7
 };
 function pickHitPlayer(poolId, rarKey){
@@ -980,7 +1048,7 @@ function finishCard(prod, pl, rarKey, rar, opts){
   const isRookie = !!rookie || !!prod.firstBowman;
   const value = cardValue(rarKey, opts, tier, prod, isRookie);
   const isHit = (rarKey!=="base");
-  const big = ["auto","gold","superrare","oneofone","rare","legend"].includes(rarKey);
+  const big = ["auto","gold","superrare","oneofone","rare","legend","casehit"].includes(rarKey);
   return {
     name, team, pos, tier, rookie: isRookie,
     set: prod.brand, year: prod.year, sport: prod.sport, design: prod.design||"generic",
@@ -1017,7 +1085,7 @@ function cardValue(rarKey, opts, tier, prod, rookie){
   // rookie auto ≈ $10-25, an Edwards/Wembanyama auto ≈ several hundred.
   let base;
   switch(rarKey){
-    case "base":      base = 0.05 + 0.15*sp;  break;  // commons: pennies
+    case "base":      base = 0.05 + 0.32*sp;  break;  // stars carry raw value too
     case "insert":    base = 0.3  + 0.8*sp;   break;
     case "parallel":  base = 0.4  + 1.1*sp;   break;  // colored prizms
     case "refractor": base = 0.3  + 0.9*sp;   break;
@@ -1028,6 +1096,7 @@ function cardValue(rarKey, opts, tier, prod, rookie){
     case "superrare": base = 10   + 50*sp;    break;  // /5
     case "auto":      base = 4    + 38*sp;    break;  // star autos carry the tail
     case "oneofone":  base = 40   + 140*sp;   break;  // 1/1 SuperFractor / Black
+    case "casehit":   base = 45   + 40*sp;    break;  // Manga/Downtown/Color Blast money
     case "legend":    base = 45   + 14*sp;    break;  // Graham family chase
     default:          base = 0.15;
   }
@@ -1592,6 +1661,7 @@ function cardFrontHTML(c){
       '<div class="face back"><span>RIP</span></div>'+
       '<div class="face front" style="'+style+'">'+
         '<div class="fbg"></div>'+
+        '<i class="rail"></i>'+
         '<div class="photowrap"><div class="photo" data-player="'+esc(c.photoKey||c.name)+'" data-sport="'+esc(c.sport||"")+'" style="background-image:radial-gradient(130% 95% at 50% 22%,'+tc[0]+' 0%,'+tc[1]+' 80%)"><span class="initials">'+initials(c.name)+'</span></div></div>'+
         '<div class="bgfx"></div>'+
         '<div class="topline">'+
