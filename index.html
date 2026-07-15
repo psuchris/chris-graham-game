@@ -291,6 +291,41 @@
   .collrow .cl-val{ font-weight:800; color:var(--accent); white-space:nowrap; }
   .empty{ color:var(--dim); text-align:center; padding:30px; }
 
+  /* ---- Collection controls / selling ---- */
+  .chiprow{ display:flex; gap:6px; flex-wrap:wrap; align-items:center; margin:10px 0 4px; }
+  .chip{ font-size:12px; padding:5px 10px; border-radius:20px; background:var(--panel);
+    border:1px solid var(--line); cursor:pointer; color:var(--dim); user-select:none; }
+  .chip.on{ color:var(--fg); border-color:var(--accent); background:#241f10; }
+  .chip:hover{ border-color:var(--accent); }
+  .cl-side{ text-align:right; }
+  .collbtns{ display:flex; gap:4px; margin-top:4px; justify-content:flex-end; }
+  .collbtns button{ font-size:10px; padding:4px 7px; border-radius:7px; }
+  .gradechip{ display:inline-block; font-size:9px; font-weight:900; padding:1px 6px;
+    border-radius:5px; margin-left:6px; vertical-align:1px; border:1px solid; }
+
+  /* ---- Toast notifications ---- */
+  .toast{ position:fixed; left:50%; bottom:22px; transform:translateX(-50%); z-index:70;
+    background:#1c2742; border:1px solid var(--gold); border-radius:12px; padding:10px 16px;
+    font-size:13px; font-weight:600; max-width:88vw; box-shadow:0 10px 30px rgba(0,0,0,.5);
+    animation:toastk 3.2s forwards; pointer-events:none; }
+  @keyframes toastk{ 0%{ opacity:0; transform:translate(-50%,14px);} 8%{ opacity:1; transform:translate(-50%,0);} 85%{ opacity:1;} 100%{ opacity:0; } }
+
+  /* ---- Grading slab ---- */
+  .slab{ width:240px; margin:14px auto 4px; border:2px solid #3a4666; border-radius:12px;
+    background:linear-gradient(180deg,#232c47,#161d2e); padding:12px; text-align:center; }
+  .slab .slabhead{ display:flex; justify-content:space-between; font-size:10px; letter-spacing:1px;
+    color:var(--dim); border-bottom:1px solid var(--line); padding-bottom:6px; margin-bottom:10px; }
+  .slab .gradeball{ font-size:46px; font-weight:900; margin:8px 0 4px; min-height:56px; }
+  .slab .spin{ font-size:32px; animation:spinr 1s linear infinite; display:inline-block; }
+  @keyframes spinr{ to{ transform:rotate(360deg); } }
+
+  /* ---- Stats & achievements ---- */
+  .statgrid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(110px,1fr)); gap:8px; margin-top:12px; }
+  .achgrid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:8px; margin-top:10px; }
+  .ach{ border:1px solid var(--line); border-radius:10px; padding:9px; background:var(--panel); font-size:11px; color:var(--dim); }
+  .ach b{ display:block; font-size:13px; color:var(--fg); margin-bottom:2px; }
+  .ach.locked{ opacity:.35; filter:grayscale(1); }
+
   .hint{ color:var(--dim); font-size:12px; text-align:center; margin-top:10px; }
   .footer{ text-align:center; color:var(--dim); font-size:11px; margin-top:30px; }
   .flash{ position:fixed; inset:0; pointer-events:none; z-index:40; opacity:0; }
@@ -557,10 +592,22 @@ const SAVE_KEY = "ripcity_save_v1";
 let state = load();
 
 function freshState(){
-  return { balance:100, spent:0, packs:0, pullValue:0, best:null, collection:[] };
+  return { balance:100, spent:0, packs:0, pullValue:0, sold:0, best:null,
+           collection:[], seq:1, ach:{}, counts:{} };
 }
 function load(){
-  try{ const s = JSON.parse(localStorage.getItem(SAVE_KEY)); if(s && typeof s.balance==="number") return s; }catch(e){}
+  try{
+    const s = JSON.parse(localStorage.getItem(SAVE_KEY));
+    if(s && typeof s.balance==="number"){
+      const st = Object.assign(freshState(), s);
+      // migrate older saves: every card needs an id, and seq must stay ahead
+      for(const c of st.collection){
+        if(!c.id) c.id = st.seq++;
+        else st.seq = Math.max(st.seq, c.id+1);
+      }
+      return st;
+    }
+  }catch(e){}
   return freshState();
 }
 function save(){ try{ localStorage.setItem(SAVE_KEY, JSON.stringify(state)); }catch(e){} }
@@ -752,12 +799,14 @@ function renderToolbar(showBack){
   let html = "";
   if(showBack) html += '<button class="ghost" id="tbBack">‹ All Products</button>';
   html += '<button class="ghost" id="tbColl">📒 Collection ('+state.collection.length+')</button>';
+  html += '<button class="ghost" id="tbStats">📈 Stats</button>';
   html += '<button class="ghost" id="tbPhotos">📷 Photos: '+(state.photos===false?"Off":"On")+'</button>';
   html += '<button class="ghost" id="tbAdd">＋ Add $100</button>';
   html += '<button class="ghost" id="tbReset">↺ Reset</button>';
   toolbarEl.innerHTML = html;
   if(showBack) byId("tbBack").onclick = ()=>renderHome();
   byId("tbColl").onclick = showCollection;
+  byId("tbStats").onclick = showStats;
   byId("tbPhotos").onclick = ()=>{ state.photos = (state.photos===false); save(); rerender(); };
   byId("tbAdd").onclick = ()=>{ state.balance += 100; save(); rerender(); };
   byId("tbReset").onclick = ()=>{
@@ -864,8 +913,14 @@ function registerPulls(prod, cards){
   for(const c of cards){
     state.pullValue += c.value;
     if(c.isHit){
-      state.collection.push(slimCard(c));
-      if(!state.best || c.value > state.best.value){ state.best = slimCard(c); }
+      const sc = slimCard(c);
+      sc.id = state.seq++;
+      c.colId = sc.id;   // lets the reveal screen quick-sell this pack's hits
+      state.collection.push(sc);
+      state.counts[c.rarKey] = (state.counts[c.rarKey]||0)+1;
+      state.counts.hits = (state.counts.hits||0)+1;
+      if(c.auto && c.rookie) state.counts.rcauto = (state.counts.rcauto||0)+1;
+      if(!state.best || c.value > state.best.value){ state.best = sc; }
     }
   }
   // Keep the binder (and localStorage) healthy: retain the 600 best hits.
@@ -873,12 +928,134 @@ function registerPulls(prod, cards){
     state.collection.sort((a,b)=> b.value - a.value);
     state.collection.length = 600;
   }
+  checkAch();
 }
 function slimCard(c){
   return { name:c.name, team:c.team, pos:c.pos, set:c.set, year:c.year, sport:c.sport,
            rarKey:c.rarKey, rarName:c.rarName, color:c.color, label:c.label, design:c.design,
            serial:c.serial, colorName:c.colorName, auto:c.auto, value:c.value,
            firstBowman:c.firstBowman, rookie:c.rookie };
+}
+
+/* ============================================================
+   SELLING  (closes the economy loop)
+   ============================================================ */
+function sellCard(id, silent){
+  const i = state.collection.findIndex(x=>x.id===id);
+  if(i<0) return 0;
+  const c = state.collection[i];
+  state.balance += c.value;
+  state.sold = (state.sold||0) + c.value;
+  state.collection.splice(i,1);
+  save(); renderWallet(); checkAch();
+  if(!silent) toast("Sold "+c.name+" for "+money(c.value));
+  return c.value;
+}
+function sellIds(ids){
+  let tot=0, n=0;
+  for(const id of ids){ const v = sellCard(id, true); if(v){ tot+=v; n++; } }
+  if(n) toast("Sold "+n+" card"+(n>1?"s":"")+" for "+money(tot));
+  return tot;
+}
+
+/* ============================================================
+   GRADING  (pay a fee, sweat the grade, value multiplies)
+   EV of the multiplier ≈ 1.5x, so grading is only +EV on cards
+   worth more than ~2x the fee — exactly like the real gamble.
+   ============================================================ */
+const GRADE_FEE = 15;
+const GRADES = [
+  { g:"10", label:"GEM MINT 10", p:0.18, mult:3.5,  color:"#ffcb3d" },
+  { g:"9",  label:"MINT 9",      p:0.35, mult:1.6,  color:"#39d98a" },
+  { g:"8",  label:"NM-MT 8",     p:0.27, mult:0.85, color:"#5ad1ff" },
+  { g:"7",  label:"NM 7",        p:0.12, mult:0.5,  color:"#8b97b3" },
+  { g:"6",  label:"EX-MT 6",     p:0.05, mult:0.3,  color:"#8b97b3" },
+  { g:"AA", label:"ALTERED",     p:0.03, mult:0.2,  color:"#ff5d6c" }
+];
+function rollGrade(){
+  let r = Math.random();
+  for(const g of GRADES){ r -= g.p; if(r<=0) return g; }
+  return GRADES[GRADES.length-1];
+}
+function gradeCard(id){
+  const c = state.collection.find(x=>x.id===id);
+  if(!c || c.grade) return;
+  if(state.balance < GRADE_FEE){ toast("Not enough balance — grading costs "+money(GRADE_FEE)); return; }
+  document.querySelectorAll(".modal-bg").forEach(m=>m.remove());
+  state.balance -= GRADE_FEE; state.spent += GRADE_FEE;
+  save(); renderWallet();
+  const sub = [c.colorName, c.label, c.serial?("#"+c.serial):null].filter(Boolean).join(" · ");
+  const bg = modal(
+    '<button class="close ghost" style="float:right">✕</button>'+
+    '<h2>💎 Grading</h2>'+
+    '<div class="slab">'+
+      '<div class="slabhead"><span>RIP CITY GRADING</span><span>fee '+money(GRADE_FEE)+'</span></div>'+
+      '<b>'+esc(c.name)+'</b>'+
+      '<div style="font-size:12px;color:var(--dim)">'+esc(c.set)+' · '+esc(sub)+'</div>'+
+      '<div class="gradeball" id="gball"><span class="spin">💿</span></div>'+
+      '<div id="gres" style="font-size:13px;color:var(--dim)">Authenticating…</div>'+
+    '</div>'
+  );
+  setTimeout(()=>{
+    const g = rollGrade();
+    const old = c.value;
+    c.value = Math.max(0.05, Math.round(old*g.mult*100)/100);
+    c.grade = g.g; c.gradeLabel = g.label;
+    state.pullValue += (c.value - old);
+    state.counts.graded = (state.counts.graded||0)+1;
+    if(state.best && c.value > state.best.value) state.best = c;
+    if(g.g==="10") unlock("gem10");
+    save(); renderWallet(); checkAch();
+    const ball = bg.querySelector("#gball"), res = bg.querySelector("#gres");
+    if(!ball || !res) return;
+    ball.innerHTML = '<span style="color:'+g.color+'">'+g.g+'</span>';
+    res.innerHTML =
+      '<b style="color:'+g.color+'">'+g.label+'</b><br>'+
+      money(old)+' → <b style="color:'+(c.value>=old?"var(--good)":"var(--bad)")+'">'+money(c.value)+'</b>'+
+      '<div style="margin-top:12px"><button class="primary" id="backColl">Back to Collection</button></div>';
+    const b = bg.querySelector("#backColl");
+    if(b) b.onclick = ()=>{ bg.remove(); showCollection(); };
+    if(g.g==="10") triggerFlash(g.color);
+  }, 1600);
+}
+
+/* ============================================================
+   ACHIEVEMENTS + TOASTS
+   ============================================================ */
+const ACH = [
+  ["first_pack","🃏","First Rip","Open your first pack"],
+  ["first_auto","✍️","Ink!","Pull your first autograph"],
+  ["rc_auto","🌟","Rookie Ink","Pull a rookie autograph"],
+  ["hit_100","💰","Heater","Pull a card worth $100+"],
+  ["hit_500","🔥","Nuclear","Pull a card worth $500+"],
+  ["oneofone","👑","The One","Pull a 1/1"],
+  ["gem10","💎","Gem Mint","Grade a perfect 10"],
+  ["packs_50","📦","Wax Addict","Rip 50 packs"],
+  ["packs_250","🏭","Case Breaker","Rip 250 packs"],
+  ["sold_500","🏪","Card Shop","Sell $500 worth of cards"]
+];
+function unlock(id){
+  if(state.ach[id]) return;
+  state.ach[id] = 1; save();
+  const a = ACH.find(x=>x[0]===id);
+  if(a) toast("🏆 "+a[2]+" unlocked — "+a[3]);
+}
+function checkAch(){
+  if(state.packs>=1) unlock("first_pack");
+  if(state.counts.auto) unlock("first_auto");
+  if(state.counts.rcauto) unlock("rc_auto");
+  if(state.best && state.best.value>=100) unlock("hit_100");
+  if(state.best && state.best.value>=500) unlock("hit_500");
+  if(state.counts.oneofone) unlock("oneofone");
+  if(state.packs>=50) unlock("packs_50");
+  if(state.packs>=250) unlock("packs_250");
+  if((state.sold||0)>=500) unlock("sold_500");
+}
+function toast(msg){
+  const t = document.createElement("div");
+  t.className = "toast"; t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(()=>{ if(t.parentNode) t.parentNode.removeChild(t); }, 3300);
 }
 
 /* ============================================================
@@ -1108,6 +1285,16 @@ function showStack(prod, cards, isBox){
       '<div class="row"><span>Cost</span><b>'+money(cost)+'</b></div>'+
       '<div class="row"><span>This pack</span><b class="'+(profit>=0?"pos":"neg")+'">'+(profit>=0?"+":"")+money(profit)+'</b></div>';
     byId("stackdone").style.display = "flex";
+    const hitIds = cards.filter(c=>c.colId).map(c=>c.colId);
+    if(hitIds.length){
+      const hv = cards.filter(c=>c.isHit).reduce((s,c)=>s+c.value,0);
+      byId("stackdone").insertAdjacentHTML("afterbegin",
+        '<button id="sellHitsS">💰 Sell hits · '+money(hv)+'</button>');
+      byId("sellHitsS").onclick = function(){
+        sellIds(hitIds);
+        this.disabled = true; this.textContent = "Sold ✓";
+      };
+    }
     renderWallet();
   }
 
@@ -1176,11 +1363,17 @@ function showReveal(prod, cards, isBox){
       '</div>'+
       '<div class="ripcontrols" style="margin-top:14px">'+
         '<button class="primary" id="again">RIP ANOTHER · '+money(prod.price)+'</button>'+
+        (hits.length ? '<button id="sellHits">💰 Sell hits · '+money(hits.reduce((s,c)=>s+c.value,0))+'</button>' : '')+
         '<button id="backToList">Other Products</button>'+
       '</div>'+
     '</div>'+
   '</div>';
   view.innerHTML = html;
+  const shBtn = byId("sellHits");
+  if(shBtn) shBtn.onclick = function(){
+    sellIds(cards.filter(c=>c.colId).map(c=>c.colId));
+    this.disabled = true; this.textContent = "Sold ✓";
+  };
 
   const revealEl = byId("reveal");
   hydratePhotos(revealEl);
@@ -1250,32 +1443,112 @@ function showOdds(prod){
 /* ============================================================
    COLLECTION MODAL
    ============================================================ */
-function showCollection(){
-  const coll = state.collection.slice().sort((a,b)=> b.value - a.value);
-  let inner;
-  if(!coll.length){
-    inner = '<div class="empty">No hits yet. Rip some packs! Base cards aren’t tracked — only parallels, inserts, numbered, and autos land in your binder.</div>';
-  } else {
-    const totalVal = coll.reduce((s,c)=>s+c.value,0);
-    inner = '<div style="color:var(--dim);font-size:13px;margin-bottom:6px">'+coll.length+' hits · est. '+money(totalVal)+
-            (state.best?' · best: '+state.best.name+' '+money(state.best.value):'')+'</div><div class="colllist">';
-    for(const c of coll){
-      const sub = [c.colorName, c.label, c.serial?("#"+c.serial):null, c.auto?"AUTO":null, c.firstBowman?"1st Bowman":null].filter(Boolean).join(" · ");
-      inner += '<div class="collrow">'+
-        '<div class="cl-rar" style="background:'+c.color+'"></div>'+
-        '<div class="photo clthumb" data-player="'+esc(c.name)+'" style="background-image:'+nameGrad(c.name)+'"><span>'+initials(c.name)+'</span></div>'+
-        '<div class="cl-main"><div class="cl-nm">'+c.name+' <span style="color:var(--dim);font-weight:400">'+c.team+'</span></div>'+
-        '<div class="cl-sub">'+c.set+' '+c.year+' · '+sub+'</div></div>'+
-        '<div class="cl-val">'+money(c.value)+'</div>'+
-      '</div>';
-    }
-    inner += '</div>';
+let collFilter = "all", collSort = "value";
+function collMatches(c){
+  switch(collFilter){
+    case "auto":   return !!c.auto;
+    case "rookie": return !!c.rookie || !!c.firstBowman;
+    case "graded": return !!c.grade;
+    case "big":    return c.value >= 50;
+    default:       return true;
   }
+}
+function gradeChipHTML(c){
+  if(!c.grade) return "";
+  const col = c.grade==="10" ? "#ffcb3d" : (c.grade==="9" ? "#39d98a" : (c.grade==="AA" ? "#ff5d6c" : "#8b97b3"));
+  const txt = c.grade==="AA" ? "ALTERED" : "GRADE "+c.grade;
+  return '<span class="gradechip" style="color:'+col+';border-color:'+col+'66;background:'+col+'18">'+txt+'</span>';
+}
+function showCollection(){
   const bg = modal(
     '<button class="close ghost" style="float:right">✕</button>'+
-    '<h2>📒 My Collection</h2>'+ inner
+    '<h2>📒 My Collection</h2><div id="collbody"></div>'
   );
-  hydratePhotos(bg);
+  renderCollBody(bg);
+}
+function renderCollBody(bg){
+  const body = bg.querySelector("#collbody");
+  if(!body) return;
+  const coll = state.collection.filter(collMatches).slice();
+  if(collSort==="value") coll.sort((a,b)=> b.value - a.value);
+  else coll.sort((a,b)=> (b.id||0) - (a.id||0));
+
+  const chips = [["all","All"],["auto","✍️ Autos"],["rookie","RC"],["graded","💎 Graded"],["big","$50+"]];
+  let html = '<div class="chiprow">'+
+    chips.map(([k,l])=>'<span class="chip'+(collFilter===k?" on":"")+'" data-f="'+k+'">'+l+'</span>').join("")+
+    '<span style="flex:1"></span>'+
+    '<span class="chip'+(collSort==="value"?" on":"")+'" data-s="value">Top value</span>'+
+    '<span class="chip'+(collSort==="new"?" on":"")+'" data-s="new">Newest</span>'+
+  '</div>';
+
+  if(!state.collection.length){
+    html += '<div class="empty">No hits yet. Rip some packs! Base cards aren’t tracked — only parallels, inserts, numbered, and autos land in your binder.</div>';
+  } else if(!coll.length){
+    html += '<div class="empty">Nothing matches this filter.</div>';
+  } else {
+    const totalVal = state.collection.reduce((s,c)=>s+c.value,0);
+    html += '<div style="color:var(--dim);font-size:13px;margin:6px 0">'+
+      state.collection.length+' hits · est. '+money(totalVal)+
+      (state.best?' · best: '+esc(state.best.name)+' '+money(state.best.value):'')+
+      ' · 💎 grading costs '+money(GRADE_FEE)+'</div><div class="colllist">';
+    for(const c of coll){
+      const sub = [c.colorName, c.label, c.serial?("#"+c.serial):null, c.auto?"AUTO":null, c.firstBowman?"1st Bowman":null].filter(Boolean).join(" · ");
+      html += '<div class="collrow">'+
+        '<div class="cl-rar" style="background:'+c.color+'"></div>'+
+        '<div class="photo clthumb" data-player="'+esc(c.name)+'" style="background-image:'+nameGrad(c.name)+'"><span>'+initials(c.name)+'</span></div>'+
+        '<div class="cl-main"><div class="cl-nm">'+esc(c.name)+gradeChipHTML(c)+' <span style="color:var(--dim);font-weight:400">'+esc(c.team)+'</span></div>'+
+        '<div class="cl-sub">'+esc(c.set)+' '+c.year+' · '+esc(sub)+'</div></div>'+
+        '<div class="cl-side"><div class="cl-val">'+money(c.value)+'</div>'+
+          '<div class="collbtns">'+
+            (!c.grade ? '<button data-g="'+c.id+'">💎 Grade</button>' : '')+
+            '<button data-sell="'+c.id+'">💰 Sell</button>'+
+          '</div>'+
+        '</div>'+
+      '</div>';
+    }
+    html += '</div>';
+  }
+  body.innerHTML = html;
+  body.querySelectorAll(".chip[data-f]").forEach(el=>{ el.onclick = ()=>{ collFilter = el.dataset.f; renderCollBody(bg); }; });
+  body.querySelectorAll(".chip[data-s]").forEach(el=>{ el.onclick = ()=>{ collSort = el.dataset.s; renderCollBody(bg); }; });
+  body.querySelectorAll("[data-sell]").forEach(el=>{ el.onclick = ()=>{ sellCard(+el.dataset.sell); renderCollBody(bg); }; });
+  body.querySelectorAll("[data-g]").forEach(el=>{ el.onclick = ()=>{ gradeCard(+el.dataset.g); }; });
+  hydratePhotos(body);
+}
+
+/* ============================================================
+   STATS + ACHIEVEMENTS MODAL
+   ============================================================ */
+function showStats(){
+  const n = state.counts || {};
+  const numbered = (n.numbered||0)+(n.rare||0)+(n.gold||0)+(n.superrare||0);
+  const net = state.pullValue - state.spent;
+  const sb = (l,v)=>'<div class="stat"><small>'+l+'</small><b>'+v+'</b></div>';
+  modal(
+    '<button class="close ghost" style="float:right">✕</button>'+
+    '<h2>📈 Career Stats</h2>'+
+    '<div class="statgrid">'+
+      sb("Packs ripped", state.packs)+
+      sb("Total spent", money(state.spent))+
+      sb("Value pulled", money(state.pullValue))+
+      sb("Cards sold", money(state.sold||0))+
+      '<div class="stat net '+(net>=0?"pos":"neg")+'"><small>Net</small><b>'+(net>=0?"+":"")+money(net)+'</b></div>'+
+      sb("Hits", n.hits||0)+
+      sb("Autographs", n.auto||0)+
+      sb("Numbered", numbered)+
+      sb("1/1s", n.oneofone||0)+
+      sb("Graded", n.graded||0)+
+    '</div>'+
+    (state.best
+      ? '<div style="margin-top:12px;font-size:13px;color:var(--dim)">Best pull: <b style="color:var(--fg)">'+esc(state.best.name)+'</b>'+
+        (state.best.label?' · '+esc(state.best.label):'')+
+        ' · <span style="color:var(--accent);font-weight:800">'+money(state.best.value)+'</span></div>'
+      : '')+
+    '<h3 style="margin:18px 0 0;font-size:15px">🏆 Achievements ('+Object.keys(state.ach||{}).length+'/'+ACH.length+')</h3>'+
+    '<div class="achgrid">'+
+      ACH.map(a=>'<div class="ach'+(state.ach[a[0]]?"":" locked")+'"><b>'+a[1]+' '+a[2]+'</b>'+a[3]+'</div>').join("")+
+    '</div>'
+  );
 }
 
 /* boot */
