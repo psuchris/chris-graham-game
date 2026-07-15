@@ -975,11 +975,14 @@ function pickHitPlayer(poolId, rarKey){
   return arr[arr.length-1];
 }
 
-// Build a single pack of cards for a product in a given box format
+// Build a single pack of cards for a product in a given box format.
+// `used` guarantees no duplicate player within one pack — like a real
+// collated pack, you never pull the same guy twice in one rip.
 function openPack(prod, fmt){
   fmt = fmt || getFormat(prod, "hobby");
   const n = fmt.cpp;
   const cards = [];
+  const used = new Set();
 
   // Roll chases first (the "hits"); retail formats cut the odds hard
   const specials = [];
@@ -987,7 +990,7 @@ function openPack(prod, fmt){
     const mult = c.rar==="auto" ? fmt.autoMult : fmt.oddsMult;
     for(let k=0;k<(c.max||1);k++){
       if(chance(c.p * mult)){
-        specials.push(makeCard(prod, c));
+        specials.push(makeCard(prod, c, used));
       }
     }
   }
@@ -996,7 +999,7 @@ function openPack(prod, fmt){
     specials.push(makeCard(prod, {
       rar:fmt.excl.rar, label:fmt.excl.label+" · "+fmt.label+" Excl.",
       p:fmt.excl.p, foilType:"refractor", runs:fmt.excl.runs
-    }));
+    }, used));
   }
   // Graham family legend roll
   if(chance(fmt.legendP)){
@@ -1009,7 +1012,7 @@ function openPack(prod, fmt){
   // Fill the rest with base cards
   const baseCount = Math.max(0, n - keptSpecials.length);
   for(let i=0;i<baseCount;i++){
-    cards.push(makeBase(prod));
+    cards.push(makeBase(prod, used));
   }
   // Insert specials at random positions, with biggest hit last
   keptSpecials.sort((a,b)=> a.value - b.value);
@@ -1018,13 +1021,21 @@ function openPack(prod, fmt){
   return cards;
 }
 
-function makeBase(prod){
-  const pl = pickPlayer(prod.pool);
+// rejection-sample until we find a player not already in this pack
+function pickUnused(pickFn, used){
+  let pl = pickFn();
+  for(let t=0; t<20 && used && used.has(pl[0]); t++){ pl = pickFn(); }
+  if(used) used.add(pl[0]);
+  return pl;
+}
+
+function makeBase(prod, used){
+  const pl = pickUnused(()=>pickPlayer(prod.pool), used);
   return finishCard(prod, pl, "base", RAR.base, { foilType:null, label:"Base" });
 }
 
-function makeCard(prod, def){
-  const pl = pickHitPlayer(prod.pool, def.rar);
+function makeCard(prod, def, used){
+  const pl = pickUnused(()=>pickHitPlayer(prod.pool, def.rar), used);
   const rar = RAR[def.rar] || RAR.parallel;
   let serial = null, colorName = null;
 
