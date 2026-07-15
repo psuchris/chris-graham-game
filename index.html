@@ -183,6 +183,23 @@
   }
   .card .front .photo .initials{ font-size:38px; font-weight:900; color:rgba(255,255,255,.92); letter-spacing:1px; text-shadow:0 2px 10px rgba(0,0,0,.45); }
   .photo.has-img .initials, .clthumb.has-img span{ display:none; }
+  /* subtle fade-in once a real photo lands */
+  .photo.has-img{ animation:imgfade .3s ease; }
+  @keyframes imgfade{ from{ opacity:.3; } to{ opacity:1; } }
+  /* handwritten on-card autograph */
+  .card .front .signature{
+    position:absolute; bottom:34%; left:8%; right:8%; z-index:3;
+    font-family:"Snell Roundhand","Savoye LET","Brush Script MT","Segoe Script","Dancing Script",cursive;
+    font-style:italic; font-size:17px; line-height:1;
+    letter-spacing:-.4px; white-space:nowrap; overflow:visible;
+    transform:rotate(-7deg); transform-origin:left center;
+    pointer-events:none; opacity:.95;
+  }
+  .swipewrap .card .front .signature{ font-size:26px; }
+  .card .front .signature.sig-blue{ color:#2f54d9;
+    text-shadow:0 1px 1px rgba(0,0,0,.4), 0 0 1px rgba(15,25,80,.7); }
+  .card .front .signature.sig-gold{ color:#f0c24b;
+    text-shadow:0 0 6px rgba(240,194,75,.55), 0 1px 1px rgba(60,40,0,.55); }
   /* top strip: brand wordmark + serial/year */
   .card .front .topline{
     position:absolute; top:3%; left:8%; right:8%; z-index:3;
@@ -216,7 +233,9 @@
     white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
   }
   /* bigger canvas in the swipe stack → scale the type up */
+  .card .front .np-name.long{ font-size:9.5px; letter-spacing:0; }
   .swipewrap .card .front .np-name{ font-size:18px; }
+  .swipewrap .card .front .np-name.long{ font-size:14px; }
   .swipewrap .card .front .np-sub{ font-size:10px; }
   .swipewrap .card .front .topline{ font-size:12px; }
   .swipewrap .card .front .topline .bmark small{ font-size:8.5px; }
@@ -923,7 +942,7 @@ function finishCard(prod, pl, rarKey, rar, opts){
 //   • Market noise adds spread plus an occasional "hot copy" spike.
 // Calibrated so a pack's EV sits a bit BELOW its price: most cards are near
 // worthless, the rare big hit chases the cost back. Ripping is -EV long term.
-const MARKET = 0.34; // global damping that sets the rip-vs-singles gap (EV≈75% of price)
+const MARKET = 0.42; // global damping that sets the rip-vs-singles gap (great boxes can top 100%)
 function cardValue(rarKey, opts, tier, prod, rookie){
   const t = tier || 1.5;
   const star = Math.pow(t, 2.1) / 6;     // t1≈0.17, t3≈1.6, t4≈3.0, t4.6≈4.1, t5≈5.1
@@ -967,7 +986,7 @@ function cardValue(rarKey, opts, tier, prod, rookie){
 
   // market noise + occasional outlier "hot" copy
   let mult = 0.6 + Math.random()*0.7;
-  if(rarKey!=="base" && Math.random()<0.05) mult *= 2.4;
+  if(rarKey!=="base" && Math.random()<0.08) mult *= 2.6;
   v *= mult * MARKET;
   return Math.max(0.05, Math.round(v*100)/100);
 }
@@ -1051,6 +1070,7 @@ function renderOpener(prodId, fmtKey){
   if(!prod) return renderHome();
   fmtKey = fmtKey || "hobby";
   const fmt = getFormat(prod, fmtKey);
+  if(state.photos !== false) prefetchPoolPhotos(prod.pool);
   rerender = ()=>renderOpener(prodId, fmtKey);
   renderWallet(); renderToolbar(true);
   const grad = "linear-gradient(160deg,"+prod.palette[0]+","+prod.palette[1]+" 60%,"+prod.palette[2]+")";
@@ -1297,29 +1317,105 @@ const TITLE_OVERRIDE = {
 };
 function wikiTitle(name){ return TITLE_OVERRIDE[name] || name; }
 
-function ensurePhoto(name){
+const WIKI_API = "https://en.wikipedia.org/w/api.php";
+// Fetch pageimages thumbnails for up to 50 titles at once (titles joined with |).
+function wikiBatchFetch(titles){
+  if(typeof fetch !== "function") return Promise.resolve(null);
+  const u = WIKI_API + "?action=query&format=json&redirects=1"
+          + "&prop=pageimages&piprop=thumbnail&pithumbsize=400&origin=*&titles="
+          + titles.map(encodeURIComponent).join("%7C");
+  return fetch(u).then(r=> r.ok ? r.json() : null);
+}
+// Map each requested title → thumbnail URL, following the API's
+// normalized (from→to) then redirects (from→to) chains to the final page title.
+function wikiThumbMap(j, requestedTitles){
+  const out = {};
+  const q = j && j.query;
+  const normMap = {}, redirMap = {}, pageByTitle = {};
+  if(q){
+    (q.normalized||[]).forEach(x=>{ normMap[x.from] = x.to; });
+    (q.redirects||[]).forEach(x=>{ redirMap[x.from] = x.to; });
+    if(q.pages){ for(const k in q.pages){ const pg = q.pages[k];
+      if(pg && pg.title!=null) pageByTitle[pg.title] = (pg.thumbnail && pg.thumbnail.source) || ""; } }
+  }
+  requestedTitles.forEach(t=>{
+    let r = t;
+    if(normMap[r]!=null) r = normMap[r];
+    let guard = 0; while(redirMap[r]!=null && guard++<5){ r = redirMap[r]; }
+    out[t] = pageByTitle[r] || pageByTitle[t] || "";
+  });
+  return out;
+}
+// Sport-specific disambiguation suffix tried when a bare title misses.
+function sportSuffixes(sport){
+  if(sport==="basketball") return [" (basketball)"];
+  if(sport==="football")   return [" (American football)"];
+  if(sport==="baseball")   return [" (baseball)"];
+  return [];
+}
+function poolSport(poolId){ const p = PRODUCTS.find(x=>x.pool===poolId); return p ? p.sport : null; }
+
+// Retry a missed name with disambiguated titles before caching the miss.
+function disambiguatePhotoP(name, sport){
+  const suffixes = sportSuffixes(sport);
+  const attempt = (i)=>{
+    if(i>=suffixes.length){ photoMap[name] = ""; savePhotos(); return Promise.resolve(""); }
+    const title = name + suffixes[i];
+    return wikiBatchFetch([title]).then(j=>{
+      const img = wikiThumbMap(j, [title])[title] || "";
+      if(img){ photoMap[name] = img; savePhotos(); return img; }
+      return attempt(i+1);
+    }).catch(()=>{ photoMap[name] = ""; savePhotos(); return ""; });
+  };
+  return attempt(0);
+}
+
+// Batch-prefetch every uncached player photo for a pool (50 titles/request).
+function prefetchPoolPhotos(poolId){
+  if(state.photos === false) return;
+  if(typeof fetch !== "function") return;
+  const pool = POOLS[poolId] || [];
+  const sport = poolSport(poolId);
+  const names = [];
+  for(const e of pool){
+    const name = e[0];
+    if(name in LEGEND_PHOTOS) continue;
+    if(name in photoMap) continue;
+    if(names.indexOf(name)<0) names.push(name);
+  }
+  if(!names.length) return;
+  for(let i=0;i<names.length;i+=50){
+    const batch = names.slice(i, i+50);
+    const titleToName = {};
+    const titles = batch.map(n=>{ const t = wikiTitle(n); titleToName[t] = n; return t; });
+    wikiBatchFetch(titles).then(j=>{
+      const map = wikiThumbMap(j, titles);
+      const misses = [];
+      titles.forEach(t=>{
+        const name = titleToName[t];
+        const thumb = map[t] || "";
+        if(thumb) photoMap[name] = thumb;
+        else misses.push(name);           // don't cache "" yet — try disambiguation
+      });
+      savePhotos();
+      misses.forEach(name=> disambiguatePhotoP(name, sport));
+    }).catch(()=>{});
+  }
+}
+
+function ensurePhoto(name, sport){
   if(name in LEGEND_PHOTOS) return Promise.resolve(LEGEND_PHOTOS[name]);
   if(name in photoMap) return Promise.resolve(photoMap[name]);
   if(typeof fetch !== "function"){ return Promise.resolve(""); }
   if(photoPromises[name]) return photoPromises[name];
   // MediaWiki Action API in anonymous-CORS mode (origin=*); redirects=1 resolves
   // accented/alt spellings automatically. Returns an upload.wikimedia.org thumbnail.
-  const u = "https://en.wikipedia.org/w/api.php?action=query&format=json&redirects=1"
-          + "&prop=pageimages&piprop=thumbnail&pithumbsize=400&titles="
-          + encodeURIComponent(wikiTitle(name)) + "&origin=*";
-  photoPromises[name] = fetch(u)
-    .then(r=> r.ok ? r.json() : null)
+  const title = wikiTitle(name);
+  photoPromises[name] = wikiBatchFetch([title])
     .then(j=>{
-      let img = "";
-      try{
-        const pages = j && j.query && j.query.pages;
-        if(pages){
-          const pg = pages[Object.keys(pages)[0]];
-          if(pg && pg.thumbnail && pg.thumbnail.source) img = pg.thumbnail.source;
-        }
-      }catch(e){}
-      photoMap[name] = img; savePhotos(); // cache definitive answer (incl. "no photo")
-      return img;
+      const img = wikiThumbMap(j, [title])[title] || "";
+      if(img){ photoMap[name] = img; savePhotos(); return img; }
+      return disambiguatePhotoP(name, sport);   // cache "" only after disambiguation
     })
     .catch(()=>{ delete photoPromises[name]; return ""; }); // network error: allow retry later
   return photoPromises[name];
@@ -1329,7 +1425,8 @@ function hydratePhotos(scope){
   if(state.photos === false) return;
   scope.querySelectorAll(".photo[data-player]").forEach(el=>{
     const name = el.getAttribute("data-player");
-    ensurePhoto(name).then(src=>{
+    const sport = el.getAttribute("data-sport") || null;
+    ensurePhoto(name, sport).then(src=>{
       if(src){ el.style.backgroundImage = 'url("'+src+'")'; el.classList.add("has-img"); }
     });
   });
@@ -1396,6 +1493,13 @@ function teamColor(sport, team){
   return (m && m[team]) || ["#4a5b82","#141a2a"];
 }
 
+// Gold ink for the truly exclusive autos (short serial run ≤10 or top rarity),
+// otherwise a blue ballpoint.
+function autoSigGold(c){
+  if(["gold","superrare","oneofone"].indexOf(c.rarKey)>=0) return true;
+  if(c.serial){ const m = /\/(\d+)/.exec(c.serial); if(m && parseInt(m[1],10)<=10) return true; }
+  return false;
+}
 function cardFrontHTML(c){
   const design = c.design || "generic";
   let cls = "card br-"+design;
@@ -1412,13 +1516,14 @@ function cardFrontHTML(c){
   const hitFlag = c.auto ? '<div class="hitflag">✍️</div>' : (c.big? '<div class="hitflag">🔥</div>':'');
   const rc  = c.rookie ? '<span class="rc">RC</span>' : '';
   const fb  = c.firstBowman ? '<div class="fbshield">1<i>ST</i> BOWMAN</div>' : '';
+  const sig = c.auto ? '<div class="signature '+(autoSigGold(c)?"sig-gold":"sig-blue")+'">'+esc(c.name)+'</div>' : '';
   const style = "--tc:"+tc[0]+";--tc2:"+tc[1]+";--ac:"+accent;
   return '<div class="'+cls+'" data-v="'+c.value+'">'+
     '<div class="inner">'+
       '<div class="face back"><span>RIP</span></div>'+
       '<div class="face front" style="'+style+'">'+
         '<div class="fbg"></div>'+
-        '<div class="photowrap"><div class="photo" data-player="'+esc(c.photoKey||c.name)+'" style="background-image:radial-gradient(130% 95% at 50% 22%,'+tc[0]+' 0%,'+tc[1]+' 80%)"><span class="initials">'+initials(c.name)+'</span></div></div>'+
+        '<div class="photowrap"><div class="photo" data-player="'+esc(c.photoKey||c.name)+'" data-sport="'+esc(c.sport||"")+'" style="background-image:radial-gradient(130% 95% at 50% 22%,'+tc[0]+' 0%,'+tc[1]+' 80%)"><span class="initials">'+initials(c.name)+'</span></div></div>'+
         '<div class="bgfx"></div>'+
         '<div class="topline">'+
           (c.legend
@@ -1429,11 +1534,12 @@ function cardFrontHTML(c){
             : '<span class="ser yr">'+c.year+'</span>')+
         '</div>'+
         '<div class="nameplate">'+
-          '<div class="np-name">'+esc(c.name)+rc+'</div>'+
+          '<div class="np-name'+(c.name.length>15?" long":"")+'">'+esc(c.name)+rc+'</div>'+
           '<div class="np-sub">'+esc(c.team)+' · '+esc(c.pos)+(c.rookie?' · ROOKIE':'')+'</div>'+
         '</div>'+
         '<div class="rarline">'+esc(rarLabel)+'</div>'+
         fb+
+        sig+
         '<div class="glare"></div>'+
         hitFlag+
       '</div>'+
@@ -1446,6 +1552,12 @@ function cardFrontHTML(c){
    ============================================================ */
 function playPackOpening(prod, cards, isBox, fmt){
   renderToolbar(true); renderWallet();
+  // Preload/decode each card's photo now so images are ready before cards flip.
+  if(state.photos !== false){
+    for(const card of cards){
+      ensurePhoto(card.photoKey||card.name, card.sport).then(url=>{ if(url){ new Image().src = url; } });
+    }
+  }
   const goReveal = ()=> isBox ? showReveal(prod, cards, true, fmt) : showStack(prod, cards, false, fmt);
   rerender = goReveal; // if state changes mid-anim, just land on the reveal
   const grad = "linear-gradient(160deg,"+prod.palette[0]+","+prod.palette[1]+" 60%,"+prod.palette[2]+")";
@@ -1859,7 +1971,7 @@ function renderCollBody(bg){
       const sub = [c.colorName, c.label, c.serial?("#"+c.serial):null, c.auto?"AUTO":null, c.firstBowman?"1st Bowman":null].filter(Boolean).join(" · ");
       html += '<div class="collrow">'+
         '<div class="cl-rar" style="background:'+c.color+'"></div>'+
-        '<div class="photo clthumb" data-player="'+esc(c.photoKey||c.name)+'" style="background-image:'+cardGrad(c)+'"><span>'+initials(c.name)+'</span></div>'+
+        '<div class="photo clthumb" data-player="'+esc(c.photoKey||c.name)+'" data-sport="'+esc(c.sport||"")+'" style="background-image:'+cardGrad(c)+'"><span>'+initials(c.name)+'</span></div>'+
         '<div class="cl-main"><div class="cl-nm">'+esc(c.name)+gradeChipHTML(c)+' <span style="color:var(--dim);font-weight:400">'+esc(c.team)+'</span></div>'+
         '<div class="cl-sub">'+esc(c.set)+' '+c.year+' · '+esc(sub)+'</div></div>'+
         '<div class="cl-side"><div class="cl-val">'+money(c.value)+'</div>'+
