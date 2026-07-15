@@ -491,6 +491,7 @@
 
   <div class="footer">
     Simulation only — no real cards, money, or purchases. Odds modeled on published hobby-pack configurations and are approximate.
+    <div style="margin-top:4px;opacity:.7">build v8</div>
   </div>
 </div>
 
@@ -827,7 +828,7 @@ let state = load();
 
 function freshState(){
   return { balance:100, spent:0, packs:0, pullValue:0, sold:0, best:null,
-           collection:[], seq:1, ach:{}, counts:{} };
+           collection:[], seq:1, ach:{}, counts:{}, rev:0 };
 }
 function load(){
   try{
@@ -844,7 +845,39 @@ function load(){
   }catch(e){}
   return freshState();
 }
-function save(){ try{ localStorage.setItem(SAVE_KEY, JSON.stringify(state)); }catch(e){} }
+let warnedSave = false;
+function save(){
+  try{
+    // never clobber a NEWER save made by another tab/session
+    const s = JSON.parse(localStorage.getItem(SAVE_KEY));
+    if(s && (s.rev||0) > (state.rev||0)){
+      state = Object.assign(freshState(), s);
+      toast("↻ Synced with your other session");
+      renderWallet(); rerender();
+      return;
+    }
+  }catch(e){}
+  state.rev = (state.rev||0)+1;
+  try{
+    localStorage.setItem(SAVE_KEY, JSON.stringify(state));
+  }catch(e){
+    if(!warnedSave){ warnedSave = true; toast("⚠️ Couldn't save progress — storage blocked/full. Pulls may not survive a reload."); }
+  }
+}
+// Multi-tab / restored-tab protection: if another tab (or an earlier session
+// Safari restored) saved a NEWER state, adopt it instead of clobbering it,
+// and never let a stale tab overwrite a newer save.
+function syncFromStorage(){
+  try{
+    const s = JSON.parse(localStorage.getItem(SAVE_KEY));
+    if(s && typeof s.balance==="number" && (s.rev||0) > (state.rev||0)){
+      state = Object.assign(freshState(), s);
+      renderWallet(); rerender();
+    }
+  }catch(e){}
+}
+document.addEventListener("visibilitychange", ()=>{ if(!document.hidden) syncFromStorage(); });
+window.addEventListener("pageshow", syncFromStorage);
 
 /* ============================================================
    ENGINE
@@ -1207,6 +1240,11 @@ function slimCard(c){
 /* ============================================================
    SELLING  (closes the economy loop)
    ============================================================ */
+// Keep the toolbar's "Collection (N)" live without re-rendering the screen
+function updateCollCount(){
+  const b = byId("tbColl");
+  if(b) b.textContent = "📒 Collection ("+state.collection.length+")";
+}
 function sellCard(id, silent){
   const i = state.collection.findIndex(x=>x.id===id);
   if(i<0) return 0;
@@ -1214,7 +1252,7 @@ function sellCard(id, silent){
   state.balance += c.value;
   state.sold = (state.sold||0) + c.value;
   state.collection.splice(i,1);
-  save(); renderWallet(); checkAch();
+  save(); renderWallet(); updateCollCount(); checkAch();
   if(!silent) toast("Sold "+c.name+" for "+money(c.value));
   return c.value;
 }
