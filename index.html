@@ -1085,7 +1085,7 @@ function cardValue(rarKey, opts, tier, prod, rookie){
   // rookie auto ≈ $10-25, an Edwards/Wembanyama auto ≈ several hundred.
   let base;
   switch(rarKey){
-    case "base":      base = 0.05 + 0.32*sp;  break;  // stars carry raw value too
+    case "base":      base = 0.05 + 0.13*Math.pow(sp,1.9); break; // steep star curve: superstar base RCs are real dollars, commons stay pennies
     case "insert":    base = 0.3  + 0.8*sp;   break;
     case "parallel":  base = 0.4  + 1.1*sp;   break;  // colored prizms
     case "refractor": base = 0.3  + 0.9*sp;   break;
@@ -1450,7 +1450,12 @@ const TITLE_OVERRIDE = {
   "Yordan Alvarez":"Yordan Álvarez", "Jasson Dominguez":"Jasson Domínguez",
   "Max Clark":"Max Clark (baseball)", "Jesus Made":"Jesús Made", "Roman Anthony":"Roman Anthony (baseball)",
   "Charlie Condon":"Charlie Condon (baseball)", "Dylan Crews":"Dylan Crews",
-  "Travis Bazzana":"Travis Bazzana", "Ethan Salas":"Ethan Salas"
+  "Travis Bazzana":"Travis Bazzana", "Ethan Salas":"Ethan Salas",
+  "Cam Ward":"Cam Ward (American football)", "Travis Hunter":"Travis Hunter (American football)",
+  "Matthew Golden":"Matthew Golden (American football)", "Tre Johnson":"Tre Johnson (basketball)",
+  "Jacob Wilson":"Jacob Wilson (shortstop)", "Cam Smith":"Cam Smith (baseball)",
+  "Danny Wolf":"Danny Wolf (basketball)", "Asa Newell":"Asa Newell", "Derik Queen":"Derik Queen",
+  "James Wood":"James Wood (baseball)"
 };
 function wikiTitle(name){ return TITLE_OVERRIDE[name] || name; }
 
