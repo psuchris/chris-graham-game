@@ -441,6 +441,22 @@
     background:linear-gradient(180deg,#ff4fd8,#b3128f); color:#fff;
     box-shadow:0 2px 8px rgba(0,0,0,.5); }
   .swipewrap .card.rt-casehit .front::before{ font-size:11px; top:18px; }
+
+  /* jersey relic: photo shrinks up, a stitched fabric window sits below it */
+  .card.rt-relic .front .photowrap{ height:44%; }
+  .card .front .relicswatch{
+    position:absolute; z-index:3; top:55.5%; left:28%; width:44%; height:15.5%;
+    background:repeating-linear-gradient(45deg, var(--sw1) 0 2.5px, rgba(0,0,0,.3) 2.5px 5px);
+    background-color:var(--sw1);
+    border:2px dashed rgba(255,255,255,.6); border-radius:6px;
+    box-shadow:inset 0 2px 8px rgba(0,0,0,.55), 0 3px 10px rgba(0,0,0,.5);
+  }
+  .card .front .relicswatch.patch{
+    background:
+      repeating-linear-gradient(45deg, rgba(0,0,0,.14) 0 2.5px, transparent 2.5px 5px),
+      linear-gradient(115deg, var(--sw1) 0 34%, #ececec 34% 58%, var(--sw2) 58% 100%);
+  }
+  .card .front .relicswatch i{ position:absolute; inset:2px; border:1px dashed rgba(255,255,255,.35); border-radius:4px; }
   .card .hitflag{ position:absolute; bottom:6px; right:6px; font-size:13px; z-index:6; }
   .card.bighit.flipped{ box-shadow:0 0 0 2px var(--gold), 0 0 24px rgba(255,203,61,.6); }
   .card.pop{ animation:pop .4s ease; }
@@ -596,7 +612,7 @@
 
   <div class="footer">
     Simulation only — no real cards, money, or purchases. Odds modeled on published hobby-pack configurations and are approximate.
-    <div style="margin-top:4px;opacity:.7">build v11</div>
+    <div style="margin-top:4px;opacity:.7">build v13</div>
   </div>
 </div>
 
@@ -624,6 +640,7 @@ const RAR = {
   gold:      { name:"Gold /10",        color:"#ffcb3d", refractor:true },
   auto:      { name:"Autograph",       color:"#ff6ec7", refractor:true },
   casehit:   { name:"Case Hit",        color:"#ff4fd8", refractor:true },
+  relic:     { name:"Jersey Relic",    color:"#c9a227" },
   oneofone:  { name:"1/1",             color:"#ffffff", refractor:true },
   legend:    { name:"RIP City Legend", color:"#39ffa0", refractor:true }
 };
@@ -830,6 +847,7 @@ const PRODUCTS = [
         { rar:"gold",      label:"Gold Prizm /10",          p:1/240,    max:1, foilType:"refractor", runs:[10] },
         { rar:"superrare", label:"Green Prizm /5",          p:1/600,    max:1, foilType:"refractor", runs:[5] },
         { rar:"auto",      label:"Autograph",               p:1/6,      max:1, foilType:"refractor" },
+        { rar:"relic",     label:"Sensational Swatches",    p:1/9,      max:1, foilType:null },
         { rar:"casehit",   label:"Case Hit",                p:1/288,    max:1, foilType:"refractor", names:["Color Blast","Explosion"] },
         { rar:"oneofone",  label:"Black Prizm 1/1",         p:1/1728,   max:1, foilType:"refractor" }
       ]}),
@@ -850,6 +868,7 @@ const PRODUCTS = [
         { rar:"gold",      label:"Gold Prizm /10",          p:1/200,    max:1, foilType:"refractor", runs:[10] },
         { rar:"superrare", label:"Gold Vinyl /5",           p:1/300,    max:1, foilType:"refractor", runs:[5] },
         { rar:"auto",      label:"Rookie / RPA Autograph",  p:1/6,      max:1, foilType:"refractor" },
+        { rar:"relic",     label:"Sensational Swatches",    p:1/9,      max:1, foilType:null },
         { rar:"casehit",   label:"Case Hit",                p:1/220,    max:1, foilType:"refractor", names:["Manga","Color Blast","Stained Glass"] },
         { rar:"oneofone",  label:"Black Finite 1/1",        p:1/1728,   max:1, foilType:"refractor" }
       ]}),
@@ -869,6 +888,7 @@ const PRODUCTS = [
         { rar:"rare",      label:"Numbered /25",            p:1/110,     max:1, foilType:"refractor", runs:[25] },
         { rar:"gold",      label:"Gold /10",                p:1/180,     max:1, foilType:"refractor", runs:[10] },
         { rar:"auto",      label:"Rated Rookie / RPA Auto", p:1/20,     max:1, foilType:"refractor" },
+        { rar:"relic",     label:"Jersey Kings",            p:1/14,     max:1, foilType:null },
         { rar:"casehit",   label:"Downtown!",               p:1/256,    max:1, foilType:"refractor", names:["Downtown!"] },
         { rar:"oneofone",  label:"Black Pandora 1/1",       p:1/2880,   max:1, foilType:"refractor" }
       ]}),
@@ -888,6 +908,7 @@ const PRODUCTS = [
         { rar:"rare",      label:"Orange Refractor /25",    p:1/450,    max:1, foilType:"refractor", runs:[25] },
         { rar:"superrare", label:"Black or Red /10, /5",    p:1/1400,   max:1, foilType:"refractor", runs:[10,5] },
         { rar:"auto",      label:"Rookie Chrome Auto",      p:1/22,     max:1, foilType:"refractor" },
+        { rar:"relic",     label:"Chrome Relics",           p:1/16,     max:1, foilType:null },
         { rar:"casehit",   label:"1986 Gold Chrome",        p:1/400,    max:1, foilType:"refractor", names:["1986 Gold Chrome"] },
         { rar:"oneofone",  label:"SuperFractor 1/1",        p:1/9000,   max:1, foilType:"refractor" }
       ]}),
@@ -908,6 +929,7 @@ const PRODUCTS = [
         { rar:"superrare", label:"Black Refractor /10",     p:1/132168, max:1, foilType:"refractor", runs:[10] },
         { rar:"superrare", label:"Red Refractor /5",        p:1/252321, max:1, foilType:"refractor", runs:[5] },
         { rar:"auto",      label:"Chrome Autograph",        p:1/24,     max:1, foilType:"refractor" },
+        { rar:"relic",     label:"Game-Used Relic",         p:1/20,     max:1, foilType:null },
         { rar:"casehit",   label:"Expressionists",          p:1/400,    max:1, foilType:"refractor", names:["Expressionists"] },
         { rar:"oneofone",  label:"SuperFractor 1/1",        p:1/1387764,max:1, foilType:"refractor" }
       ]}),
@@ -926,7 +948,8 @@ const PRODUCTS = [
         { rar:"gold",      label:"Gold Refractor /50",      p:1/130,     max:1, foilType:"refractor", runs:[50] },
         { rar:"rare",      label:"Orange Refractor /25",    p:1/137,    max:1, foilType:"refractor", runs:[25] },
         { rar:"superrare", label:"Refractor /10 or /5",     p:1/400,    max:1, foilType:"refractor", runs:[10,5] },
-        { rar:"auto",      label:"Autograph",               p:1/3,      max:1, foilType:"refractor" },
+        { rar:"auto",      label:"Autograph",               p:1/4,      max:1, foilType:"refractor" },
+        { rar:"relic",     label:"Finest Threads",          p:1/8,      max:1, foilType:null },
         { rar:"casehit",   label:"Finest Fusions",          p:1/300,    max:1, foilType:"refractor", names:["Finest Fusions"] },
         { rar:"oneofone",  label:"SuperFractor 1/1",        p:1/3600,   max:1, foilType:"refractor" }
       ]}),
@@ -947,6 +970,7 @@ const PRODUCTS = [
         { rar:"rare",      label:"Orange Refractor /25",    p:1/200,    max:1, foilType:"refractor", runs:[25] },
         { rar:"superrare", label:"Black /10 or Red /5",     p:1/800,    max:1, foilType:"refractor", runs:[10,5] },
         { rar:"auto",      label:"Chrome Prospect Auto",    p:1/12,     max:1, foilType:"refractor" },
+        { rar:"relic",     label:"Prospect Threads",        p:1/30,     max:1, foilType:null },
         { rar:"casehit",   label:"Bowman Heroes",           p:1/350,    max:1, foilType:"refractor", names:["Bowman Heroes"] },
         { rar:"oneofone",  label:"SuperFractor 1/1",        p:1/4500,   max:1, foilType:"refractor" }
       ]})
@@ -1017,6 +1041,9 @@ function makeLegendCard(prod){
    STATE  (persisted to localStorage)
    ============================================================ */
 const SAVE_KEY = "ripcity_save_v1";
+// multipliers from the OLD grading system — needed by load()'s migration to
+// crack/repair slabs graded before v12. MUST be declared before load() runs.
+const LEGACY_GRADE_MULT = { "10":3.5, "9":1.6, "8":0.85, "7":0.5, "6":0.3, "AA":0.2 };
 let state = load();
 
 function freshState(){
@@ -1032,6 +1059,20 @@ function load(){
       for(const c of st.collection){
         if(!c.id) c.id = st.seq++;
         else st.seq = Math.max(st.seq, c.id+1);
+        // legacy slabs never stored preGrade — reconstruct it from the old
+        // multiplier table so cracking restores the true raw value
+        if(c.grade && typeof c.preGrade!=="number"){
+          const m = LEGACY_GRADE_MULT[c.grade] || 1;
+          c.preGrade = Math.max(0.05, Math.round(c.value/m*100)/100);
+        }
+        // repair pass: raw Graham legends can't legitimately sit under $200 —
+        // ones that do were cracked while the legacy-multiplier bug ate their
+        // value (e.g. Altered $600 -> $120). Undo the 0.2x.
+        if(c.rarKey==="legend" && !c.grade && c.value < 200){
+          const fixed = Math.round(c.value*5*100)/100;
+          st.pullValue += (fixed - c.value);
+          c.value = fixed;
+        }
       }
       return st;
     }
@@ -1086,7 +1127,7 @@ function pickPlayer(poolId){ return rnd(POOLS[poolId]); }
 // Bigger k = stronger bias to commons (used for autos & top-end hits), which
 // keeps EV sane while letting the occasional star hit be worth real money.
 const HIT_BIAS = {
-  auto:4.2, oneofone:3.0, superrare:3.2, gold:3.0, rare:3.0, casehit:1.2,
+  auto:4.2, oneofone:3.0, superrare:3.2, gold:3.0, rare:3.0, casehit:1.2, relic:2.0,
   numbered:2.0, silver:1.8, parallel:0.7, insert:0.7, refractor:0.7
 };
 function pickHitPlayer(poolId, rarKey){
@@ -1173,6 +1214,11 @@ function makeCard(prod, def, used){
 
   let label = def.label;
   if(def.names && def.names.length){ label = rnd(def.names); }
+  // ~1 in 7 relics is a multicolor PATCH, serial-numbered /25 and worth real money
+  if(def.rar==="relic" && Math.random()<0.15){
+    colorName = "Patch";
+    serial = (1 + Math.floor(Math.random()*25)) + "/25";
+  }
 
   const opts = { foilType:def.foilType, label:label, serial:serial, colorName:colorName, hitClass:def.rar };
   return finishCard(prod, pl, def.rar, rar, opts);
@@ -1209,13 +1255,22 @@ function finishCard(prod, pl, rarKey, rar, opts){
 //   • Market noise adds spread plus an occasional "hot copy" spike.
 // Calibrated so a pack's EV sits a bit BELOW its price: most cards are near
 // worthless, the rare big hit chases the cost back. Ripping is -EV long term.
-const MARKET = 0.34; // global damping that sets the rip-vs-singles gap (great boxes can top 100%)
+function runMult(run){
+  if(run>=75) return Math.max(0.85, 200/run);           // /75≈2.7 /100=2 /150=1.33
+  if(run>=50) return 7.5 - (run-50)*(7.5-2.67)/25;      // cliff: /50≈7.5
+  if(run>=25) return 12  - (run-25)*(12-7.5)/25;        // /25≈12
+  if(run>=10) return 18  - (run-10)*(18-12)/15;         // /10≈18
+  if(run>=5)  return 26  - (run-5)*(26-18)/5;           // /5≈26
+  return 40;                                            // /4 down to /2
+}
+const MARKET = 0.26; // global damping that sets the rip-vs-singles gap (great boxes can top 100%)
 function cardValue(rarKey, opts, tier, prod, rookie){
   const t = tier || 1.5;
   const star = Math.pow(t, 2.1) / 6;     // t1≈0.17, t3≈1.6, t4≈3.0, t4.6≈4.1, t5≈5.1
   const sp   = Math.pow(star, 1.4);      // star-power: steep curve so commons are
                                          // cheap and only true stars carry value
                                          // (t1.5≈0.24, t2.4≈1.1, t3≈1.9, t4.6≈7.2, t5≈9.8)
+  const s26  = Math.pow(star, 2.6);      // fixed-run curve (steepest of all)
   const spx  = Math.pow(star, 2.2);      // premium curve: the gap between a
                                          // no-name and Josh Allen is a chasm
                                          // (t2.4≈1.1, t3.5≈4.5, t4.5≈20, t5≈32)
@@ -1224,19 +1279,20 @@ function cardValue(rarKey, opts, tier, prod, rookie){
   // rookie auto ≈ $10-25, an Edwards/Wembanyama auto ≈ several hundred.
   let base;
   switch(rarKey){
-    case "base":      base = 0.05 + 0.13*Math.pow(sp,1.9); break; // steep star curve: superstar base RCs are real dollars, commons stay pennies
+    case "base":      base = 0.05 + 0.17*Math.pow(sp,1.9); break; // steep star curve: superstar base RCs are real dollars, commons stay pennies
     case "insert":    base = 0.3  + 0.8*sp;   break;
     case "parallel":  base = 0.4  + 1.1*sp;   break;  // colored prizms
     case "refractor": base = 0.3  + 0.9*sp;   break;
     case "silver":    base = 0.5  + 2.2*sp;   break;  // Silver Prizm / Holo
     case "numbered":  base = 0.6  + 6*spx;    break;  // further scaled by run
-    case "rare":      base = 2    + 22*spx;   break;  // /25-ish: no-name ~$10, star ~$200
-    case "gold":      base = 3    + 30*spx;   break;  // /10
-    case "superrare": base = 4    + 45*spx;   break;  // /5
-    case "auto":      base = 3    + 35*spx;   break;  // Allen/Mahomes autos are $300+
+    case "rare":      base = 1    + 40*s26;   break;  // fixed /25: no-name ~$14, Allen ~$450
+    case "gold":      base = 1    + 62*s26;   break;  // fixed /10
+    case "superrare": base = 1    + 85*s26;   break;  // fixed /5
+    case "auto":      base = 3    + 57*spx;   break;  // Allen/Mahomes autos are $300+
     case "oneofone":  base = 30   + 220*spx;  break;  // 1/1 SuperFractor / Black
-    case "casehit":   base = 30   + 32*spx;   break;  // Manga/Downtown/Color Blast money
-    case "legend":    base = 45   + 14*sp;    break;  // Graham family chase
+    case "casehit":   base = 45   + 55*spx;   break;  // Manga/Downtown/Color Blast money
+    case "relic":     base = (opts && opts.colorName==="Patch") ? 6 + 22*spx : 1.5 + 5*spx; break; // swatches are cheap, patches are not
+    case "legend":    base = 45   + 26*sp;    break;  // Graham family chase
     default:          base = 0.15;
   }
   let v = base * ((prod && prod.valMult) || 1);
@@ -1245,14 +1301,22 @@ function cardValue(rarKey, opts, tier, prod, rookie){
   if(rookie && rarKey!=="base") v *= 1.5;
   else if(rookie) v *= 1.15;
 
-  // serial print-run scarcity — ONLY for variable-run parallels (a /199 vs a
-  // /49 of the same player). The fixed-run rarities (rare=/25, gold=/10,
-  // superrare=/5, oneofone=1/1) already price their run into the base above,
-  // so applying a serial multiplier there would double-count it.
-  if(opts && opts.serial && (rarKey==="numbered"||rarKey==="refractor"||rarKey==="silver"||rarKey==="parallel"||rarKey==="legend")){
+  // serial print-run scarcity — ONLY for variable-run parallels. Fixed-run
+  // rarities (rare=/25, gold=/10, superrare=/5, 1/1) price the run into
+  // their base. The ladder is anchored to real comps: value climbs gently
+  // down to /75, then CLIFFS at /50 and below — that's the hobby line
+  // between "numbered" and "low-numbered".
+  if(opts && opts.serial){
     const m = /\/(\d+)/.exec(opts.serial);
-    if(m){ const run = parseInt(m[1],10); v *= Math.min(6, Math.max(1, 200/run)); }
-    if(rarKey==="legend" && opts.serial==="1/1") v *= 2.5;  // the family grail
+    if(m){
+      const run = parseInt(m[1],10);
+      if(rarKey==="numbered"||rarKey==="refractor"||rarKey==="silver"||rarKey==="parallel"){
+        v *= runMult(run);
+      } else if(rarKey==="legend"){
+        v *= Math.min(6, Math.max(1, 200/run));
+        if(opts.serial==="1/1") v *= 2.5;  // the family grail
+      }
+    }
   }
 
   // market noise + occasional outlier "hot" copy
@@ -1538,7 +1602,8 @@ function gradeCard(id){
 function crackSlab(id){
   const c = state.collection.find(x=>x.id===id);
   if(!c || !c.grade) return;
-  const mult = (GRADES.find(g=>g.g===c.grade)||{mult:1}).mult;
+  const mult = (GRADES.find(g=>g.g===c.grade)||{}).mult
+            || LEGACY_GRADE_MULT[c.grade] || 1;
   const raw = (typeof c.preGrade==="number") ? c.preGrade
             : Math.max(0.05, Math.round(c.value/mult*100)/100);
   state.pullValue += (raw - c.value);
@@ -1824,6 +1889,9 @@ function cardFrontHTML(c){
         '<i class="rail"></i>'+
         '<div class="photowrap"><div class="photo" data-player="'+esc(c.photoKey||c.name)+'" data-sport="'+esc(c.sport||"")+'" style="background-image:radial-gradient(130% 95% at 50% 22%,'+tc[0]+' 0%,'+tc[1]+' 80%)"><span class="initials">'+initials(c.name)+'</span></div></div>'+
         '<div class="bgfx"></div>'+
+        (c.rarKey==="relic"
+          ? '<div class="relicswatch'+(c.colorName==="Patch"?" patch":"")+'" style="--sw1:'+tc[0]+';--sw2:'+tc[1]+'"><i></i></div>'
+          : '')+
         '<div class="topline">'+
           (c.legend
             ? '<span class="bmark" style="color:#39ffa0"><small>RIP CITY</small>LEGENDS</span>'
