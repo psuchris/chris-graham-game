@@ -611,6 +611,113 @@
     0%,100%{ box-shadow:0 0 0 2.5px #d4af37, 0 0 24px rgba(46,125,50,.6); }
     50%    { box-shadow:0 0 0 3.5px #d4af37, 0 0 58px rgba(212,175,55,.95), 0 0 100px rgba(46,125,50,.7); }
   }
+
+  /* == ⚡ PASSING THE TORCH — Allen × Kelly. The mother of all cards. == */
+  @property --torchang{ syntax:"<angle>"; initial-value:0deg; inherits:false; }
+  .card.torchcard .front{
+    display:block; color:#fff; overflow:hidden;
+    background:
+      radial-gradient(80% 50% at 18% 12%, rgba(198,12,48,.4), transparent 60%),
+      radial-gradient(90% 60% at 85% 75%, rgba(0,51,141,.55), transparent 65%),
+      radial-gradient(55% 35% at 62% 30%, rgba(127,208,255,.16), transparent 60%),
+      linear-gradient(160deg,#04060f,#010209 70%);
+    box-shadow: inset 0 0 0 3px #ffd75e, inset 0 0 0 6px #000a24,
+                inset 0 0 0 7.5px rgba(255,215,94,.55), inset 0 0 0 13px rgba(127,208,255,.08);
+  }
+  .torchcard .front .stars{ position:absolute; inset:-25%; pointer-events:none; z-index:0;
+    background-image:radial-gradient(rgba(255,255,255,.95) .6px, transparent 1px); }
+  .torchcard .front .stars.s1{ background-size:23px 23px; opacity:.5;
+    animation:stardrift 70s linear infinite, twinkle 3.1s ease-in-out infinite; }
+  .torchcard .front .stars.s2{ background-size:43px 43px; opacity:.35;
+    animation:stardrift 110s linear infinite reverse, twinkle 4.6s .8s ease-in-out infinite; }
+  .torchcard .front .stars.s3{ background-size:71px 71px; opacity:.45;
+    background-image:radial-gradient(rgba(127,208,255,.95) .9px, transparent 1.4px);
+    animation:stardrift 150s linear infinite, twinkle 5.4s 1.6s ease-in-out infinite; }
+  @keyframes stardrift{ to{ transform:translate3d(7%,5%,0); } }
+  @keyframes twinkle{ 0%,100%{ opacity:.25; } 50%{ opacity:.6; } }
+  .torchcard .front .nebula{ position:absolute; inset:-30%; z-index:0; pointer-events:none; mix-blend-mode:screen;
+    background:conic-gradient(from 200deg at 55% 40%, transparent,
+      rgba(198,12,48,.20) 12%, transparent 30%, rgba(0,82,204,.26) 45%,
+      transparent 62%, rgba(255,215,94,.12) 78%, transparent);
+    animation:nebulaspin 26s linear infinite; }
+  @keyframes nebulaspin{ to{ transform:rotate(360deg); } }
+  .torchcard .front .topline{ z-index:6; }
+  .card.torchcard .front .photowrap.duo{ position:absolute; top:8.5%; left:6.5%; right:6.5%; height:44%;
+    padding:2.5px; border-radius:9px; z-index:2;
+    background:linear-gradient(135deg,#ffd75e,#fff7d6 22%,#C60C30 48%,#00338D 74%,#ffd75e); }
+  .torchcard .front .photowrap.duo .photo{ position:absolute; inset:2.5px; border-radius:7px;
+    background-size:cover; background-position:center 15%; background-repeat:no-repeat;
+    display:flex; align-items:center; justify-content:center; }
+  .torchcard .front .photowrap.duo .photo.duoa{
+    background-color:#001a4a;
+    background-image:radial-gradient(130% 95% at 50% 22%, #00338D 0%, #001536 80%);
+    clip-path:polygon(0 0, 61% 0, 39% 100%, 0 100%); }
+  .torchcard .front .photowrap.duo .photo.duob{
+    background-color:#400512;
+    background-image:radial-gradient(130% 95% at 50% 22%, #C60C30 0%, #37040f 80%);
+    clip-path:polygon(61% 0, 100% 0, 100% 100%, 39% 100%); }
+  .torchcard .front .photowrap.duo .bolt{ position:absolute; top:-3%; bottom:-3%; left:36%; width:26%; z-index:3;
+    background:linear-gradient(180deg,#fff7d6,#ffd75e 55%,#f5a623);
+    clip-path:polygon(56% 0, 70% 0, 50% 44%, 62% 44%, 32% 100%, 44% 100%, 48% 56%, 36% 56%);
+    filter:drop-shadow(0 0 9px rgba(255,215,94,.95));
+    animation:boltpulse 2.2s ease-in-out infinite; }
+  @keyframes boltpulse{ 0%,100%{ filter:drop-shadow(0 0 6px rgba(255,215,94,.7)); }
+    50%{ filter:drop-shadow(0 0 16px rgba(255,247,214,1)); } }
+  .torchcard .front .signature{ position:absolute; z-index:5; pointer-events:none;
+    font-family:"Snell Roundhand","Savoye LET","Brush Script MT","Segoe Script",cursive;
+    font-style:italic; font-size:20px; white-space:nowrap; opacity:.96; }
+  .torchcard .front .signature{ bottom:auto; }
+  .torchcard .front .signature.siga{ left:7%; right:auto; top:41%; transform:rotate(-8deg); color:#ffd75e;
+    text-shadow:0 0 12px rgba(255,215,94,.9), 0 2px 4px rgba(0,0,0,.85); }
+  .torchcard .front .signature.sigb{ right:6%; left:auto; text-align:right; top:46.5%; transform:rotate(-4deg); color:#dbe9ff;
+    text-shadow:0 0 12px rgba(127,208,255,.9), 0 2px 4px rgba(0,0,0,.85); }
+  .swipewrap .torchcard .front .signature{ font-size:31px; }
+  .torchcard .front .patchrow{ position:absolute; top:56.5%; left:6.5%; right:6.5%; height:13.5%;
+    display:flex; gap:6px; align-items:stretch; z-index:4; }
+  .torchcard .front .tpatch{ flex:1; border:2px dashed rgba(255,255,255,.6); border-radius:6px;
+    box-shadow:inset 0 2px 8px rgba(0,0,0,.55), 0 3px 10px rgba(0,0,0,.5); position:relative; }
+  .torchcard .front .tpatch.pa{
+    background:repeating-linear-gradient(45deg, #C60C30 0 3px, #8c0a23 3px 6px, #f0f0f0 6px 8px); }
+  .torchcard .front .tpatch.pb{
+    background:repeating-linear-gradient(45deg, #00338D 0 3px, #002263 3px 6px, #f0f0f0 6px 8px); }
+  .torchcard .front .tpatch i{ position:absolute; inset:2px; border:1px dashed rgba(255,255,255,.35); border-radius:4px; }
+  .torchcard .front .tmedal{ width:17%; align-self:center; aspect-ratio:1; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    background:radial-gradient(circle at 35% 30%, #fff7d6, #ffd75e 45%, #b8860b);
+    color:#241a00; font-weight:900; font-size:13px; border:2px solid #fff3c4;
+    box-shadow:0 0 18px rgba(255,215,94,.8), inset 0 -3px 6px rgba(120,80,10,.5);
+    animation:medalglow 2.6s ease-in-out infinite; }
+  @keyframes medalglow{ 0%,100%{ box-shadow:0 0 12px rgba(255,215,94,.6), inset 0 -3px 6px rgba(120,80,10,.5); }
+    50%{ box-shadow:0 0 30px rgba(255,215,94,1), inset 0 -3px 6px rgba(120,80,10,.5); } }
+  .card.torchcard .front .nameplate{ position:absolute; left:6.5%; right:6.5%; bottom:11.5%; z-index:5;
+    padding:5px 8px 6px; text-align:center; clip-path:none;
+    background:linear-gradient(90deg,#8c0a23,#000a24 52%,#00256b);
+    border:1px solid #ffd75e; border-bottom:3px solid #ffd75e;
+    box-shadow:inset 0 1.5px 0 rgba(255,255,255,.3), 0 2px 12px rgba(0,0,0,.6); }
+  .card.torchcard .front .np-name{ font-weight:900; font-size:14.5px; font-style:italic;
+    letter-spacing:2px; color:#fff3c4; text-shadow:0 1px 3px rgba(0,0,0,.8);
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .card.torchcard .front .np-sub{ font-size:7.5px; letter-spacing:1.8px; color:#9fb9ff; margin-top:2px; }
+  .card.torchcard .front .rarline{ position:absolute; left:6.5%; right:6.5%; bottom:3.6%; z-index:5;
+    text-align:center; font-size:8.5px; font-weight:900; letter-spacing:2.5px;
+    color:#ffd75e; text-shadow:0 0 8px rgba(255,215,94,.6); }
+  .torchcard .front .photo .initials{ font-size:34px; font-weight:900; color:rgba(255,255,255,.9);
+    text-shadow:0 2px 10px rgba(0,0,0,.5); }
+  .torchcard .front .photo.duoa .initials{ transform:translateX(-56%); }
+  .torchcard .front .photo.duob .initials{ transform:translateX(56%); }
+  /* rotating aurora ring (CSS @property tech — degrades to static elsewhere) */
+  .card.torchcard .front::after{
+    background:conic-gradient(from var(--torchang), #C60C30, #ffd75e, #ffffff, #00338D, #7fd0ff, #C60C30);
+    animation:torchspin 5s linear infinite; filter:none;
+  }
+  @keyframes torchspin{ to{ --torchang:360deg; } }
+  .card.torchcard.flipped{ animation:torchaura 1.9s ease-in-out infinite; }
+  @keyframes torchaura{
+    0%,100%{ box-shadow:0 0 0 2.5px #ffd75e, 0 0 30px rgba(198,12,48,.6), 0 0 60px rgba(0,51,141,.5); }
+    50%    { box-shadow:0 0 0 3.5px #fff7d6, 0 0 72px rgba(255,215,94,1), 0 0 130px rgba(127,208,255,.8); }
+  }
+  .swipewrap .card.torchcard .front .np-name{ font-size:21px; }
+  .swipewrap .card.torchcard .front .tmedal{ font-size:19px; }
   /* Foil rarity = animated BORDER ring, not a sheen over the whole card.
      The ring is drawn with a padding+mask trick so only the frame shows. */
   .card.refractor .front::after,
@@ -875,7 +982,7 @@
 
   <div class="footer">
     Simulation only — no real cards, money, or purchases. Odds modeled on published hobby-pack configurations and are approximate.
-    <div style="margin-top:4px;opacity:.7">build v26</div>
+    <div style="margin-top:4px;opacity:.7">build v27</div>
   </div>
 </div>
 
@@ -1697,6 +1804,21 @@ function openPack(prod, fmt){
     cards[pi] = pca;
   }
 
+  // ⚡ PASSING THE TORCH — Allen × Kelly dual patch dual auto 1/1.
+  // NT Football's crown. First NT FB box on this save; 1:2,500 after.
+  if(prod.id==="nt_fb" && (!state.torchGolden || chance(1/2500))){
+    state.torchGolden = "claimed";
+    const torch = finishCard(prod, ["Josh Allen / Jim Kelly","BUF","QB",5], "oneofone", RAR.oneofone,
+      { foilType:"refractor", label:"Dual Patch Dual Autograph", serial:"1/1" });
+    torch.auto = true; torch.torch = true;
+    torch.tcOverride = ["#C60C30","#00338D"];
+    torch.photoKey = "Josh Allen";
+    torch.value = Math.round((40000 + Math.random()*35000)*100)/100;
+    let ti = 0;
+    for(let i=1;i<cards.length;i++) if(cards[i].value < cards[ti].value) ti = i;
+    cards[ti] = torch;
+  }
+
   return cards;
 }
 
@@ -2038,6 +2160,7 @@ function registerPulls(prod, cards){
       if(!state.best || c.value > state.best.value){ state.best = sc; }
       if(c.mamba) setTimeout(()=>toast("🐍 MAMBA OUT. The Logoman is real."), 900);
       if(c.pca) setTimeout(()=>toast("🌿 OUT OF THE IVY. The Wrigley 1/1."), 900);
+      if(c.torch) setTimeout(()=>toast("⚡ THE TORCH IS PASSED. Allen × Kelly, one of one, forever."), 900);
     }
   }
   // Keep the binder (and localStorage) healthy: retain the 600 best hits.
@@ -2052,7 +2175,7 @@ function slimCard(c){
            rarKey:c.rarKey, rarName:c.rarName, color:c.color, label:c.label, design:c.design,
            serial:c.serial, colorName:c.colorName, auto:c.auto, value:c.value,
            firstBowman:c.firstBowman, rookie:c.rookie,
-           photoKey:c.photoKey, tcOverride:c.tcOverride, legend:c.legend, mamba:c.mamba, pca:c.pca };
+           photoKey:c.photoKey, tcOverride:c.tcOverride, legend:c.legend, mamba:c.mamba, pca:c.pca, torch:c.torch };
 }
 
 /* ============================================================
@@ -2121,8 +2244,8 @@ function gradeCard(id){
     '</div>'
   );
   setTimeout(()=>{
-    const g = (c.mamba || c.pca) ? GRADES[0] : rollGrade();   // the grails only gem
-    const mult = c.mamba ? 6 : (c.pca ? 5 : g.mult);          // and the market goes insane
+    const g = (c.mamba || c.pca || c.torch) ? GRADES[0] : rollGrade();   // the grails only gem
+    const mult = c.mamba ? 6 : ((c.pca || c.torch) ? 5 : g.mult);        // and the market goes insane
     const old = c.value;
     c.preGrade = old;   // kept so a bad slab can be cracked back to raw
     c.value = Math.max(0.05, Math.round(old*mult*100)/100);
@@ -2355,6 +2478,39 @@ function cardGrad(c){
   return "radial-gradient(130% 95% at 50% 22%,"+t[0]+" 0%,"+t[1]+" 80%)";
 }
 
+/* ⚡ PASSING THE TORCH — fully bespoke card: twin windows split by a bolt,
+   twin patches, twin inks, animated nebula + starfield parallax. */
+function torchCardHTML(c){
+  return '<div class="card rt-oneofone torchcard refractor bighit" data-v="'+c.value+'">'+
+    '<div class="inner">'+
+      '<div class="face back"><span>RIP</span></div>'+
+      '<div class="face front">'+
+        '<i class="stars s1"></i><i class="stars s2"></i><i class="stars s3"></i>'+
+        '<i class="nebula"></i>'+
+        '<div class="topline"><span class="bmark" style="color:#ffd75e"><small>NAT. TREASURES</small>PASSING THE TORCH</span>'+
+        '<span class="ser" style="color:#ffd75e">#1/1</span></div>'+
+        '<div class="photowrap duo">'+
+          '<div class="photo duoa" data-player="Josh Allen" data-sport="football"><span class="initials">JA</span></div>'+
+          '<div class="photo duob" data-player="Jim Kelly" data-sport="football"><span class="initials">JK</span></div>'+
+          '<i class="bolt"></i>'+
+        '</div>'+
+        '<div class="signature siga">Josh Allen</div>'+
+        '<div class="signature sigb">Jim Kelly</div>'+
+        '<div class="patchrow">'+
+          '<div class="tpatch pa"><i></i></div>'+
+          '<div class="tmedal">1/1</div>'+
+          '<div class="tpatch pb"><i></i></div>'+
+        '</div>'+
+        '<div class="nameplate"><div class="np-name">ALLEN × KELLY</div>'+
+        '<div class="np-sub">BUFFALO · DUAL PATCH · DUAL AUTOGRAPH</div></div>'+
+        '<div class="rarline">THE MOTHER OF ALL CARDS</div>'+
+        '<div class="glare"></div>'+
+        '<div class="hitflag">✍️</div>'+
+      '</div>'+
+    '</div>'+
+  '</div>';
+}
+
 /* Brand wordmark + tagline shown on the card face (drives the visual design) */
 const BRANDS = {
   prizm:   { mark:"PRIZM",  sub:"PANINI" },
@@ -2420,6 +2576,7 @@ function autoSigGold(c){
   return false;
 }
 function cardFrontHTML(c){
+  if(c.torch) return torchCardHTML(c);
   const design = c.design || "generic";
   let cls = "card br-"+design+" rt-"+(c.rarKey||"base");
   if(c.foilType==="holo") cls += " holo";
@@ -2841,6 +2998,9 @@ function showOdds(prod, fmt){
       (fmt.excl.runs?' <span style="color:var(--dim)">('+fmt.excl.runs.map(x=>"/"+x).join(", ")+')</span>':'')+
       ' <b style="color:var(--accent)">'+fmt.label+' Exclusive</b></td><td class="r">'+odds1in(fmt.excl.p)+' packs</td></tr>';
   }
+  if(prod.id==="nt_fb"){
+    rows += '<tr><td><span class="swatch" style="background:#ffd75e"></span>⚡ Passing the Torch — Allen × Kelly Dual Patch Dual Auto 1/1 <span style="color:var(--dim)">(auto-gems)</span></td><td class="r">1 : 2,500 boxes</td></tr>';
+  }
   if(prod.id==="dynasty_bb"){
     rows += '<tr><td><span class="swatch" style="background:#2e7d32"></span>🌿 Wrigley Ivy Autograph 1/1 — PCA <span style="color:var(--dim)">(auto-gems a 10)</span></td><td class="r">1 : 800 boxes</td></tr>';
   }
@@ -2964,7 +3124,7 @@ function renderCollBody(bg){
   if(bc) bc.onclick = ()=>{ bulkOpen = !bulkOpen; renderCollBody(bg); };
   const ba = body.querySelector("#bulkAmt"), bgo = body.querySelector("#bulkGo");
   if(ba && bgo){
-    const bulkMatches = ()=> state.collection.filter(c=> c.value < (parseFloat(ba.value)||0) && !c.grade && c.rarKey!=="legend" && !c.mamba && !c.pca && !c.pinned);
+    const bulkMatches = ()=> state.collection.filter(c=> c.value < (parseFloat(ba.value)||0) && !c.grade && c.rarKey!=="legend" && !c.mamba && !c.pca && !c.torch && !c.pinned);
     const refresh = ()=>{
       const m = bulkMatches();
       bgo.textContent = m.length ? ("Sell "+m.length+" cards · "+money(m.reduce((s,c)=>s+c.value,0))) : "Nothing under that";
