@@ -257,9 +257,10 @@
   .swipewrap .card .front .rarline{ font-size:10px; }
   .swipewrap .card .front .photo .initials{ font-size:60px; }
 
-  /* ---- Brand design system -------------------------------------------------
-     Each brand reshapes the photo window & nameplate (clip-path) and lays its
-     own foil pattern (.bgfx) over the face — like real product lines.       */
+  /* ---- Brand design system v3 ----------------------------------------------
+     Each product line owns its base identity — BRAND first, team second.
+     The type layer further down tints parallels and breaks the frame for
+     inserts/case hits. Donruss ≠ Prizm ≠ Chrome at a glance.              */
   .card .front .bgfx{ position:absolute; inset:0; z-index:2; pointer-events:none; }
   .rc{ display:inline-block; font-size:8px; font-weight:900; line-height:1; vertical-align:middle; font-style:normal;
        background:linear-gradient(180deg,#ffe06a,#f5a623); color:#231600; padding:2px 3px;
@@ -271,67 +272,101 @@
        box-shadow:0 1px 5px rgba(0,0,0,.6); border:1px solid rgba(255,255,255,.5); }
   .fbshield i{ font-style:normal; font-size:5px; vertical-align:top; }
 
-  /* PANINI PRIZM — notched chrome window + prizm sparkle */
+  /* == PANINI PRIZM — graphite + silver chrome slash, metal nameplate == */
+  .br-prizm .front{ background:
+      linear-gradient(115deg, transparent 30%, rgba(230,236,248,.14) 42%, transparent 60%),
+      linear-gradient(160deg,#20242e,#0b0d13 75%); }
+  .br-prizm .front .fbg{ opacity:1; background:
+      linear-gradient(115deg, transparent 55%, rgba(232,236,244,.9) 55.4%, rgba(232,236,244,.9) 57%, transparent 57.5%),
+      linear-gradient(115deg, transparent 60%, var(--tc) 60.4%, var(--tc) 61.2%, transparent 61.7%); }
+  .br-prizm .front .bgfx{ opacity:.25; mix-blend-mode:screen;
+      background-image:radial-gradient(rgba(255,255,255,.5) .7px, transparent 1.2px); background-size:7px 7px; }
   .br-prizm .front .photowrap, .br-prizm .front .photowrap .photo{
-    clip-path:polygon(0 0, 91% 0, 100% 8%, 100% 100%, 9% 100%, 0 92%); }
-  .br-prizm .front .bgfx{ opacity:.3; mix-blend-mode:screen;
-    background-image:radial-gradient(rgba(255,255,255,.55) .7px, transparent 1.2px); background-size:7px 7px; }
+      clip-path:polygon(0 0, 91% 0, 100% 8%, 100% 100%, 9% 100%, 0 92%); }
+  .br-prizm .front .nameplate{ background:linear-gradient(115deg,#f2f5fa,#b9c2d4 70%,#8f9ab0);
+      clip-path:polygon(0 0,100% 0,96% 100%,0 100%); border-bottom:2.5px solid var(--tc); }
+  .br-prizm .front .np-name{ color:#12161f; text-shadow:none; }
+  .br-prizm .front .np-sub{ color:#3c465c; text-shadow:none; }
   .br-prizm .front .bmark{ color:#eef2fb; }
 
-  /* DONRUSS OPTIC — slashed window + holo dots */
+  /* == DONRUSS OPTIC — jet black, racing stripes, skewed white name block == */
+  .br-optic .front{ background:linear-gradient(160deg,#101014,#050507); }
+  .br-optic .front .fbg{ opacity:1; background:
+      linear-gradient(#ff7b1a,#ff7b1a) top 6% right 5%/2.8% 88% no-repeat,
+      linear-gradient(#7a1fff,#7a1fff) top 6% right 9.5%/1.4% 88% no-repeat; }
+  .br-optic .front .bgfx{ opacity:.4; mix-blend-mode:screen;
+      background-image:radial-gradient(rgba(176,108,255,.35) 1px, transparent 1.7px); background-size:9px 9px; }
+  .br-optic .front .photowrap{ right:13%; }
   .br-optic .front .photowrap, .br-optic .front .photowrap .photo{
-    clip-path:polygon(0 0, 100% 0, 100% 87%, 0 100%); }
-  .br-optic .front .nameplate{ clip-path:polygon(5% 0, 100% 0, 100% 100%, 0 100%); }
-  .br-optic .front .bgfx{ opacity:.5; mix-blend-mode:screen;
-    background-image:
-      repeating-linear-gradient(115deg, rgba(255,255,255,.06) 0 1px, transparent 1px 7px),
-      radial-gradient(rgba(176,108,255,.4) 1px, transparent 1.7px);
-    background-size:auto, 9px 9px; }
-  .br-optic .front .bmark{ color:#e9dcff; }
-  .br-optic .front .bmark small{ color:#ff7b1a; }
+      clip-path:polygon(0 0,100% 0,100% 88%,0 100%); }
+  .br-optic .front .nameplate{ background:#f4f4f6; clip-path:polygon(0 0,100% 0,100% 100%,4% 100%);
+      transform:skewX(-6deg); border-bottom:none; border-left:5px solid #ff7b1a; }
+  .br-optic .front .np-name{ color:#0d0d10; text-shadow:none; }
+  .br-optic .front .np-sub{ color:#56565e; text-shadow:none; }
+  .br-optic .front .bmark{ color:#ff9b4d; }
+  .br-optic .front .bmark small{ color:#b9a1ff; }
 
-  /* TOPPS CHROME — swoosh window + chrome streaks */
+  /* == TOPPS CHROME (BB) — bright silver-white chrome, navy plate == */
+  .br-chrome .front{ background:linear-gradient(160deg,#eef1f5,#c3cbd6 60%,#9aa5b5); }
+  .br-chrome .front .fbg{ opacity:1; background:
+      linear-gradient(115deg, transparent 58%, rgba(255,255,255,.85) 58.4%, rgba(255,255,255,.85) 60%, transparent 60.6%),
+      radial-gradient(120% 60% at 50% -5%, rgba(255,255,255,.7), transparent 55%); }
+  .br-chrome .front .bgfx{ opacity:.35;
+      background-image:repeating-linear-gradient(90deg, rgba(120,135,160,.25) 0 1px, transparent 1px 5px); }
   .br-chrome .front .photowrap, .br-chrome .front .photowrap .photo{
-    border-radius:7px 7px 42% 7px / 7px 7px 16% 7px; }
-  .br-chrome .front .nameplate{ clip-path:none; border-radius:5px 16px 16px 5px; }
-  .br-chrome .front .bgfx{ opacity:.55; mix-blend-mode:screen;
-    background-image:
-      linear-gradient(180deg, rgba(255,255,255,.2), transparent 36%),
-      repeating-linear-gradient(90deg, rgba(255,255,255,.06) 0 1px, transparent 1px 5px); }
-  .br-chrome .front .bmark{ color:#dcefff; }
-  .br-chrome .front .bmark small{ color:#ff5d8f; }
+      border-radius:7px 7px 40% 7px / 7px 7px 15% 7px; }
+  .br-chrome .front .nameplate{ background:linear-gradient(115deg,#12305e,#0a1e3c);
+      border-radius:5px 14px 14px 5px; clip-path:none; border-bottom:2px solid var(--tc); }
+  .br-chrome .front .topline{ text-shadow:none; }
+  .br-chrome .front .topline .bmark{ color:#132a4c; }
+  .br-chrome .front .topline .bmark small{ color:#c0392b; }
+  .br-chrome .front .topline .ser.yr{ color:#44506a; }
+  .br-chrome.rt-base .front .rarline{ color:#5a6a86; text-shadow:none; }
 
-  /* TOPPS FINEST — beveled hex window + teal tech lines */
-  .br-finest .front .photowrap, .br-finest .front .photowrap .photo{
-    clip-path:polygon(8% 0, 92% 0, 100% 9%, 100% 91%, 92% 100%, 8% 100%, 0 91%, 0 9%); }
-  .br-finest .front .nameplate{ clip-path:polygon(0 0, 100% 0, 93% 100%, 7% 100%); text-align:center; }
-  .br-finest .front .bgfx{ opacity:.6; mix-blend-mode:screen;
-    background-image:
-      radial-gradient(130% 55% at 50% -8%, rgba(0,224,212,.3), transparent 60%),
-      repeating-linear-gradient(90deg, rgba(0,224,212,.13) 0 1px, transparent 1px 6px); }
-  .br-finest .front .bmark{ color:#9bfaf0; letter-spacing:3px; }
-  .br-finest .front .bmark small{ color:#7fd9d2; }
-
-  /* TOPPS CHROME FOOTBALL — pennant-cut window + yard-line grid */
-  .br-chromefb .front .photowrap, .br-chromefb .front .photowrap .photo{
-    clip-path:polygon(0 4%, 46% 0, 54% 0, 100% 4%, 100% 100%, 54% 96%, 46% 100%, 0 96%); }
-  .br-chromefb .front .nameplate{ clip-path:polygon(3% 0, 97% 0, 100% 50%, 97% 100%, 3% 100%, 0 50%); text-align:center; }
+  /* == TOPPS CHROME FOOTBALL — carbon, pennant window, red/navy shield == */
+  .br-chromefb .front{ background:linear-gradient(160deg,#1d0f14,#0b0d16 70%); }
+  .br-chromefb .front .fbg{ opacity:.9; background:
+      linear-gradient(115deg, transparent 56%, rgba(200,16,46,.75) 56.4%, rgba(200,16,46,.75) 57.4%, transparent 58%); }
   .br-chromefb .front .bgfx{ opacity:.5; mix-blend-mode:screen;
     background-image:
       repeating-linear-gradient(0deg, rgba(255,255,255,.09) 0 1px, transparent 1px 14px),
-      repeating-linear-gradient(90deg, rgba(200,16,46,.16) 0 2px, transparent 2px 26px),
-      linear-gradient(180deg, rgba(255,255,255,.16), transparent 40%); }
+      repeating-linear-gradient(90deg, rgba(200,16,46,.16) 0 2px, transparent 2px 26px); }
+  .br-chromefb .front .photowrap, .br-chromefb .front .photowrap .photo{
+      clip-path:polygon(0 4%, 46% 0, 54% 0, 100% 4%, 100% 100%, 54% 96%, 46% 100%, 0 96%); }
+  .br-chromefb .front .nameplate{ background:linear-gradient(90deg,#c8102e,#7a0a1e 55%,#0b2265);
+      clip-path:polygon(3% 0,97% 0,100% 50%,97% 100%,3% 100%,0 50%); text-align:center; border-bottom:none; }
   .br-chromefb .front .bmark{ color:#ffd9de; }
   .br-chromefb .front .bmark small{ color:#9db8f0; }
 
-  /* BOWMAN CHROME — clean frame, blue weave, blocky left-bar nameplate */
-  .br-bowman .front .nameplate{ clip-path:none; border-left:5px solid var(--ac); }
-  .br-bowman .front .bgfx{ opacity:.55; mix-blend-mode:screen;
-    background-image:
-      radial-gradient(130% 65% at 50% -8%, rgba(54,118,238,.4), transparent 62%),
-      repeating-linear-gradient(125deg, rgba(255,255,255,.07) 0 1px, transparent 1px 8px); }
-  .br-bowman .front .bmark{ color:#dbe7ff; }
-  .br-bowman .front .bmark small{ color:#ffcb3d; }
+  /* == TOPPS FINEST — faceted black-teal, neon frame, centered plate == */
+  .br-finest .front{ background:
+      repeating-conic-gradient(from 25deg at 70% 18%, rgba(0,224,212,.10) 0 12deg, transparent 12deg 30deg),
+      linear-gradient(160deg,#0c2224,#040d12); }
+  .br-finest .front .fbg{ opacity:1; background:
+      linear-gradient(115deg, transparent 52%, rgba(0,224,212,.5) 52.4%, rgba(0,224,212,.5) 53.4%, transparent 54%); }
+  .br-finest .front .bgfx{ opacity:.4; mix-blend-mode:screen;
+      background-image:repeating-linear-gradient(90deg, rgba(0,224,212,.12) 0 1px, transparent 1px 6px); }
+  .br-finest .front .photowrap{ padding:2.5px; background:linear-gradient(135deg,#00e0d4,#eafffe 45%,#00e0d4); }
+  .br-finest .front .photowrap, .br-finest .front .photowrap .photo{
+      clip-path:polygon(8% 0, 92% 0, 100% 9%, 100% 91%, 92% 100%, 8% 100%, 0 91%, 0 9%); }
+  .br-finest .front .nameplate{ background:linear-gradient(115deg,#062c2c,#0b3c3a);
+      clip-path:polygon(0 0,100% 0,93% 100%,7% 100%); text-align:center; border-bottom:2px solid #00e0d4; }
+  .br-finest .front .bmark{ color:#9bfaf0; letter-spacing:3px; }
+  .br-finest .front .bmark small{ color:#7fd9d2; }
+
+  /* == BOWMAN CHROME — clean paper-white, blue frame, red corner == */
+  .br-bowman .front{ background:linear-gradient(165deg,#f7f8fa,#dde3ec); }
+  .br-bowman .front .fbg{ opacity:1; background:
+      linear-gradient(135deg, #d8232a 0 11%, transparent 11.5%) top left/40% 40% no-repeat,
+      linear-gradient(160deg, rgba(30,77,216,.10), transparent 50%); }
+  .br-bowman .front .bgfx{ opacity:0; }
+  .br-bowman .front .photowrap{ padding:2.5px; background:linear-gradient(135deg,#1e4dd8,#7aa0ff 50%,#1e4dd8); }
+  .br-bowman .front .nameplate{ background:#101726; clip-path:none; border-left:5px solid #1e4dd8; border-bottom:2px solid var(--tc); }
+  .br-bowman .front .topline{ text-shadow:none; }
+  .br-bowman .front .topline .bmark{ color:#152a68; }
+  .br-bowman .front .topline .bmark small{ color:#d8232a; }
+  .br-bowman .front .topline .ser.yr{ color:#44506a; }
+  .br-bowman.rt-base .front .rarline{ color:#5a6a86; text-shadow:none; }
   /* Foil rarity = animated BORDER ring, not a sheen over the whole card.
      The ring is drawn with a padding+mask trick so only the frame shows. */
   .card.refractor .front::after,
@@ -352,6 +387,60 @@
     background-size:400% 400%; animation:borderflow 6s linear infinite;
   }
   @keyframes borderflow{ 0%{ background-position:0% 50%;} 100%{ background-position:400% 50%;} }
+
+  /* ---- Card TYPE layer -----------------------------------------------------
+     Base = clean brand card. Parallels = the SAME brand design tinted by
+     their parallel color. Inserts & case hits = their own loud layout.    */
+  .card.rt-parallel .front::before, .card.rt-silver .front::before,
+  .card.rt-refractor .front::before, .card.rt-numbered .front::before,
+  .card.rt-rare .front::before, .card.rt-gold .front::before,
+  .card.rt-superrare .front::before{
+    content:""; position:absolute; inset:5px; z-index:2; pointer-events:none;
+    background:linear-gradient(160deg, var(--ac) 0%, transparent 35% 65%, var(--ac) 100%);
+    opacity:.28; mix-blend-mode:screen;
+  }
+  .card.rt-rare .front::before, .card.rt-gold .front::before, .card.rt-superrare .front::before{ opacity:.45; }
+  .card .front .rarline{ font-size:9px; }
+  .swipewrap .card .front .rarline{ font-size:12px; }
+
+  /* inserts & case hits: full-bleed art card + diagonal title banner */
+  .card.rt-insert .front .rail, .card.rt-casehit .front .rail{ display:none; }
+  .card.rt-insert .front .fbg, .card.rt-casehit .front .fbg{ display:none; }
+  .card.rt-insert .front .photowrap, .card.rt-casehit .front .photowrap{
+    top:4.5%; left:4.5%; right:4.5%; height:63%; clip-path:none; border-radius:6px; padding:2px;
+    background:linear-gradient(135deg, var(--ac), rgba(255,255,255,.9) 50%, var(--ac)); }
+  .card.rt-insert .front .photowrap .photo, .card.rt-casehit .front .photowrap .photo{ clip-path:none; border-radius:5px; }
+  .card.rt-insert .front .nameplate, .card.rt-casehit .front .nameplate{
+    left:4.5%; right:4.5%; bottom:4%; background:rgba(6,8,14,.74); clip-path:none;
+    transform:none; border:1px solid var(--ac); border-left-width:1px; border-radius:6px; text-align:center; }
+  .card.rt-insert .front .np-name, .card.rt-casehit .front .np-name{ color:#fff; text-shadow:0 1px 3px rgba(0,0,0,.8); }
+  .card.rt-insert .front .np-sub, .card.rt-casehit .front .np-sub{ color:rgba(255,255,255,.78); text-shadow:none; }
+  .card.rt-insert .front .topline .bmark, .card.rt-casehit .front .topline .bmark{ color:#fff; text-shadow:0 1px 3px rgba(0,0,0,.7); }
+  .card.rt-insert .front .rarline, .card.rt-casehit .front .rarline{
+    left:-6%; right:-6%; bottom:24.5%; transform:rotate(-5deg);
+    font-size:12px; text-align:center; padding:4px 0; letter-spacing:2.5px;
+    background:linear-gradient(90deg, transparent, rgba(4,6,10,.85) 18% 82%, transparent);
+    color:var(--ac); overflow:visible; z-index:4; text-shadow:none;
+  }
+  .swipewrap .card.rt-insert .front .rarline, .swipewrap .card.rt-casehit .front .rarline{ font-size:16px; }
+  /* per-product insert art palettes (brand colors, no team colors) */
+  .br-prizm.rt-insert .front{ background:linear-gradient(150deg,#3b1e78,#c026a6 60%,#1c0f38); }
+  .br-optic.rt-insert .front{ background:linear-gradient(150deg,#2c0d52,#ff7b1a 140%); }
+  .br-chrome.rt-insert .front{ background:linear-gradient(150deg,#0e3386,#cc3433 140%); }
+  .br-chromefb.rt-insert .front{ background:linear-gradient(150deg,#7a0a1e,#0b2265); }
+  .br-finest.rt-insert .front{ background:linear-gradient(150deg,#003c3c,#00b5ab 140%); }
+  .br-bowman.rt-insert .front{ background:linear-gradient(150deg,#1e4dd8,#c99700 150%); }
+  /* case hits: animated prismatic frame + corner ribbon */
+  .card.rt-casehit .front{
+    background:linear-gradient(120deg,#ff3d8b,#ffcb3d,#39d98a,#5ad1ff,#b06cff,#ff3d8b);
+    background-size:400% 400%; animation:borderflow 7s linear infinite; }
+  .card.rt-casehit .front::before{
+    content:"CASE HIT"; position:absolute; top:13px; left:-32px; z-index:7;
+    transform:rotate(-35deg); padding:3px 36px;
+    font-size:8px; font-weight:900; letter-spacing:2px;
+    background:linear-gradient(180deg,#ff4fd8,#b3128f); color:#fff;
+    box-shadow:0 2px 8px rgba(0,0,0,.5); }
+  .swipewrap .card.rt-casehit .front::before{ font-size:11px; top:18px; }
   .card .hitflag{ position:absolute; bottom:6px; right:6px; font-size:13px; z-index:6; }
   .card.bighit.flipped{ box-shadow:0 0 0 2px var(--gold), 0 0 24px rgba(255,203,61,.6); }
   .card.pop{ animation:pop .4s ease; }
@@ -507,7 +596,7 @@
 
   <div class="footer">
     Simulation only — no real cards, money, or purchases. Odds modeled on published hobby-pack configurations and are approximate.
-    <div style="margin-top:4px;opacity:.7">build v10</div>
+    <div style="margin-top:4px;opacity:.7">build v11</div>
   </div>
 </div>
 
@@ -728,7 +817,7 @@ const PRODUCTS = [
   P({ id:"prizm_bk", name:"Prizm Basketball", year:"2025-26", sport:"basketball", brand:"PANINI PRIZM",
       price:20, cardsPerPack:12, packsPerBox:12, pool:"nba_2425",
       design:"prizm", valMult:1.15,
-      excl:{ hobby:{label:"Gold Shimmer", rar:"rare", p:1/50, runs:[10]},
+      excl:{ hobby:{label:"Gold Shimmer", rar:"rare", p:1/150, runs:[10]},
              mega:{label:"Orange Ice", rar:"numbered", p:1/10, runs:[149]},
              blaster:{label:"Green Ice", rar:"parallel", p:1/5} },
       palette:["#e62b54","#1f6dff","#0a0e17"],
@@ -737,7 +826,7 @@ const PRODUCTS = [
         { rar:"parallel",  label:"Colored Prizm",           p:1/1.6,    max:2, foilType:"refractor", colors:["Hyper","Red Wave","Blue","Pink","Purple","Green"] },
         { rar:"insert",    label:"Insert",                  p:1/1.8,    max:2, foilType:"holo", names:["Sensational","Emergent","Far Out!","Dominance","Get Hyped"] },
         { rar:"numbered",  label:"Numbered Prizm",          p:1/4,      max:1, foilType:"refractor", runs:[199,149,125,99,75,49] },
-        { rar:"rare",      label:"Numbered /25 or /15",     p:1/45,     max:1, foilType:"refractor", runs:[25,15] },
+        { rar:"rare",      label:"Numbered /25 or /15",     p:1/120,     max:1, foilType:"refractor", runs:[25,15] },
         { rar:"gold",      label:"Gold Prizm /10",          p:1/240,    max:1, foilType:"refractor", runs:[10] },
         { rar:"superrare", label:"Green Prizm /5",          p:1/600,    max:1, foilType:"refractor", runs:[5] },
         { rar:"auto",      label:"Autograph",               p:1/6,      max:1, foilType:"refractor" },
@@ -748,7 +837,7 @@ const PRODUCTS = [
   P({ id:"prizm_fb", name:"Prizm Football", year:"2025", sport:"football", brand:"PANINI PRIZM",
       price:24, cardsPerPack:12, packsPerBox:12, pool:"nfl_24",
       design:"prizm", valMult:1.12,
-      excl:{ hobby:{label:"Black Shimmer", rar:"rare", p:1/60, runs:[10]},
+      excl:{ hobby:{label:"Black Shimmer", rar:"rare", p:1/160, runs:[10]},
              mega:{label:"Orange Lazer", rar:"numbered", p:1/10, runs:[125]},
              blaster:{label:"Pink Ice", rar:"parallel", p:1/5} },
       palette:["#13a05a","#1f6dff","#0a0e17"],
@@ -757,8 +846,8 @@ const PRODUCTS = [
         { rar:"parallel",  label:"Colored Prizm",           p:1/1.6,    max:2, foilType:"refractor", colors:["Red","Blue","Green","Pink","Hyper","No Huddle"] },
         { rar:"insert",    label:"Insert",                  p:1/1.8,    max:2, foilType:"holo", names:["Prizmania","Fireworks","Dawn of a New Era","No Huddle"] },
         { rar:"numbered",  label:"Numbered Prizm",          p:1/3.5,    max:1, foilType:"refractor", runs:[199,99,75,49] },
-        { rar:"rare",      label:"Numbered /25 (Purple Power)", p:1/30, max:1, foilType:"refractor", runs:[25] },
-        { rar:"gold",      label:"Gold Prizm /10",          p:1/120,    max:1, foilType:"refractor", runs:[10] },
+        { rar:"rare",      label:"Numbered /25 (Purple Power)", p:1/100, max:1, foilType:"refractor", runs:[25] },
+        { rar:"gold",      label:"Gold Prizm /10",          p:1/200,    max:1, foilType:"refractor", runs:[10] },
         { rar:"superrare", label:"Gold Vinyl /5",           p:1/300,    max:1, foilType:"refractor", runs:[5] },
         { rar:"auto",      label:"Rookie / RPA Autograph",  p:1/6,      max:1, foilType:"refractor" },
         { rar:"casehit",   label:"Case Hit",                p:1/220,    max:1, foilType:"refractor", names:["Manga","Color Blast","Stained Glass"] },
@@ -768,7 +857,7 @@ const PRODUCTS = [
   P({ id:"optic_fb", name:"Donruss Optic Football", year:"2025", sport:"football", brand:"OPTIC",
       price:13, cardsPerPack:11, packsPerBox:20, pool:"nfl_24",
       design:"optic", valMult:0.9,
-      excl:{ hobby:{label:"Black Velocity", rar:"rare", p:1/70, runs:[25]},
+      excl:{ hobby:{label:"Black Velocity", rar:"rare", p:1/170, runs:[25]},
              mega:{label:"Orange Scope", rar:"numbered", p:1/9, runs:[199]},
              blaster:{label:"Pink Velocity", rar:"parallel", p:1/4} },
       palette:["#ff7b1a","#7a1fff","#0a0e17"],
@@ -777,8 +866,8 @@ const PRODUCTS = [
         { rar:"insert",    label:"Insert",                  p:1/4,      max:1, foilType:"holo", names:["The Rookies","My House","Optic Elite","Rated Rookie"] },
         { rar:"parallel",  label:"Colored Prizm",           p:1/5,      max:1, foilType:"refractor", colors:["Pink Velocity","Blue","Red","Purple","Ice"] },
         { rar:"numbered",  label:"Numbered Optic",          p:1/2.2,    max:1, foilType:"refractor", runs:[249,199,99,75,49] },
-        { rar:"rare",      label:"Numbered /25",            p:1/30,     max:1, foilType:"refractor", runs:[25] },
-        { rar:"gold",      label:"Gold /10",                p:1/90,     max:1, foilType:"refractor", runs:[10] },
+        { rar:"rare",      label:"Numbered /25",            p:1/110,     max:1, foilType:"refractor", runs:[25] },
+        { rar:"gold",      label:"Gold /10",                p:1/180,     max:1, foilType:"refractor", runs:[10] },
         { rar:"auto",      label:"Rated Rookie / RPA Auto", p:1/20,     max:1, foilType:"refractor" },
         { rar:"casehit",   label:"Downtown!",               p:1/256,    max:1, foilType:"refractor", names:["Downtown!"] },
         { rar:"oneofone",  label:"Black Pandora 1/1",       p:1/2880,   max:1, foilType:"refractor" }
@@ -787,7 +876,7 @@ const PRODUCTS = [
   P({ id:"chrome_fb", name:"Topps Chrome Football", year:"2026", sport:"football", brand:"TOPPS CHROME",
       price:7, cardsPerPack:4, packsPerBox:24, pool:"nfl_24",
       design:"chromefb", valMult:1.2,
-      excl:{ hobby:{label:"Gold RayWave", rar:"rare", p:1/60, runs:[50]},
+      excl:{ hobby:{label:"Gold RayWave", rar:"rare", p:1/130, runs:[50]},
              mega:{label:"Orange RayWave", rar:"numbered", p:1/12, runs:[199]},
              blaster:{label:"Pink Prism", rar:"parallel", p:1/5} },
       palette:["#c8102e","#0b2265","#0a0e17"],
@@ -826,7 +915,7 @@ const PRODUCTS = [
   P({ id:"finest_bb", name:"Topps Finest Baseball", year:"2025", sport:"baseball", brand:"TOPPS FINEST",
       price:20, cardsPerPack:10, packsPerBox:6, pool:"mlb_24",
       design:"finest", valMult:1.05,
-      excl:{ hobby:{label:"Black Mini-Diamond", rar:"rare", p:1/80, runs:[25]},
+      excl:{ hobby:{label:"Black Mini-Diamond", rar:"rare", p:1/180, runs:[25]},
              mega:{label:"Blue Mini-Diamond", rar:"numbered", p:1/10, runs:[150]},
              blaster:{label:"Purple Refractor", rar:"parallel", p:1/4} },
       palette:["#00d0c0","#1f6dff","#0a0e17"],
@@ -834,7 +923,7 @@ const PRODUCTS = [
         { rar:"refractor", label:"Refractor",               p:1/5,      max:2, foilType:"refractor" },
         { rar:"insert",    label:"Checkerboard Refractor",  p:1/2,      max:1, foilType:"holo", names:["Finest Firsts","Diamond Finest","Fiesta","Future So Bright"] },
         { rar:"numbered",  label:"Blue Checkerboard /99",   p:1/35,     max:1, foilType:"refractor", runs:[99] },
-        { rar:"gold",      label:"Gold Refractor /50",      p:1/69,     max:1, foilType:"refractor", runs:[50] },
+        { rar:"gold",      label:"Gold Refractor /50",      p:1/130,     max:1, foilType:"refractor", runs:[50] },
         { rar:"rare",      label:"Orange Refractor /25",    p:1/137,    max:1, foilType:"refractor", runs:[25] },
         { rar:"superrare", label:"Refractor /10 or /5",     p:1/400,    max:1, foilType:"refractor", runs:[10,5] },
         { rar:"auto",      label:"Autograph",               p:1/3,      max:1, foilType:"refractor" },
@@ -845,7 +934,7 @@ const PRODUCTS = [
   P({ id:"bowman_bb", name:"Bowman Chrome Prospects", year:"2025", sport:"baseball", brand:"BOWMAN", subtitle:"Chrome Prospects",
       price:8, cardsPerPack:4, packsPerBox:24, pool:"bowman_prospects",
       design:"bowman", valMult:1.0,
-      excl:{ hobby:{label:"Gold Shimmer", rar:"rare", p:1/90, runs:[50]},
+      excl:{ hobby:{label:"Gold Shimmer", rar:"rare", p:1/140, runs:[50]},
              mega:{label:"Blue Mojo", rar:"numbered", p:1/10, runs:[150]},
              blaster:{label:"Sky Blue Shimmer", rar:"parallel", p:1/5} },
       palette:["#1e4dd8","#ffcb3d","#0a0e17"],
@@ -854,7 +943,7 @@ const PRODUCTS = [
         { rar:"refractor", label:"Prospect Refractor /499", p:1/3,      max:2, foilType:"refractor", runs:[499] },
         { rar:"insert",    label:"My 1st Bowman / Insert",  p:1/6,      max:1, foilType:"holo", names:["My 1st Bowman","Spotlight","International Impact"] },
         { rar:"numbered",  label:"Colored Refractor",       p:1/20,     max:1, foilType:"refractor", runs:[299,250,199,150], colors:["Fuchsia /299","Purple /250","Blue /150"] },
-        { rar:"gold",      label:"Gold Refractor /50",      p:1/90,     max:1, foilType:"refractor", runs:[50] },
+        { rar:"gold",      label:"Gold Refractor /50",      p:1/150,     max:1, foilType:"refractor", runs:[50] },
         { rar:"rare",      label:"Orange Refractor /25",    p:1/200,    max:1, foilType:"refractor", runs:[25] },
         { rar:"superrare", label:"Black /10 or Red /5",     p:1/800,    max:1, foilType:"refractor", runs:[10,5] },
         { rar:"auto",      label:"Chrome Prospect Auto",    p:1/12,     max:1, foilType:"refractor" },
@@ -1120,13 +1209,16 @@ function finishCard(prod, pl, rarKey, rar, opts){
 //   • Market noise adds spread plus an occasional "hot copy" spike.
 // Calibrated so a pack's EV sits a bit BELOW its price: most cards are near
 // worthless, the rare big hit chases the cost back. Ripping is -EV long term.
-const MARKET = 0.40; // global damping that sets the rip-vs-singles gap (great boxes can top 100%)
+const MARKET = 0.34; // global damping that sets the rip-vs-singles gap (great boxes can top 100%)
 function cardValue(rarKey, opts, tier, prod, rookie){
   const t = tier || 1.5;
   const star = Math.pow(t, 2.1) / 6;     // t1≈0.17, t3≈1.6, t4≈3.0, t4.6≈4.1, t5≈5.1
   const sp   = Math.pow(star, 1.4);      // star-power: steep curve so commons are
                                          // cheap and only true stars carry value
                                          // (t1.5≈0.24, t2.4≈1.1, t3≈1.9, t4.6≈7.2, t5≈9.8)
+  const spx  = Math.pow(star, 2.2);      // premium curve: the gap between a
+                                         // no-name and Josh Allen is a chasm
+                                         // (t2.4≈1.1, t3.5≈4.5, t4.5≈20, t5≈32)
   // small flat floor + star-power term. Star hits are RARE (pickHitPlayer biases
   // away from them), so the top end can be priced like the real market: a common
   // rookie auto ≈ $10-25, an Edwards/Wembanyama auto ≈ several hundred.
@@ -1137,13 +1229,13 @@ function cardValue(rarKey, opts, tier, prod, rookie){
     case "parallel":  base = 0.4  + 1.1*sp;   break;  // colored prizms
     case "refractor": base = 0.3  + 0.9*sp;   break;
     case "silver":    base = 0.5  + 2.2*sp;   break;  // Silver Prizm / Holo
-    case "numbered":  base = 0.8  + 3.5*sp;   break;  // further scaled by run
-    case "rare":      base = 4    + 18*sp;    break;  // /25-ish
-    case "gold":      base = 6    + 30*sp;    break;  // /10
-    case "superrare": base = 10   + 50*sp;    break;  // /5
-    case "auto":      base = 4    + 38*sp;    break;  // star autos carry the tail
-    case "oneofone":  base = 40   + 140*sp;   break;  // 1/1 SuperFractor / Black
-    case "casehit":   base = 45   + 40*sp;    break;  // Manga/Downtown/Color Blast money
+    case "numbered":  base = 0.6  + 6*spx;    break;  // further scaled by run
+    case "rare":      base = 2    + 22*spx;   break;  // /25-ish: no-name ~$10, star ~$200
+    case "gold":      base = 3    + 30*spx;   break;  // /10
+    case "superrare": base = 4    + 45*spx;   break;  // /5
+    case "auto":      base = 3    + 35*spx;   break;  // Allen/Mahomes autos are $300+
+    case "oneofone":  base = 30   + 220*spx;  break;  // 1/1 SuperFractor / Black
+    case "casehit":   base = 30   + 32*spx;   break;  // Manga/Downtown/Color Blast money
     case "legend":    base = 45   + 14*sp;    break;  // Graham family chase
     default:          base = 0.15;
   }
@@ -1386,12 +1478,13 @@ function sellIds(ids){
    ============================================================ */
 const GRADE_FEE = 15;
 const GRADES = [
-  { g:"10", label:"GEM MINT 10", p:0.18, mult:3.5,  color:"#ffcb3d" },
-  { g:"9",  label:"MINT 9",      p:0.35, mult:1.6,  color:"#39d98a" },
-  { g:"8",  label:"NM-MT 8",     p:0.27, mult:0.85, color:"#5ad1ff" },
-  { g:"7",  label:"NM 7",        p:0.12, mult:0.5,  color:"#8b97b3" },
-  { g:"6",  label:"EX-MT 6",     p:0.05, mult:0.3,  color:"#8b97b3" },
-  { g:"AA", label:"ALTERED",     p:0.03, mult:0.2,  color:"#ff5d6c" }
+  // pack-fresh cards: overwhelmingly 9s and 10s, occasionally an 8,
+  // a 7 only on a true factory dud. No 6s, no "altered" — these came
+  // straight out of the wrapper.
+  { g:"10", label:"GEM MINT 10", p:0.42, mult:2.5,  color:"#ffcb3d" },
+  { g:"9",  label:"MINT 9",      p:0.46, mult:1.05, color:"#39d98a" },
+  { g:"8",  label:"NM-MT 8",     p:0.10, mult:0.55, color:"#5ad1ff" },
+  { g:"7",  label:"NM 7",        p:0.02, mult:0.3,  color:"#8b97b3" }
 ];
 function rollGrade(){
   let r = Math.random();
@@ -1420,6 +1513,7 @@ function gradeCard(id){
   setTimeout(()=>{
     const g = rollGrade();
     const old = c.value;
+    c.preGrade = old;   // kept so a bad slab can be cracked back to raw
     c.value = Math.max(0.05, Math.round(old*g.mult*100)/100);
     c.grade = g.g; c.gradeLabel = g.label;
     state.pullValue += (c.value - old);
@@ -1438,6 +1532,19 @@ function gradeCard(id){
     if(b) b.onclick = ()=>{ bg.remove(); showCollection(); };
     if(g.g==="10") triggerFlash(g.color);
   }, 1600);
+}
+
+// Crack the slab: free, restores raw value, card can be regraded.
+function crackSlab(id){
+  const c = state.collection.find(x=>x.id===id);
+  if(!c || !c.grade) return;
+  const mult = (GRADES.find(g=>g.g===c.grade)||{mult:1}).mult;
+  const raw = (typeof c.preGrade==="number") ? c.preGrade
+            : Math.max(0.05, Math.round(c.value/mult*100)/100);
+  state.pullValue += (raw - c.value);
+  c.value = raw;
+  delete c.grade; delete c.gradeLabel; delete c.preGrade;
+  save(); renderWallet(); toast("Cracked the slab — "+c.name+" is raw again");
 }
 
 /* ============================================================
@@ -1693,7 +1800,7 @@ function autoSigGold(c){
 }
 function cardFrontHTML(c){
   const design = c.design || "generic";
-  let cls = "card br-"+design;
+  let cls = "card br-"+design+" rt-"+(c.rarKey||"base");
   if(c.foilType==="holo") cls += " holo";
   if(c.foilType==="refractor"||c.foilType==="silver") cls += " refractor";
   if(c.big) cls += " bighit";
@@ -2180,7 +2287,7 @@ function renderCollBody(bg){
         '<div class="cl-sub">'+esc(c.set)+' '+c.year+' · '+esc(sub)+'</div></div>'+
         '<div class="cl-side"><div class="cl-val">'+money(c.value)+'</div>'+
           '<div class="collbtns">'+
-            (!c.grade ? '<button data-g="'+c.id+'">💎 Grade</button>' : '')+
+            (!c.grade ? '<button data-g="'+c.id+'">💎 Grade</button>' : '<button data-crack="'+c.id+'">🔨 Crack</button>')+
             '<button data-sell="'+c.id+'">💰 Sell</button>'+
           '</div>'+
         '</div>'+
@@ -2193,6 +2300,7 @@ function renderCollBody(bg){
   body.querySelectorAll(".chip[data-s]").forEach(el=>{ el.onclick = ()=>{ collSort = el.dataset.s; renderCollBody(bg); }; });
   body.querySelectorAll("[data-sell]").forEach(el=>{ el.onclick = ()=>{ sellCard(+el.dataset.sell); renderCollBody(bg); }; });
   body.querySelectorAll("[data-g]").forEach(el=>{ el.onclick = ()=>{ gradeCard(+el.dataset.g); }; });
+  body.querySelectorAll("[data-crack]").forEach(el=>{ el.onclick = ()=>{ crackSlab(+el.dataset.crack); renderCollBody(bg); }; });
   hydratePhotos(body);
 }
 
