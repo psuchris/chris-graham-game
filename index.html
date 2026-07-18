@@ -875,7 +875,7 @@
 
   <div class="footer">
     Simulation only — no real cards, money, or purchases. Odds modeled on published hobby-pack configurations and are approximate.
-    <div style="margin-top:4px;opacity:.7">build v25</div>
+    <div style="margin-top:4px;opacity:.7">build v26</div>
   </div>
 </div>
 
@@ -1415,8 +1415,10 @@ function getFormat(prod, key){
   const boxPrice = (prod.boxPrices && prod.boxPrices[t.key])
               || Math.round(prod.price * packs * (t.priceMult||1));
   const packPrice = boxPrice/packs;
-  // Graham Legends odds scale with what you paid; premium boxes chase harder
-  const legendP = Math.min(0.12, (packPrice/7000) * t.legendMult);
+  // Graham Legends odds are scaled per BOX dollar (~\$25k of boxes per
+  // legend at base odds, any product) so no box type is a legend farm.
+  // Hard cap 4% per pack; the pity system still shortens dry streaks.
+  const legendP = Math.min(0.04, (boxPrice/25000) * t.legendMult / packs);
   return Object.assign({}, t, {
     packs, cpp, packPrice, boxPrice, legendP,
     excl: prod.excl ? prod.excl[t.key] : null
