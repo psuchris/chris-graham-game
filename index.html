@@ -492,6 +492,28 @@
   .br-definitive .front .np-name{ color:#e8cf8a; }
   .br-definitive .front .np-sub{ color:#8f8393; }
   .br-definitive .front .bmark{ color:#d8b64a; letter-spacing:2.5px; }
+
+  /* ---- Per-product photo window GEOMETRY --------------------------------
+     Each line frames its photo differently: full-bleed, tall-narrow,
+     letterbox, or small luxury window. Same info, different architecture. */
+  .br-prizm .front .photowrap{ top:5.5%; left:5.5%; right:5.5%; height:66%; }
+  .br-optic .front .photowrap{ top:5.5%; left:5.5%; right:16%; height:68%; }
+  .br-select .front .photowrap{ top:7%; left:7%; right:7%; height:54%; }
+  .br-hoops .front .photowrap{ top:8.5%; left:5%; right:5%; height:61%; }
+  .br-chrome .front .photowrap{ top:8.5%; left:9%; right:9%; height:58%; }
+  .br-chromefb .front .photowrap{ top:8%; left:7%; right:7%; height:61%; }
+  .br-finest .front .photowrap{ top:6%; left:5%; right:5%; height:63%; }
+  .br-bowman .front .photowrap{ top:8.5%; left:5%; right:5%; height:57%; }
+  /* luxury lines: small deliberate windows, lots of premium real estate */
+  .br-nt .front .photowrap{ top:12%; left:16%; right:16%; height:44%; }
+  .br-flawless .front .photowrap{ top:11%; left:13%; right:13%; height:48%; }
+  .br-immaculate .front .photowrap{ top:14%; left:8%; right:8%; height:40%; }  /* letterbox */
+  .br-dynasty .front .photowrap{ top:8%; left:14%; right:14%; height:58%; }    /* tall arch */
+  .br-dynasty .front .photowrap, .br-dynasty .front .photowrap .photo{
+      clip-path:none; border-radius:46% 46% 4px 4px / 20% 20% 4px 4px; }
+  /* bigger windows -> initials scale with them */
+  .br-prizm .front .photo .initials, .br-optic .front .photo .initials{ font-size:44px; }
+  .br-nt .front .photo .initials, .br-immaculate .front .photo .initials{ font-size:30px; }
   /* Foil rarity = animated BORDER ring, not a sheen over the whole card.
      The ring is drawn with a padding+mask trick so only the frame shows. */
   .card.refractor .front::after,
@@ -737,7 +759,7 @@
 
   <div class="footer">
     Simulation only — no real cards, money, or purchases. Odds modeled on published hobby-pack configurations and are approximate.
-    <div style="margin-top:4px;opacity:.7">build v18</div>
+    <div style="margin-top:4px;opacity:.7">build v19</div>
   </div>
 </div>
 
