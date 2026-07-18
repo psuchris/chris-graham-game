@@ -562,6 +562,54 @@
     0%,100%{ box-shadow:0 0 0 2.5px #fdb927, 0 0 26px rgba(253,185,39,.55); }
     50%    { box-shadow:0 0 0 3.5px #fdb927, 0 0 64px rgba(253,185,39,1), 0 0 110px rgba(85,37,131,.8); }
   }
+
+  /* == 🌿 THE WRIGLEY IVY — bronze plaque in the outfield wall == */
+  .card.ivycard .front{
+    background:
+      radial-gradient(9px 7px at 10% 3%, #2e7d32 45%, transparent 50%),
+      radial-gradient(9px 7px at 30% 1.5%, #1f5c26 45%, transparent 50%),
+      radial-gradient(9px 7px at 50% 3%, #3a8f40 45%, transparent 50%),
+      radial-gradient(9px 7px at 70% 1.5%, #245f2a 45%, transparent 50%),
+      radial-gradient(9px 7px at 90% 3%, #2e7d32 45%, transparent 50%),
+      radial-gradient(9px 7px at 20% 99%, #2e7d32 45%, transparent 50%),
+      radial-gradient(9px 7px at 40% 97.5%, #1f5c26 45%, transparent 50%),
+      radial-gradient(9px 7px at 60% 99%, #3a8f40 45%, transparent 50%),
+      radial-gradient(9px 7px at 80% 97.5%, #245f2a 45%, transparent 50%),
+      repeating-linear-gradient(115deg, rgba(46,125,50,.14) 0 5px, transparent 5px 12px),
+      linear-gradient(160deg,#241a08,#120d04 70%);
+    box-shadow: inset 0 0 0 3px #d4af37, inset 0 0 0 6px #1f4d2a,
+                inset 0 0 0 7.5px rgba(212,175,55,.6), inset 0 0 0 12px rgba(46,125,50,.15);
+  }
+  .card.ivycard .front::before{
+    content:"WRIGLEY"; position:absolute; top:38%; left:0; right:0; z-index:1;
+    text-align:center; font-size:30px; font-weight:900; font-style:italic;
+    letter-spacing:6px; color:rgba(212,175,55,.12); pointer-events:none;
+  }
+  .card.ivycard .front .fbg, .card.ivycard .front .bgfx{ opacity:0; }
+  .card.ivycard .front .rail{ width:2%; background:linear-gradient(180deg,#2e7d32,#d4af37); left:5%; }
+  .card.ivycard .front .photowrap{ top:9.5%; left:13%; right:13%; height:49%; padding:3px;
+    background:linear-gradient(135deg,#d4af37,#f7e7a8 30%,#2e7d32 65%,#d4af37); }
+  .card.ivycard .front .photowrap, .card.ivycard .front .photowrap .photo{
+    clip-path:none; border-radius:7px 7px 3px 3px; }
+  /* the plaque effect: gold-toned photo like a Cooperstown bronze */
+  .card.ivycard .front .photowrap .photo{ filter:sepia(.9) saturate(1.35) contrast(1.08) brightness(1.02); }
+  .card.ivycard .front .photowrap .photo::after{
+    box-shadow:inset 0 -16px 24px rgba(40,26,4,.6), inset 0 4px 12px rgba(255,240,180,.15);
+    background:linear-gradient(180deg, rgba(212,175,55,.16), rgba(90,60,10,.22)); content:""; position:absolute; inset:0;
+  }
+  .card.ivycard .front .nameplate{ left:13%; right:13%; background:linear-gradient(115deg,#2a1f08,#3a2c0c);
+    border:1px solid #d4af37; border-bottom:3px solid #2e7d32; clip-path:none; text-align:center; }
+  .card.ivycard .front .np-name{ color:#f3e3a5; letter-spacing:1.5px; }
+  .card.ivycard .front .np-sub{ color:#9fce9f; }
+  .card.ivycard .front .rarline{ text-align:center; color:#8fce8f; font-size:10px; letter-spacing:1.5px; }
+  .card.ivycard .front .signature{ color:#ffe9a8; font-size:25px;
+    text-shadow:0 0 12px rgba(212,175,55,.9), 0 2px 4px rgba(0,0,0,.85); }
+  .swipewrap .card.ivycard .front .signature{ font-size:40px; }
+  .card.ivycard.flipped{ animation:ivyglow 1.6s ease-in-out infinite; }
+  @keyframes ivyglow{
+    0%,100%{ box-shadow:0 0 0 2.5px #d4af37, 0 0 24px rgba(46,125,50,.6); }
+    50%    { box-shadow:0 0 0 3.5px #d4af37, 0 0 58px rgba(212,175,55,.95), 0 0 100px rgba(46,125,50,.7); }
+  }
   /* Foil rarity = animated BORDER ring, not a sheen over the whole card.
      The ring is drawn with a padding+mask trick so only the frame shows. */
   .card.refractor .front::after,
@@ -826,7 +874,7 @@
 
   <div class="footer">
     Simulation only — no real cards, money, or purchases. Odds modeled on published hobby-pack configurations and are approximate.
-    <div style="margin-top:4px;opacity:.7">build v23</div>
+    <div style="margin-top:4px;opacity:.7">build v24</div>
   </div>
 </div>
 
@@ -1631,6 +1679,21 @@ function openPack(prod, fmt){
     cards[mi] = kobe;
   }
 
+  // 🌿 THE WRIGLEY IVY — Dynasty Baseball's chase: PCA in the ivy, plaque gold.
+  // Guaranteed in the first Dynasty box on this save; 1:800 boxes after.
+  if(prod.id==="dynasty_bb" && (!state.pcaGolden || chance(1/800))){
+    state.pcaGolden = "claimed";
+    const pca = finishCard(prod, ["Pete Crow-Armstrong","CHC","OF",3.4], "oneofone", RAR.oneofone,
+      { foilType:"refractor", label:"Wrigley Ivy Autograph", serial:"1/1" });
+    pca.auto = true; pca.pca = true;
+    pca.tcOverride = ["#d4af37","#1f4d2a"];
+    pca.photoKey = "Pete Crow-Armstrong";
+    pca.value = Math.round((4000 + Math.random()*3000)*100)/100;
+    let pi = 0;
+    for(let i=1;i<cards.length;i++) if(cards[i].value < cards[pi].value) pi = i;
+    cards[pi] = pca;
+  }
+
   return cards;
 }
 
@@ -1971,6 +2034,7 @@ function registerPulls(prod, cards){
       if(c.auto && c.rookie) state.counts.rcauto = (state.counts.rcauto||0)+1;
       if(!state.best || c.value > state.best.value){ state.best = sc; }
       if(c.mamba) setTimeout(()=>toast("🐍 MAMBA OUT. The Logoman is real."), 900);
+      if(c.pca) setTimeout(()=>toast("🌿 OUT OF THE IVY. The Wrigley 1/1."), 900);
     }
   }
   // Keep the binder (and localStorage) healthy: retain the 600 best hits.
@@ -1985,7 +2049,7 @@ function slimCard(c){
            rarKey:c.rarKey, rarName:c.rarName, color:c.color, label:c.label, design:c.design,
            serial:c.serial, colorName:c.colorName, auto:c.auto, value:c.value,
            firstBowman:c.firstBowman, rookie:c.rookie,
-           photoKey:c.photoKey, tcOverride:c.tcOverride, legend:c.legend, mamba:c.mamba };
+           photoKey:c.photoKey, tcOverride:c.tcOverride, legend:c.legend, mamba:c.mamba, pca:c.pca };
 }
 
 /* ============================================================
@@ -2054,8 +2118,8 @@ function gradeCard(id){
     '</div>'
   );
   setTimeout(()=>{
-    const g = c.mamba ? GRADES[0] : rollGrade();   // the Mamba only gems
-    const mult = c.mamba ? 6 : g.mult;             // and the market goes insane
+    const g = (c.mamba || c.pca) ? GRADES[0] : rollGrade();   // the grails only gem
+    const mult = c.mamba ? 6 : (c.pca ? 5 : g.mult);          // and the market goes insane
     const old = c.value;
     c.preGrade = old;   // kept so a bad slab can be cracked back to raw
     c.value = Math.max(0.05, Math.round(old*mult*100)/100);
@@ -2360,6 +2424,7 @@ function cardFrontHTML(c){
   if(c.big) cls += " bighit";
   if(c.legend) cls += " legendcard";
   if(c.mamba) cls += " mambacard";
+  if(c.pca) cls += " ivycard";
   const tc = c.tcOverride || teamColor(c.sport, c.team);
   // the parallel's color IS the card frame, like real cardboard; base cards
   // get a neutral chrome frame and let the team colors do the talking
@@ -2383,7 +2448,9 @@ function cardFrontHTML(c){
           ? '<div class="relicswatch'+(c.colorName==="Patch"?" patch":"")+'" style="--sw1:'+tc[0]+';--sw2:'+tc[1]+'"><i></i></div>'
           : '')+
         '<div class="topline">'+
-          (c.mamba
+          (c.pca
+            ? '<span class="bmark" style="color:#8fce8f"><small>DYNASTY</small>WRIGLEY IVY</span>'
+            : c.mamba
             ? '<span class="bmark" style="color:#fdb927"><small>FLAWLESS</small>BLACK MAMBA</span>'
             : c.legend
             ? '<span class="bmark" style="color:#39ffa0"><small>RIP CITY</small>LEGENDS</span>'
@@ -2771,6 +2838,9 @@ function showOdds(prod, fmt){
       (fmt.excl.runs?' <span style="color:var(--dim)">('+fmt.excl.runs.map(x=>"/"+x).join(", ")+')</span>':'')+
       ' <b style="color:var(--accent)">'+fmt.label+' Exclusive</b></td><td class="r">'+odds1in(fmt.excl.p)+' packs</td></tr>';
   }
+  if(prod.id==="dynasty_bb"){
+    rows += '<tr><td><span class="swatch" style="background:#2e7d32"></span>🌿 Wrigley Ivy Autograph 1/1 — PCA <span style="color:var(--dim)">(auto-gems a 10)</span></td><td class="r">1 : 800 boxes</td></tr>';
+  }
   if(prod.id==="flawless_bk"){
     rows += '<tr><td><span class="swatch" style="background:#fdb927"></span>🐍 Mamba Logoman Autograph 1/1 <span style="color:var(--dim)">(auto-gems a 10)</span></td><td class="r">1 : 1,200 boxes</td></tr>';
   }
@@ -2891,7 +2961,7 @@ function renderCollBody(bg){
   if(bc) bc.onclick = ()=>{ bulkOpen = !bulkOpen; renderCollBody(bg); };
   const ba = body.querySelector("#bulkAmt"), bgo = body.querySelector("#bulkGo");
   if(ba && bgo){
-    const bulkMatches = ()=> state.collection.filter(c=> c.value < (parseFloat(ba.value)||0) && !c.grade && c.rarKey!=="legend" && !c.mamba && !c.pinned);
+    const bulkMatches = ()=> state.collection.filter(c=> c.value < (parseFloat(ba.value)||0) && !c.grade && c.rarKey!=="legend" && !c.mamba && !c.pca && !c.pinned);
     const refresh = ()=>{
       const m = bulkMatches();
       bgo.textContent = m.length ? ("Sell "+m.length+" cards · "+money(m.reduce((s,c)=>s+c.value,0))) : "Nothing under that";
