@@ -590,12 +590,13 @@
   .card.ivycard .front .photowrap{ top:9.5%; left:13%; right:13%; height:49%; padding:3px;
     background:linear-gradient(135deg,#d4af37,#f7e7a8 30%,#2e7d32 65%,#d4af37); }
   .card.ivycard .front .photowrap, .card.ivycard .front .photowrap .photo{
-    clip-path:none; border-radius:7px 7px 3px 3px; }
+    clip-path:none; border-radius:46% 46% 4px 4px / 22% 22% 4px 4px; }  /* Dynasty arch */
   /* the plaque effect: gold-toned photo like a Cooperstown bronze */
   .card.ivycard .front .photowrap .photo{ filter:sepia(.9) saturate(1.35) contrast(1.08) brightness(1.02); }
   .card.ivycard .front .photowrap .photo::after{
     box-shadow:inset 0 -16px 24px rgba(40,26,4,.6), inset 0 4px 12px rgba(255,240,180,.15);
     background:linear-gradient(180deg, rgba(212,175,55,.16), rgba(90,60,10,.22)); content:""; position:absolute; inset:0;
+    border-radius:inherit;
   }
   .card.ivycard .front .nameplate{ left:13%; right:13%; background:linear-gradient(115deg,#2a1f08,#3a2c0c);
     border:1px solid #d4af37; border-bottom:3px solid #2e7d32; clip-path:none; text-align:center; }
@@ -874,7 +875,7 @@
 
   <div class="footer">
     Simulation only — no real cards, money, or purchases. Odds modeled on published hobby-pack configurations and are approximate.
-    <div style="margin-top:4px;opacity:.7">build v24</div>
+    <div style="margin-top:4px;opacity:.7">build v25</div>
   </div>
 </div>
 
