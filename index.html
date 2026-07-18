@@ -429,6 +429,69 @@
   .br-dynasty .front .np-name{ color:#f2df9e; }
   .br-dynasty .front .np-sub{ color:#95a4c8; }
   .br-dynasty .front .bmark{ color:#e6c964; letter-spacing:2px; }
+
+  /* == SELECT — tri-level concourse bands, blue/purple disco == */
+  .br-select .front{ background:
+      linear-gradient(180deg, transparent 62%, rgba(122,31,255,.28) 62%, rgba(122,31,255,.28) 72%, rgba(31,109,255,.25) 72%, rgba(31,109,255,.25) 82%, transparent 82%),
+      linear-gradient(160deg,#171225,#0a0817 70%); }
+  .br-select .front .bgfx{ opacity:.3; mix-blend-mode:screen;
+      background-image:radial-gradient(rgba(160,120,255,.6) .7px, transparent 1.2px); background-size:8px 8px; }
+  .br-select .front .photowrap, .br-select .front .photowrap .photo{
+      clip-path:polygon(6% 0, 94% 0, 100% 6%, 100% 94%, 94% 100%, 6% 100%, 0 94%, 0 6%); }
+  .br-select .front .nameplate{ background:linear-gradient(115deg,#7a1fff,#1f6dff);
+      clip-path:polygon(0 0,100% 0,96% 100%,0 100%); border-bottom:2px solid var(--ac); }
+  .br-select .front .bmark{ color:#c9b3ff; letter-spacing:3px; }
+
+  /* == NBA HOOPS — clean white budget card, red banner == */
+  .br-hoops .front{ background:linear-gradient(170deg,#f4f5f7,#dfe2e8); }
+  .br-hoops .front .fbg{ opacity:1; background:
+      linear-gradient(115deg, transparent 55%, rgba(230,43,43,.75) 55.4%, rgba(230,43,43,.75) 56.6%, transparent 57%); }
+  .br-hoops .front .bgfx{ opacity:0; }
+  .br-hoops .front .photowrap{ padding:2px; background:linear-gradient(135deg,#e62b2b,#8c1010); }
+  .br-hoops .front .nameplate{ background:linear-gradient(115deg,#e62b2b,#8c1010);
+      clip-path:polygon(0 0,100% 0,100% 100%,5% 100%); border-bottom:2px solid #1c2d5c; }
+  .br-hoops .front .topline{ text-shadow:none; }
+  .br-hoops .front .topline .bmark{ color:#b31212; }
+  .br-hoops .front .topline .bmark small{ color:#1c2d5c; }
+  .br-hoops .front .topline .ser.yr{ color:#5a6a86; }
+  .br-hoops.rt-base .front .rarline{ color:#8a94a8; text-shadow:none; }
+
+  /* == IMMACULATE — ivory marble, hairline silver, quiet money == */
+  .br-immaculate .front{ background:
+      radial-gradient(120% 70% at 30% 10%, rgba(255,255,255,.8), transparent 60%),
+      repeating-linear-gradient(115deg, rgba(140,133,119,.08) 0 3px, transparent 3px 9px),
+      linear-gradient(165deg,#efece4,#d8d2c4);
+      box-shadow: inset 0 0 0 2px #b9b2a2, inset 0 0 0 4.5px #efece4, inset 0 0 0 5.5px #8c8577; }
+  .br-immaculate .front .fbg{ opacity:0; }
+  .br-immaculate .front .bgfx{ opacity:0; }
+  .br-immaculate .front .rail{ width:1.6%; background:linear-gradient(180deg,#8c8577,#4d483e); left:5.5%; }
+  .br-immaculate .front .photowrap{ top:10%; left:10%; right:10%; height:53%; padding:2.5px;
+      background:linear-gradient(135deg,#cfc9bb,#faf8f2 50%,#a29a89); }
+  .br-immaculate .front .nameplate{ left:10%; right:10%; background:#26231d;
+      clip-path:none; border-bottom:2px solid #b9b2a2; text-align:center; }
+  .br-immaculate .front .np-name{ color:#e9e2d2; }
+  .br-immaculate .front .np-sub{ color:#9a917d; }
+  .br-immaculate .front .topline{ text-shadow:none; }
+  .br-immaculate .front .topline .bmark{ color:#5c5648; letter-spacing:3px; }
+  .br-immaculate .front .topline .bmark small{ color:#a89f8c; }
+  .br-immaculate .front .topline .ser.yr{ color:#7a7263; }
+  .br-immaculate.rt-base .front .rarline{ color:#8c8577; text-shadow:none; }
+
+  /* == DEFINITIVE — onyx, oxblood rail, gold hairline == */
+  .br-definitive .front{ background:linear-gradient(160deg,#15151a,#0a0a0e 70%);
+      box-shadow: inset 0 0 0 2px #c9a227, inset 0 0 0 4.5px #0a0a0e, inset 0 0 0 5.5px #8c0f1f; }
+  .br-definitive .front .fbg{ opacity:1; background:
+      linear-gradient(90deg, transparent 49.5%, rgba(140,15,31,.7) 49.7%, rgba(140,15,31,.7) 50.3%, transparent 50.5%) bottom 8% left 0/100% 30% no-repeat; }
+  .br-definitive .front .bgfx{ opacity:.25; mix-blend-mode:screen;
+      background-image:repeating-linear-gradient(45deg, rgba(201,162,39,.2) 0 1px, transparent 1px 12px); }
+  .br-definitive .front .rail{ width:1.8%; background:linear-gradient(180deg,#8c0f1f,#3d060d); left:5.5%; }
+  .br-definitive .front .photowrap{ top:10%; left:10%; right:10%; height:53%; padding:2.5px;
+      background:linear-gradient(135deg,#c9a227,#f3e3a5 50%,#8c6d14); }
+  .br-definitive .front .nameplate{ left:10%; right:10%; background:linear-gradient(115deg,#1c1416,#241016);
+      border:1px solid #8c0f1f; border-bottom:2px solid #c9a227; clip-path:none; text-align:center; }
+  .br-definitive .front .np-name{ color:#e8cf8a; }
+  .br-definitive .front .np-sub{ color:#8f8393; }
+  .br-definitive .front .bmark{ color:#d8b64a; letter-spacing:2.5px; }
   /* Foil rarity = animated BORDER ring, not a sheen over the whole card.
      The ring is drawn with a padding+mask trick so only the frame shows. */
   .card.refractor .front::after,
@@ -674,7 +737,7 @@
 
   <div class="footer">
     Simulation only — no real cards, money, or purchases. Odds modeled on published hobby-pack configurations and are approximate.
-    <div style="margin-top:4px;opacity:.7">build v16</div>
+    <div style="margin-top:4px;opacity:.7">build v17</div>
   </div>
 </div>
 
@@ -929,7 +992,7 @@ const PRODUCTS = [
         { rar:"rare",      label:"Numbered /25 (Purple Power)", p:1/100, max:1, foilType:"refractor", runs:[25] },
         { rar:"gold",      label:"Gold Prizm /10",          p:1/200,    max:1, foilType:"refractor", runs:[10] },
         { rar:"superrare", label:"Gold Vinyl /5",           p:1/300,    max:1, foilType:"refractor", runs:[5] },
-        { rar:"auto",      label:"Rookie / RPA Autograph",  p:1/6,      max:1, foilType:"refractor" },
+        { rar:"auto",      label:"Rookie / RPA Autograph",  rcOnly:true, p:1/6,      max:1, foilType:"refractor" },
         { rar:"relic",     label:"Sensational Swatches",    p:1/9,      max:1, foilType:null },
         { rar:"casehit",   label:"Case Hit",                p:1/220,    max:1, foilType:"refractor", names:["Manga","Color Blast","Stained Glass"] },
         { rar:"oneofone",  label:"Black Finite 1/1",        p:1/1728,   max:1, foilType:"refractor" }
@@ -949,13 +1012,13 @@ const PRODUCTS = [
         { rar:"numbered",  label:"Numbered Optic",          p:1/2.2,    max:1, foilType:"refractor", runs:[249,199,99,75,49] },
         { rar:"rare",      label:"Numbered /25",            p:1/110,     max:1, foilType:"refractor", runs:[25] },
         { rar:"gold",      label:"Gold /10",                p:1/180,     max:1, foilType:"refractor", runs:[10] },
-        { rar:"auto",      label:"Rated Rookie / RPA Auto", p:1/20,     max:1, foilType:"refractor" },
+        { rar:"auto",      label:"Rated Rookie / RPA Auto", rcOnly:true, p:1/20,     max:1, foilType:"refractor" },
         { rar:"relic",     label:"Jersey Kings",            p:1/14,     max:1, foilType:null },
         { rar:"casehit",   label:"Downtown!",               p:1/256,    max:1, foilType:"refractor", names:["Downtown!"] },
         { rar:"oneofone",  label:"Black Pandora 1/1",       p:1/2880,   max:1, foilType:"refractor" }
       ]}),
   // ---- 2026 Topps Chrome Football: Topps' NFL return. 4/pack, 24 packs/box.
-  P({ boxPrices:{hobby:260, mega:40, blaster:25}, fmtPacks:{mega:10, blaster:7}, fmtCpp:{mega:4, blaster:4}, id:"chrome_fb", name:"Topps Chrome Football", year:"2026", sport:"football", brand:"TOPPS CHROME",
+  P({ boxPrices:{hobby:260, mega:40, blaster:25}, fmtPacks:{mega:10, blaster:7}, fmtCpp:{mega:4, blaster:4}, id:"chrome_fb", name:"Topps Chrome Football", year:"2025", sport:"football", brand:"TOPPS CHROME",
       price:7, cardsPerPack:4, packsPerBox:24, pool:"nfl_24",
       design:"chromefb", valMult:1.4,
       excl:{ hobby:{label:"Gold RayWave", rar:"rare", p:1/130, runs:[50]},
@@ -969,7 +1032,7 @@ const PRODUCTS = [
         { rar:"gold",      label:"Gold Refractor /50",      p:1/110,    max:1, foilType:"refractor", runs:[50] },
         { rar:"rare",      label:"Orange Refractor /25",    p:1/450,    max:1, foilType:"refractor", runs:[25] },
         { rar:"superrare", label:"Black or Red /10, /5",    p:1/1400,   max:1, foilType:"refractor", runs:[10,5] },
-        { rar:"auto",      label:"Rookie Chrome Auto",      p:1/22,     max:1, foilType:"refractor" },
+        { rar:"auto",      label:"Rookie Chrome Auto",      rcOnly:true, p:1/22,     max:1, foilType:"refractor" },
         { rar:"relic",     label:"Chrome Relics",           p:1/16,     max:1, foilType:null },
         { rar:"casehit",   label:"1986 Gold Chrome",        p:1/400,    max:1, foilType:"refractor", names:["1986 Gold Chrome"] },
         { rar:"oneofone",  label:"SuperFractor 1/1",        p:1/9000,   max:1, foilType:"refractor" }
@@ -1037,6 +1100,68 @@ const PRODUCTS = [
         { rar:"oneofone",  label:"SuperFractor 1/1",        p:1/4500,   max:1, foilType:"refractor" }
       ]})
   ,
+  // ---- 2025-26 Select Basketball: tri-level chase, 12x12 hobby.
+  P({ id:"select_bk", name:"Select Basketball", year:"2025-26", sport:"basketball", brand:"SELECT",
+      price:450, cardsPerPack:12, packsPerBox:12, pool:"nba_2425",
+      design:"select", valMult:0.85,
+      boxPrices:{hobby:450, mega:70, blaster:30}, fmtPacks:{mega:10, blaster:6}, fmtCpp:{mega:4, blaster:4},
+      excl:{ hobby:{label:"Gold Disco", rar:"rare", p:1/150, runs:[10]},
+             mega:{label:"Orange Flash", rar:"numbered", p:1/10, runs:[149]},
+             blaster:{label:"Blue Retro", rar:"parallel", p:1/5} },
+      palette:["#7a1fff","#1f6dff","#0a0e17"],
+      chase:[
+        { rar:"silver",    label:"Silver Disco",            p:1/4,      max:1, foilType:"silver" },
+        { rar:"parallel",  label:"Color Disco",             p:1/2,      max:2, foilType:"refractor", colors:["Blue","Red","Purple","Tie-Dye","Zebra Flash"] },
+        { rar:"insert",    label:"Insert",                  p:1/3,      max:1, foilType:"holo", names:["Turbocharged","Phenomenon","Artistic Selections","Company Man"] },
+        { rar:"numbered",  label:"Numbered Disco",          p:1/4,      max:1, foilType:"refractor", runs:[199,149,99,75,49] },
+        { rar:"rare",      label:"Numbered /25",            p:1/130,    max:1, foilType:"refractor", runs:[25] },
+        { rar:"gold",      label:"Gold /10",                p:1/220,    max:1, foilType:"refractor", runs:[10] },
+        { rar:"relic",     label:"Select Swatches",         p:1/12,     max:1, foilType:null },
+        { rar:"auto",      label:"Signatures",              p:1/8,      max:1, foilType:"refractor" },
+        { rar:"casehit",   label:"Zebra",                   p:1/300,    max:1, foilType:"refractor", names:["Zebra"] },
+        { rar:"oneofone",  label:"Black 1/1",               p:1/2400,   max:1, foilType:"refractor" }
+      ]}),
+  // ---- 2025-26 Donruss Optic Basketball: same Donruss DNA as the football set.
+  P({ id:"optic_bk", name:"Donruss Optic Basketball", year:"2025-26", sport:"basketball", brand:"OPTIC",
+      price:400, cardsPerPack:4, packsPerBox:20, pool:"nba_2425",
+      design:"optic", valMult:1.05,
+      boxPrices:{hobby:400, mega:65, blaster:32}, fmtPacks:{mega:10, blaster:6}, fmtCpp:{mega:4, blaster:4},
+      excl:{ hobby:{label:"Black Velocity", rar:"rare", p:1/170, runs:[25]},
+             mega:{label:"Orange Scope", rar:"numbered", p:1/9, runs:[199]},
+             blaster:{label:"Pink Velocity", rar:"parallel", p:1/4} },
+      palette:["#ff7b1a","#1f6dff","#0a0e17"],
+      chase:[
+        { rar:"silver",    label:"Holo",                    p:1/6,      max:1, foilType:"silver" },
+        { rar:"insert",    label:"Insert",                  p:1/4,      max:1, foilType:"holo", names:["Express Lane","Splash!","Winner Stays","Rated Rookie"] },
+        { rar:"parallel",  label:"Colored Optic",           p:1/5,      max:1, foilType:"refractor", colors:["Blue","Red","Purple","Ice"] },
+        { rar:"numbered",  label:"Numbered Optic",          p:1/2.2,    max:1, foilType:"refractor", runs:[249,199,99,75,49] },
+        { rar:"rare",      label:"Numbered /25",            p:1/110,    max:1, foilType:"refractor", runs:[25] },
+        { rar:"gold",      label:"Gold /10",                p:1/180,    max:1, foilType:"refractor", runs:[10] },
+        { rar:"relic",     label:"Jersey Kings",            p:1/14,     max:1, foilType:null },
+        { rar:"auto",      label:"Rated Rookie Auto",       rcOnly:true, p:1/22, max:1, foilType:"refractor" },
+        { rar:"casehit",   label:"Downtown!",               p:1/256,    max:1, foilType:"refractor", names:["Downtown!"] },
+        { rar:"oneofone",  label:"Black Pandora 1/1",       p:1/2880,   max:1, foilType:"refractor" }
+      ]}),
+  // ---- 2025-26 NBA Hoops: the affordable rip, base-heavy.
+  P({ id:"hoops_bk", name:"NBA Hoops", year:"2025-26", sport:"basketball", brand:"HOOPS",
+      price:120, cardsPerPack:8, packsPerBox:24, pool:"nba_2425",
+      design:"hoops", valMult:0.5,
+      boxPrices:{hobby:120, mega:28, blaster:18}, fmtPacks:{mega:10, blaster:6}, fmtCpp:{mega:5, blaster:5},
+      excl:{ hobby:{label:"Artist Proof", rar:"rare", p:1/250, runs:[25]},
+             mega:{label:"Orange Explosion", rar:"numbered", p:1/12, runs:[149]},
+             blaster:{label:"Green Shimmer", rar:"parallel", p:1/5} },
+      palette:["#e62b2b","#1c2d5c","#0a0e17"],
+      chase:[
+        { rar:"silver",    label:"Silver",                  p:1/8,      max:1, foilType:"silver" },
+        { rar:"insert",    label:"Insert",                  p:1/3,      max:1, foilType:"holo", names:["Lights Camera Action","Frequent Flyers","Rookie Special","Now Playing"] },
+        { rar:"parallel",  label:"Colored Parallel",        p:1/4,      max:1, foilType:"refractor", colors:["Blue","Red","Teal","Purple"] },
+        { rar:"numbered",  label:"Numbered",                p:1/12,     max:1, foilType:"refractor", runs:[199,99,49] },
+        { rar:"rare",      label:"Numbered /25",            p:1/300,    max:1, foilType:"refractor", runs:[25] },
+        { rar:"auto",      label:"Great SIGnificance",      p:1/40,     max:1, foilType:"refractor" },
+        { rar:"casehit",   label:"Slam!",                   p:1/500,    max:1, foilType:"refractor", names:["Slam!"] },
+        { rar:"oneofone",  label:"Black 1/1",               p:1/5000,   max:1, foilType:"refractor" }
+      ]})
+  ,
   // ---- HIGH END: one loaded pack per box, hobby only, star-heavy checklists.
   P({ id:"nt_fb", name:"National Treasures", year:"2025", sport:"football", brand:"NATIONAL TREASURES",
       price:1200, cardsPerPack:10, packsPerBox:1, pool:"nfl_24",
@@ -1044,7 +1169,7 @@ const PRODUCTS = [
       boxPrices:{hobby:1200},
       palette:["#c9a227","#17130c","#080604"],
       chase:[
-        { rar:"auto",      label:"Rookie Patch Autograph",  p:1,        max:1, foilType:"refractor", runs:[99,49,25] },
+        { rar:"auto",      label:"Rookie Patch Autograph",  rcOnly:true, p:1,        max:1, foilType:"refractor", runs:[99,49,25] },
         { rar:"auto",      label:"On-Card Autograph",       p:1,        max:2, foilType:"refractor", runs:[99,49] },
         { rar:"auto",      label:"Legends Autograph",       p:0.55,    max:1, foilType:"refractor", runs:[25,10] },
         { rar:"relic",     label:"Treasured Materials",     p:1,        max:3, foilType:null },
@@ -1059,7 +1184,7 @@ const PRODUCTS = [
       boxPrices:{hobby:2000},
       palette:["#dfe6f0","#101318","#05070b"],
       chase:[
-        { rar:"auto",      label:"Rookie Gem Autograph",    p:1,        max:1, foilType:"refractor", runs:[25,10] },
+        { rar:"auto",      label:"Rookie Gem Autograph",    rcOnly:true, p:1,        max:1, foilType:"refractor", runs:[25,10] },
         { rar:"auto",      label:"On-Card Autograph",       p:1,        max:2, foilType:"refractor", runs:[49,25] },
         { rar:"relic",     label:"Diamond Materials",       p:1,        max:2, foilType:null },
         { rar:"numbered",  label:"Base /20",                p:1,        max:2, foilType:"refractor", runs:[20] },
@@ -1079,7 +1204,49 @@ const PRODUCTS = [
         { rar:"numbered",  label:"Base /50",                p:1,        max:2, foilType:"refractor", runs:[50] },
         { rar:"superrare", label:"Red /5",                  p:1/7,      max:1, foilType:"refractor", runs:[5] },
         { rar:"oneofone",  label:"Dynasty 1/1",             p:1/28,     max:1, foilType:"refractor" }
+      ]})  ,
+  P({ id:"nt_bk", name:"National Treasures", year:"2025-26", sport:"basketball", brand:"NATIONAL TREASURES",
+      price:1500, cardsPerPack:10, packsPerBox:1, pool:"nba_2425",
+      design:"nt", valMult:2.0, hobbyOnly:true, premium:true,
+      boxPrices:{hobby:1500},
+      palette:["#c9a227","#17130c","#080604"],
+      chase:[
+        { rar:"auto",      label:"Rookie Patch Autograph",  rcOnly:true, p:1, max:1, foilType:"refractor", runs:[99,49,25] },
+        { rar:"auto",      label:"On-Card Autograph",       p:1,        max:2, foilType:"refractor", runs:[99,49] },
+        { rar:"auto",      label:"Legends Autograph",       p:0.55,    max:1, foilType:"refractor", runs:[25,10] },
+        { rar:"relic",     label:"Treasured Materials",     p:1,        max:3, foilType:null },
+        { rar:"numbered",  label:"Base /99",                p:1,        max:2, foilType:"refractor", runs:[99] },
+        { rar:"gold",      label:"Gold /10",                p:1/4,      max:1, foilType:"refractor", runs:[10] },
+        { rar:"superrare", label:"Emerald /5",              p:1/8,      max:1, foilType:"refractor", runs:[5] },
+        { rar:"oneofone",  label:"Platinum Logoman 1/1",    p:1/28,     max:1, foilType:"refractor" }
+      ]}),
+  P({ id:"immaculate_fb", name:"Immaculate", year:"2025", sport:"football", brand:"IMMACULATE",
+      price:650, cardsPerPack:8, packsPerBox:1, pool:"nfl_24",
+      design:"immaculate", valMult:1.5, hobbyOnly:true, premium:true,
+      boxPrices:{hobby:650},
+      palette:["#d9d4c8","#8c8577","#2a2721"],
+      chase:[
+        { rar:"auto",      label:"Rookie Patch Autograph",  rcOnly:true, p:1, max:1, foilType:"refractor", runs:[99,49,25] },
+        { rar:"auto",      label:"Immaculate Ink",          p:1,        max:1, foilType:"refractor", runs:[49,25] },
+        { rar:"relic",     label:"Immaculate Standard",     p:1,        max:2, foilType:null },
+        { rar:"numbered",  label:"Base /75",                p:1,        max:2, foilType:"refractor", runs:[75] },
+        { rar:"superrare", label:"Platinum /5",             p:1/8,      max:1, foilType:"refractor", runs:[5] },
+        { rar:"oneofone",  label:"Immaculate 1/1",          p:1/35,     max:1, foilType:"refractor" }
+      ]}),
+  P({ id:"definitive_bb", name:"Topps Definitive", year:"2025", sport:"baseball", brand:"DEFINITIVE",
+      price:1300, cardsPerPack:10, packsPerBox:1, pool:"mlb_24",
+      design:"definitive", valMult:1.7, hobbyOnly:true, premium:true,
+      boxPrices:{hobby:1300},
+      palette:["#8c0f1f","#101014","#c9a227"],
+      chase:[
+        { rar:"auto",      label:"Definitive Autograph",    p:1,        max:2, foilType:"refractor", runs:[50,25] },
+        { rar:"auto",      label:"Legendary Ink",           p:0.7,      max:1, foilType:"refractor", runs:[10,5] },
+        { rar:"relic",     label:"Definitive Relic",        p:1,        max:2, foilType:null },
+        { rar:"numbered",  label:"Base /50",                p:1,        max:2, foilType:"refractor", runs:[50] },
+        { rar:"gold",      label:"Gold Framed /10",         p:1/5,      max:1, foilType:"refractor", runs:[10] },
+        { rar:"oneofone",  label:"Definitive 1/1",          p:1/30,     max:1, foilType:"refractor" }
       ]})
+
 ];
 
 /* ============================================================
@@ -1220,8 +1387,24 @@ function load(){
   }catch(e){}
   return freshState();
 }
+// Live legend-value invariant: runs on every save and collection open, so
+// broken values get healed no matter how they entered the running state
+// (stale cache builds, old tabs, anything).
+function repairLegends(){
+  let n=0;
+  if(!state || !state.collection) return 0;
+  for(const c of state.collection){
+    if(c.rarKey!=="legend") continue;
+    const fair = fairLegendValue(c.serial);
+    if(!c.grade && c.value < fair*0.5){ state.pullValue += (fair-c.value); c.value = fair; n++; }
+    if(c.grade && (typeof c.preGrade!=="number" || c.preGrade < fair*0.5)) c.preGrade = fair;
+  }
+  if(n) toast("🔧 Restored "+n+" Graham legend"+(n>1?"s":"")+" to fair value");
+  return n;
+}
 let warnedSave = false;
 function save(){
+  repairLegends();
   try{
     // never clobber a NEWER save made by another tab/session
     const s = JSON.parse(localStorage.getItem(SAVE_KEY));
@@ -1281,8 +1464,10 @@ const HIT_BIAS = {
   auto:4.2, oneofone:3.0, superrare:3.2, gold:3.0, rare:3.0, casehit:1.2, relic:2.0,
   numbered:2.0, silver:1.8, parallel:0.7, insert:0.7, refractor:0.7
 };
-function pickHitPlayer(poolId, rarKey, premium){
-  const arr = POOLS[poolId];
+function pickHitPlayer(poolId, rarKey, premium, rcOnly){
+  let arr = POOLS[poolId];
+  // rookie-labeled slots (RPA, Rated Rookie Auto...) only pull actual rookies
+  if(rcOnly){ const rc = arr.filter(p=>p[4]===true); if(rc.length) arr = rc; }
   // premium checklists (NT/Flawless/Dynasty) are curated stars, not commons
   const k = (HIT_BIAS[rarKey] || 0) * (premium ? 0.55 : 1);
   if(!k) return rnd(arr);
@@ -1359,7 +1544,7 @@ function makeBase(prod, used){
 }
 
 function makeCard(prod, def, used){
-  const pl = pickUnused(()=>pickHitPlayer(prod.pool, def.rar, prod.premium), used);
+  const pl = pickUnused(()=>pickHitPlayer(prod.pool, def.rar, prod.premium, def.rcOnly), used);
   const rar = RAR[def.rar] || RAR.parallel;
   let serial = null, colorName = null;
 
@@ -1980,6 +2165,10 @@ const BRANDS = {
   prizm:   { mark:"PRIZM",  sub:"PANINI" },
   chromefb:{ mark:"CHROME", sub:"TOPPS · NFL" },
   nt:      { mark:"NAT. TREASURES", sub:"PANINI" },
+  select:  { mark:"SELECT", sub:"PANINI" },
+  hoops:   { mark:"HOOPS", sub:"PANINI" },
+  immaculate:{ mark:"IMMACULATE", sub:"PANINI" },
+  definitive:{ mark:"DEFINITIVE", sub:"TOPPS" },
   flawless:{ mark:"FLAWLESS", sub:"PANINI" },
   dynasty: { mark:"DYNASTY", sub:"TOPPS" },
   optic:   { mark:"OPTIC",  sub:"DONRUSS" },
@@ -2488,6 +2677,7 @@ function gradeChipHTML(c){
   return '<span class="gradechip" style="color:'+col+';border-color:'+col+'66;background:'+col+'18">'+txt+'</span>';
 }
 function showCollection(){
+  if(repairLegends()) save();
   const bg = modal(
     '<button class="close ghost" style="float:right">✕</button>'+
     '<h2>📒 My Collection</h2><div id="collbody"></div>'
