@@ -367,6 +367,68 @@
   .br-bowman .front .topline .bmark small{ color:#d8232a; }
   .br-bowman .front .topline .ser.yr{ color:#44506a; }
   .br-bowman.rt-base .front .rarline{ color:#5a6a86; text-shadow:none; }
+
+  /* == NATIONAL TREASURES — black leather, double gold frame == */
+  .br-nt .front{
+    background:
+      radial-gradient(140% 90% at 50% 0%, rgba(201,162,39,.14), transparent 55%),
+      repeating-linear-gradient(45deg, rgba(255,255,255,.025) 0 2px, transparent 2px 4px),
+      linear-gradient(160deg,#17130c,#080604 70%);
+    box-shadow: inset 0 0 0 2.5px #c9a227, inset 0 0 0 5px #080604,
+                inset 0 0 0 6px rgba(201,162,39,.55), inset 0 0 0 11px rgba(201,162,39,.10); }
+  .br-nt .front .fbg{ opacity:0; }
+  .br-nt .front .bgfx{ opacity:.35; mix-blend-mode:screen;
+    background-image:radial-gradient(rgba(240,217,140,.5) .6px, transparent 1.1px); background-size:13px 13px; }
+  .br-nt .front .rail{ width:1.8%; background:linear-gradient(180deg,#c9a227,#5c4a10); left:5.5%; }
+  .br-nt .front .photowrap{ top:10%; left:10%; right:10%; height:53%; padding:3px;
+    background:linear-gradient(135deg,#f5d97a,#c9a227 30%,#fff2c4 50%,#c9a227 70%,#8a6d14); }
+  .br-nt .front .nameplate{ left:10%; right:10%; background:linear-gradient(115deg,#0c0a06,#171207);
+    clip-path:none; border:1px solid #c9a227; border-bottom:2.5px solid #c9a227; text-align:center; }
+  .br-nt .front .np-name{ color:#f0d98c; }
+  .br-nt .front .np-sub{ color:#a08a4a; }
+  .br-nt .front .bmark{ color:#e7c85c; font-size:7.5px; letter-spacing:1.2px; white-space:nowrap; }
+  .br-nt .front .bmark small{ color:#8a7433; }
+  .br-nt .front .rarline{ text-align:center; }
+  .swipewrap .br-nt .front .bmark{ font-size:10px; }
+
+  /* == FLAWLESS — black diamond, platinum frame, diamond dust == */
+  .br-flawless .front{
+    background:linear-gradient(160deg,#101318,#05070b 70%);
+    box-shadow: inset 0 0 0 2.5px #dfe6f0, inset 0 0 0 5px #05070b,
+                inset 0 0 0 6px rgba(223,230,240,.5), inset 0 0 0 11px rgba(223,230,240,.08); }
+  .br-flawless .front .fbg{ opacity:0; }
+  .br-flawless .front .bgfx{ opacity:.55; mix-blend-mode:screen;
+    background-image:
+      radial-gradient(rgba(255,255,255,.9) .6px, transparent 1.1px),
+      radial-gradient(rgba(160,200,255,.6) .5px, transparent 1px);
+    background-size:11px 11px, 17px 17px; }
+  .br-flawless .front .rail{ width:1.8%; background:linear-gradient(180deg,#eef4ff,#5a6a86); left:5.5%; }
+  .br-flawless .front .photowrap{ top:10%; left:10%; right:10%; height:53%; padding:3px;
+    background:linear-gradient(135deg,#f4f8ff,#9fb2cc 35%,#ffffff 55%,#8fa3c0); }
+  .br-flawless .front .nameplate{ left:10%; right:10%; background:linear-gradient(115deg,#e8edf5,#b9c5d8);
+    clip-path:none; border-bottom:2.5px solid #7fd0ff; text-align:center; }
+  .br-flawless .front .np-name{ color:#0d1420; text-shadow:none; }
+  .br-flawless .front .np-sub{ color:#44506a; text-shadow:none; }
+  .br-flawless .front .bmark{ color:#eef4ff; letter-spacing:3px; }
+
+  /* == DYNASTY — navy vault, gold crest window == */
+  .br-dynasty .front{
+    background:linear-gradient(160deg,#0c1c3f,#060d1f 70%);
+    box-shadow: inset 0 0 0 2.5px #d4af37, inset 0 0 0 5px #060d1f, inset 0 0 0 6px rgba(212,175,55,.45); }
+  .br-dynasty .front .fbg{ opacity:1; background:
+    radial-gradient(60% 30% at 50% 6%, rgba(212,175,55,.28), transparent 70%); }
+  .br-dynasty .front .bgfx{ opacity:.25; mix-blend-mode:screen;
+    background-image:repeating-linear-gradient(0deg, rgba(212,175,55,.25) 0 1px, transparent 1px 16px); }
+  .br-dynasty .front .rail{ width:1.8%; background:linear-gradient(180deg,#d4af37,#6b5716); left:5.5%; }
+  .br-dynasty .front .photowrap{ top:10%; left:9.5%; right:9.5%; height:54%; padding:2.5px;
+    background:linear-gradient(135deg,#d4af37,#f7e7a8 50%,#a5842a); }
+  .br-dynasty .front .photowrap, .br-dynasty .front .photowrap .photo{
+    clip-path:polygon(0 0, 100% 0, 100% 91%, 50% 100%, 0 91%); }
+  .br-dynasty .front .nameplate{ left:9.5%; right:9.5%; background:linear-gradient(115deg,#122a55,#0b1b3a);
+    border:1px solid #d4af37; border-bottom:2px solid #d4af37; clip-path:none; text-align:center; }
+  .br-dynasty .front .np-name{ color:#f2df9e; }
+  .br-dynasty .front .np-sub{ color:#95a4c8; }
+  .br-dynasty .front .bmark{ color:#e6c964; letter-spacing:2px; }
   /* Foil rarity = animated BORDER ring, not a sheen over the whole card.
      The ring is drawn with a padding+mask trick so only the frame shows. */
   .card.refractor .front::after,
@@ -612,7 +674,7 @@
 
   <div class="footer">
     Simulation only — no real cards, money, or purchases. Odds modeled on published hobby-pack configurations and are approximate.
-    <div style="margin-top:4px;opacity:.7">build v15</div>
+    <div style="margin-top:4px;opacity:.7">build v16</div>
   </div>
 </div>
 
@@ -831,7 +893,7 @@ function P(o){ return o; }
 const PRODUCTS = [
   // ---- 2024-25 Panini Prizm Basketball: 12 cards/pack, 12 packs/box, ~2 autos & ~22 parallels/box.
   //      Panini doesn't publish unnumbered Silver/color odds (approx); /N runs are exact.
-  P({ id:"prizm_bk", name:"Prizm Basketball", year:"2025-26", sport:"basketball", brand:"PANINI PRIZM",
+  P({ boxPrices:{hobby:950, mega:80, blaster:35}, fmtPacks:{mega:10, blaster:6}, fmtCpp:{mega:4, blaster:4}, id:"prizm_bk", name:"Prizm Basketball", year:"2025-26", sport:"basketball", brand:"PANINI PRIZM",
       price:20, cardsPerPack:12, packsPerBox:12, pool:"nba_2425",
       design:"prizm", valMult:1.0,
       excl:{ hobby:{label:"Gold Shimmer", rar:"rare", p:1/150, runs:[10]},
@@ -852,7 +914,7 @@ const PRODUCTS = [
         { rar:"oneofone",  label:"Black Prizm 1/1",         p:1/1728,   max:1, foilType:"refractor" }
       ]}),
   // ---- 2024 Panini Prizm Football: 12/pack, 12 packs/box, ~2 autos & ~10 numbered/box.
-  P({ id:"prizm_fb", name:"Prizm Football", year:"2025", sport:"football", brand:"PANINI PRIZM",
+  P({ boxPrices:{hobby:750, mega:90, blaster:30}, fmtPacks:{mega:10, blaster:6}, fmtCpp:{mega:4, blaster:4}, id:"prizm_fb", name:"Prizm Football", year:"2025", sport:"football", brand:"PANINI PRIZM",
       price:24, cardsPerPack:12, packsPerBox:12, pool:"nfl_24",
       design:"prizm", valMult:1.35,
       excl:{ hobby:{label:"Black Shimmer", rar:"rare", p:1/160, runs:[10]},
@@ -873,8 +935,8 @@ const PRODUCTS = [
         { rar:"oneofone",  label:"Black Finite 1/1",        p:1/1728,   max:1, foilType:"refractor" }
       ]}),
   // ---- 2024 Donruss Optic Football: 11/pack, 20 packs/box, ~1 auto, ~3 Holo, ~9 numbered/box.
-  P({ id:"optic_fb", name:"Donruss Optic Football", year:"2025", sport:"football", brand:"OPTIC",
-      price:13, cardsPerPack:11, packsPerBox:20, pool:"nfl_24",
+  P({ boxPrices:{hobby:280, mega:50, blaster:25}, fmtPacks:{mega:10, blaster:6}, fmtCpp:{mega:4, blaster:4}, id:"optic_fb", name:"Donruss Optic Football", year:"2025", sport:"football", brand:"OPTIC",
+      price:13, cardsPerPack:4, packsPerBox:20, pool:"nfl_24",
       design:"optic", valMult:1.1,
       excl:{ hobby:{label:"Black Velocity", rar:"rare", p:1/170, runs:[25]},
              mega:{label:"Orange Scope", rar:"numbered", p:1/9, runs:[199]},
@@ -893,7 +955,7 @@ const PRODUCTS = [
         { rar:"oneofone",  label:"Black Pandora 1/1",       p:1/2880,   max:1, foilType:"refractor" }
       ]}),
   // ---- 2026 Topps Chrome Football: Topps' NFL return. 4/pack, 24 packs/box.
-  P({ id:"chrome_fb", name:"Topps Chrome Football", year:"2026", sport:"football", brand:"TOPPS CHROME",
+  P({ boxPrices:{hobby:260, mega:40, blaster:25}, fmtPacks:{mega:10, blaster:7}, fmtCpp:{mega:4, blaster:4}, id:"chrome_fb", name:"Topps Chrome Football", year:"2026", sport:"football", brand:"TOPPS CHROME",
       price:7, cardsPerPack:4, packsPerBox:24, pool:"nfl_24",
       design:"chromefb", valMult:1.4,
       excl:{ hobby:{label:"Gold RayWave", rar:"rare", p:1/130, runs:[50]},
@@ -913,7 +975,7 @@ const PRODUCTS = [
         { rar:"oneofone",  label:"SuperFractor 1/1",        p:1/9000,   max:1, foilType:"refractor" }
       ]}),
   // ---- 2024 Topps Chrome Baseball: 4/pack, 24 packs/box, 1 auto/box. Topps odds are exact & published.
-  P({ id:"chrome_bb", name:"Topps Chrome Baseball", year:"2025", sport:"baseball", brand:"TOPPS CHROME",
+  P({ boxPrices:{hobby:230, mega:35, blaster:22}, fmtPacks:{mega:10, blaster:7}, fmtCpp:{mega:4, blaster:4}, id:"chrome_bb", name:"Topps Chrome Baseball", year:"2025", sport:"baseball", brand:"TOPPS CHROME",
       price:5, cardsPerPack:4, packsPerBox:24, pool:"mlb_24",
       design:"chrome", valMult:0.8,
       excl:{ hobby:{label:"X-Fractor", rar:"refractor", p:1/6},
@@ -934,8 +996,8 @@ const PRODUCTS = [
         { rar:"oneofone",  label:"SuperFractor 1/1",        p:1/1387764,max:1, foilType:"refractor" }
       ]}),
   // ---- 2024 Topps Finest Baseball: 10/pack, 6 packs/box, 2 autos/box. Hit-dense.
-  P({ id:"finest_bb", name:"Topps Finest Baseball", year:"2025", sport:"baseball", brand:"TOPPS FINEST",
-      price:20, cardsPerPack:10, packsPerBox:6, pool:"mlb_24",
+  P({ boxPrices:{hobby:240, mega:60, blaster:35}, fmtPacks:{mega:8, blaster:6}, fmtCpp:{mega:5, blaster:5}, id:"finest_bb", name:"Topps Finest Baseball", year:"2025", sport:"baseball", brand:"TOPPS FINEST",
+      price:20, cardsPerPack:12, packsPerBox:6, pool:"mlb_24",
       design:"finest", valMult:1.05,
       excl:{ hobby:{label:"Black Mini-Diamond", rar:"rare", p:1/180, runs:[25]},
              mega:{label:"Blue Mini-Diamond", rar:"numbered", p:1/10, runs:[150]},
@@ -954,7 +1016,7 @@ const PRODUCTS = [
         { rar:"oneofone",  label:"SuperFractor 1/1",        p:1/3600,   max:1, foilType:"refractor" }
       ]}),
   // ---- 2024 Bowman Chrome Prospects: 4/pack, 24 packs/box, 2 autos/box. 1st Bowman chase.
-  P({ id:"bowman_bb", name:"Bowman Chrome Prospects", year:"2025", sport:"baseball", brand:"BOWMAN", subtitle:"Chrome Prospects",
+  P({ boxPrices:{hobby:330, mega:45, blaster:28}, fmtPacks:{mega:10, blaster:6}, fmtCpp:{mega:4, blaster:4}, id:"bowman_bb", name:"Bowman Chrome Prospects", year:"2025", sport:"baseball", brand:"BOWMAN", subtitle:"Chrome Prospects",
       price:8, cardsPerPack:4, packsPerBox:24, pool:"bowman_prospects",
       design:"bowman", valMult:1.0,
       excl:{ hobby:{label:"Gold Shimmer", rar:"rare", p:1/140, runs:[50]},
@@ -974,6 +1036,50 @@ const PRODUCTS = [
         { rar:"casehit",   label:"Bowman Heroes",           p:1/350,    max:1, foilType:"refractor", names:["Bowman Heroes"] },
         { rar:"oneofone",  label:"SuperFractor 1/1",        p:1/4500,   max:1, foilType:"refractor" }
       ]})
+  ,
+  // ---- HIGH END: one loaded pack per box, hobby only, star-heavy checklists.
+  P({ id:"nt_fb", name:"National Treasures", year:"2025", sport:"football", brand:"NATIONAL TREASURES",
+      price:1200, cardsPerPack:10, packsPerBox:1, pool:"nfl_24",
+      design:"nt", valMult:1.9, hobbyOnly:true, premium:true,
+      boxPrices:{hobby:1200},
+      palette:["#c9a227","#17130c","#080604"],
+      chase:[
+        { rar:"auto",      label:"Rookie Patch Autograph",  p:1,        max:1, foilType:"refractor", runs:[99,49,25] },
+        { rar:"auto",      label:"On-Card Autograph",       p:1,        max:2, foilType:"refractor", runs:[99,49] },
+        { rar:"auto",      label:"Legends Autograph",       p:0.55,    max:1, foilType:"refractor", runs:[25,10] },
+        { rar:"relic",     label:"Treasured Materials",     p:1,        max:3, foilType:null },
+        { rar:"numbered",  label:"Base /99",                p:1,        max:2, foilType:"refractor", runs:[99] },
+        { rar:"gold",      label:"Gold /10",                p:1/4,      max:1, foilType:"refractor", runs:[10] },
+        { rar:"superrare", label:"Emerald /5",              p:1/8,      max:1, foilType:"refractor", runs:[5] },
+        { rar:"oneofone",  label:"Platinum Logoman 1/1",    p:1/30,     max:1, foilType:"refractor" }
+      ]}),
+  P({ id:"flawless_bk", name:"Flawless", year:"2025-26", sport:"basketball", brand:"FLAWLESS",
+      price:2000, cardsPerPack:10, packsPerBox:1, pool:"nba_2425",
+      design:"flawless", valMult:2.2, hobbyOnly:true, premium:true,
+      boxPrices:{hobby:2000},
+      palette:["#dfe6f0","#101318","#05070b"],
+      chase:[
+        { rar:"auto",      label:"Rookie Gem Autograph",    p:1,        max:1, foilType:"refractor", runs:[25,10] },
+        { rar:"auto",      label:"On-Card Autograph",       p:1,        max:2, foilType:"refractor", runs:[49,25] },
+        { rar:"relic",     label:"Diamond Materials",       p:1,        max:2, foilType:null },
+        { rar:"numbered",  label:"Base /20",                p:1,        max:2, foilType:"refractor", runs:[20] },
+        { rar:"gold",      label:"Gold /10",                p:1/3,      max:1, foilType:"refractor", runs:[10] },
+        { rar:"superrare", label:"Emerald /5",              p:1/6,      max:1, foilType:"refractor", runs:[5] },
+        { rar:"oneofone",  label:"Logoman 1/1",             p:1/25,     max:1, foilType:"refractor" }
+      ]}),
+  P({ id:"dynasty_bb", name:"Dynasty", year:"2025", sport:"baseball", brand:"DYNASTY",
+      price:800, cardsPerPack:10, packsPerBox:1, pool:"mlb_24",
+      design:"dynasty", valMult:1.15, hobbyOnly:true, premium:true,
+      boxPrices:{hobby:800},
+      palette:["#d4af37","#0c1c3f","#060d1f"],
+      chase:[
+        { rar:"auto",      label:"Dynasty Patch Autograph", p:1,        max:1, foilType:"refractor", runs:[10,5] },
+        { rar:"auto",      label:"On-Card Autograph",       p:0.8,      max:1, foilType:"refractor", runs:[25,10] },
+        { rar:"relic",     label:"Dynasty Materials",       p:1,        max:2, foilType:null },
+        { rar:"numbered",  label:"Base /50",                p:1,        max:2, foilType:"refractor", runs:[50] },
+        { rar:"superrare", label:"Red /5",                  p:1/7,      max:1, foilType:"refractor", runs:[5] },
+        { rar:"oneofone",  label:"Dynasty 1/1",             p:1/28,     max:1, foilType:"refractor" }
+      ]})
 ];
 
 /* ============================================================
@@ -988,7 +1094,7 @@ const BOX_TYPES = {
             oddsMult:1.0,  autoMult:1.0,  legendMult:1.0,
             blurb:"Autos live here · best odds" },
   mega:   { key:"mega",    label:"Mega",    icon:"📦", priceMult:0.62, cppMult:0.75, packsFixed:8,
-            oddsMult:0.55, autoMult:0.12, legendMult:0.6,
+            oddsMult:0.38, autoMult:0.08, legendMult:0.6,
             blurb:"Retail · exclusive parallel" },
   blaster:{ key:"blaster", label:"Blaster", icon:"🛒", priceMult:0.42, cppMult:0.6,  packsFixed:6,
             oddsMult:0.3,  autoMult:0.05, legendMult:0.4,
@@ -996,14 +1102,18 @@ const BOX_TYPES = {
 };
 function getFormat(prod, key){
   const t = BOX_TYPES[key] || BOX_TYPES.hobby;
-  const packs = t.packsFixed || prod.packsPerBox;
-  const cpp = Math.max(3, Math.round(prod.cardsPerPack * t.cppMult));
-  const packPrice = Math.max(2, Math.round(prod.price * t.priceMult));
-  // Graham Legends odds scale with pack price so cheap products don't
-  // become legend printers; hobby pulls them ~2.5x as often as blasters
-  const legendP = (packPrice/7000) * t.legendMult;
+  if(prod.hobbyOnly && t.key!=="hobby") return null;   // high-end has no retail
+  const packs = t.key==="hobby" ? prod.packsPerBox
+              : ((prod.fmtPacks && prod.fmtPacks[t.key]) || t.packsFixed || 6);
+  const cpp   = t.key==="hobby" ? prod.cardsPerPack
+              : ((prod.fmtCpp && prod.fmtCpp[t.key]) || 4);
+  const boxPrice = (prod.boxPrices && prod.boxPrices[t.key])
+              || Math.round(prod.price * packs * (t.priceMult||1));
+  const packPrice = boxPrice/packs;
+  // Graham Legends odds scale with what you paid; premium boxes chase harder
+  const legendP = Math.min(0.12, (packPrice/7000) * t.legendMult);
   return Object.assign({}, t, {
-    packs, cpp, packPrice, legendP,
+    packs, cpp, packPrice, boxPrice, legendP,
     excl: prod.excl ? prod.excl[t.key] : null
   });
 }
@@ -1171,9 +1281,10 @@ const HIT_BIAS = {
   auto:4.2, oneofone:3.0, superrare:3.2, gold:3.0, rare:3.0, casehit:1.2, relic:2.0,
   numbered:2.0, silver:1.8, parallel:0.7, insert:0.7, refractor:0.7
 };
-function pickHitPlayer(poolId, rarKey){
+function pickHitPlayer(poolId, rarKey, premium){
   const arr = POOLS[poolId];
-  const k = HIT_BIAS[rarKey] || 0;
+  // premium checklists (NT/Flawless/Dynasty) are curated stars, not commons
+  const k = (HIT_BIAS[rarKey] || 0) * (premium ? 0.55 : 1);
   if(!k) return rnd(arr);
   let tot = 0; const w = new Array(arr.length);
   for(let i=0;i<arr.length;i++){ w[i] = 1/Math.pow(arr[i][3]||1.5, k); tot += w[i]; }
@@ -1248,7 +1359,7 @@ function makeBase(prod, used){
 }
 
 function makeCard(prod, def, used){
-  const pl = pickUnused(()=>pickHitPlayer(prod.pool, def.rar), used);
+  const pl = pickUnused(()=>pickHitPlayer(prod.pool, def.rar, prod.premium), used);
   const rar = RAR[def.rar] || RAR.parallel;
   let serial = null, colorName = null;
 
@@ -1314,7 +1425,10 @@ function posMult(sport, pos, rarKey){
     else if(pos==="TE") m = 0.42;
     else m = 0.3;
   } else if(sport==="baseball"){
-    m = (pos==="P") ? 0.75 : 1;
+    if(pos==="P") m = 0.7;
+    else if(pos==="C") m = 0.85;
+  } else if(sport==="basketball"){
+    if(pos==="C") m = 0.9;   // bigs discount slightly; superstars transcend via tier
   }
   if(m<1 && (rarKey==="oneofone")) m = Math.pow(m, 0.4);
   return m;
@@ -1417,14 +1531,14 @@ function renderToolbar(showBack){
   html += '<button class="ghost" id="tbColl">📒 Collection ('+state.collection.length+')</button>';
   html += '<button class="ghost" id="tbStats">📈 Stats</button>';
   html += '<button class="ghost" id="tbPhotos">📷 Photos: '+(state.photos===false?"Off":"On")+'</button>';
-  html += '<button class="ghost" id="tbAdd">＋ Add $100</button>';
+  html += '<button class="ghost" id="tbAdd">＋ Add $500</button>';
   html += '<button class="ghost" id="tbReset">↺ Reset</button>';
   toolbarEl.innerHTML = html;
   if(showBack) byId("tbBack").onclick = ()=>renderHome();
   byId("tbColl").onclick = showCollection;
   byId("tbStats").onclick = showStats;
   byId("tbPhotos").onclick = ()=>{ state.photos = (state.photos===false); save(); rerender(); };
-  byId("tbAdd").onclick = ()=>{ state.balance += 100; save(); rerender(); };
+  byId("tbAdd").onclick = ()=>{ state.balance += 500; save(); rerender(); };
   byId("tbReset").onclick = ()=>{
     if(confirm("Reset wallet and collection? This clears all pulls.")){ state = freshState(); save(); renderHome(); }
   };
@@ -1448,10 +1562,10 @@ function renderHome(){
       const grad = "linear-gradient(90deg,"+p.palette[0]+","+p.palette[1]+")";
       html += '<div class="product" data-id="'+p.id+'">'+
         '<div class="sheen"></div>'+
-        '<div class="yr">'+p.year+' • '+p.packsPerBox+' packs/box</div>'+
+        '<div class="yr">'+p.year+' • '+p.packsPerBox+' pack'+(p.packsPerBox>1?'s':'')+'/box'+(p.hobbyOnly?' • 💎 HIGH END':'')+'</div>'+
         '<h3>'+p.name+'</h3>'+
         (p.subtitle?'<div class="yr">'+p.subtitle+'</div>':'')+
-        '<div class="meta"><span>'+p.cardsPerPack+' cards/pack</span><span class="price">'+money(p.price)+'</span></div>'+
+        '<div class="meta"><span>'+p.cardsPerPack+' cards/pack</span><span class="price">'+money((p.boxPrices&&p.boxPrices.hobby)||p.price)+' box</span></div>'+
         '<div class="stripe" style="background:'+grad+'"></div>'+
       '</div>';
     }
@@ -1503,10 +1617,9 @@ function renderOpener(prodId, fmtKey){
           '<div class="ptap">'+fmt.icon+' '+fmt.label.toUpperCase()+' · TAP TO RIP</div>'+
         '</div>'+
         '<div class="ripcontrols">'+
-          '<button class="primary" id="ripBtn" '+(canAfford?"":"disabled")+'>RIP PACK · '+money(fmt.packPrice)+'</button>'+
-          '<button id="ripBoxBtn" '+(state.balance>=boxTotal?"":"disabled")+'>RIP '+fmt.label.toUpperCase()+' BOX · '+fmt.packs+' packs · '+money(boxTotal)+'</button>'+
+          '<button class="primary" id="ripBoxBtn" '+(canAfford?"":"disabled")+'>RIP '+fmt.label.toUpperCase()+' BOX · '+fmt.packs+' pack'+(fmt.packs>1?'s':'')+' · '+money(fmt.boxPrice)+'</button>'+
         '</div>'+
-        (canAfford?'':'<div class="hint">Not enough balance — use “Add $100”.</div>')+
+        (canAfford?'':'<div class="hint">Not enough balance — use “＋ Add $500”.</div>')+
       '</div>'+
     '</div>';
 
@@ -1514,29 +1627,18 @@ function renderOpener(prodId, fmtKey){
     el.onclick = ()=> renderOpener(prodId, el.dataset.fmt);
   });
   byId("oddsBtn").onclick = ()=> showOdds(prod, fmt);
-  byId("packart").onclick = ()=> doRip(prod, fmt);
-  byId("ripBtn").onclick = ()=> doRip(prod, fmt);
+  byId("packart").onclick = ()=> doRipBox(prod, fmt);
   byId("ripBoxBtn").onclick = ()=> doRipBox(prod, fmt);
-}
-
-function doRip(prod, fmt){
-  fmt = fmt || getFormat(prod, "hobby");
-  if(state.balance < fmt.packPrice) return;
-  state.balance -= fmt.packPrice; state.spent += fmt.packPrice; state.packs += 1;
-  const cards = openPack(prod, fmt);
-  currentPack = cards;
-  registerPulls(prod, cards);
-  save(); renderWallet();
-  playPackOpening(prod, cards, false, fmt);
 }
 
 function doRipBox(prod, fmt){
   fmt = fmt || getFormat(prod, "hobby");
-  const total = fmt.packPrice*fmt.packs;
+  const total = fmt.boxPrice;
   if(state.balance < total) return;
+  state.balance -= total; state.spent += total;
   let all = [];
   for(let i=0;i<fmt.packs;i++){
-    state.balance -= fmt.packPrice; state.spent += fmt.packPrice; state.packs += 1;
+    state.packs += 1;
     const cards = openPack(prod, fmt);
     registerPulls(prod, cards);
     all = all.concat(cards);
@@ -1877,6 +1979,9 @@ function cardGrad(c){
 const BRANDS = {
   prizm:   { mark:"PRIZM",  sub:"PANINI" },
   chromefb:{ mark:"CHROME", sub:"TOPPS · NFL" },
+  nt:      { mark:"NAT. TREASURES", sub:"PANINI" },
+  flawless:{ mark:"FLAWLESS", sub:"PANINI" },
+  dynasty: { mark:"DYNASTY", sub:"TOPPS" },
   optic:   { mark:"OPTIC",  sub:"DONRUSS" },
   chrome:  { mark:"CHROME", sub:"TOPPS" },
   finest:  { mark:"FINEST", sub:"TOPPS" },
@@ -1992,7 +2097,7 @@ function playPackOpening(prod, cards, isBox, fmt){
       ensurePhoto(card.photoKey||card.name, card.sport).then(url=>{ if(url){ new Image().src = url; } });
     }
   }
-  const goReveal = ()=> isBox ? showReveal(prod, cards, true, fmt) : showStack(prod, cards, false, fmt);
+  const goReveal = ()=> (cards.length <= 16) ? showStack(prod, cards, true, fmt) : showReveal(prod, cards, true, fmt);
   rerender = goReveal; // if state changes mid-anim, just land on the reveal
   const grad = "linear-gradient(160deg,"+prod.palette[0]+","+prod.palette[1]+" 60%,"+prod.palette[2]+")";
   view.innerHTML =
@@ -2035,7 +2140,7 @@ function showStack(prod, cards, isBox, fmt){
         '</div>'+
         '<div class="pull-summary" id="stacksum" style="display:none"></div>'+
         '<div class="ripcontrols" id="stackdone" style="display:none;margin-top:14px">'+
-          '<button class="primary" id="againS">RIP ANOTHER · '+money(fmt.packPrice)+'</button>'+
+          '<button class="primary" id="againS">RIP ANOTHER BOX · '+money(fmt.boxPrice)+'</button>'+
           '<button id="backS">Other Products</button>'+
         '</div>'+
       '</div>'+
@@ -2085,7 +2190,7 @@ function showStack(prod, cards, isBox, fmt){
     byId("swipehint").style.display = "none";
     const packVal = cards.reduce((s,c)=>s+c.value,0);
     const hits = cards.filter(c=>c.isHit).length;
-    const cost = fmt.packPrice, profit = packVal - cost;
+    const cost = fmt.boxPrice, profit = packVal - cost;
     const sum = byId("stacksum");
     sum.style.display = "block";
     sum.innerHTML =
@@ -2093,7 +2198,7 @@ function showStack(prod, cards, isBox, fmt){
       '<div class="row"><span>Hits</span><b>'+hits+'</b></div>'+
       '<div class="row"><span>Est. pull value</span><b>'+money(packVal)+'</b></div>'+
       '<div class="row"><span>Cost</span><b>'+money(cost)+'</b></div>'+
-      '<div class="row"><span>This pack</span><b class="'+(profit>=0?"pos":"neg")+'">'+(profit>=0?"+":"")+money(profit)+'</b></div>';
+      '<div class="row"><span>This box</span><b class="'+(profit>=0?"pos":"neg")+'">'+(profit>=0?"+":"")+money(profit)+'</b></div>';
     byId("stackdone").style.display = "flex";
     const hitIds = cards.filter(c=>c.colId).map(c=>c.colId);
     if(hitIds.length){
@@ -2157,7 +2262,7 @@ function showStack(prod, cards, isBox, fmt){
   byId("nextC").onclick = next;
   byId("prevC").onclick = prev;
   byId("toGrid").onclick = ()=> showReveal(prod, cards, isBox, fmt);
-  byId("againS").onclick = ()=>{ if(state.balance>=fmt.packPrice){ doRip(prod, fmt);} else { renderOpener(prod.id, fmt.key); } };
+  byId("againS").onclick = ()=>{ if(state.balance>=fmt.boxPrice){ doRipBox(prod, fmt);} else { renderOpener(prod.id, fmt.key); } };
   byId("backS").onclick = ()=> renderOpener(prod.id, fmt.key);
 
   // deal the fresh pack up into the stack, then flip the first card
@@ -2175,7 +2280,7 @@ function showReveal(prod, cards, isBox, fmt){
   renderToolbar(true);
   const hits = cards.filter(c=>c.isHit);
   const packVal = cards.reduce((s,c)=>s+c.value,0);
-  const cost = isBox ? fmt.packPrice*fmt.packs : fmt.packPrice;
+  const cost = fmt.boxPrice;
   const profit = packVal - cost;
 
   let html = '<div class="opener">'+
@@ -2192,7 +2297,7 @@ function showReveal(prod, cards, isBox, fmt){
         '<div class="row"><span>This '+(isBox?"box":"pack")+'</span><b class="'+(profit>=0?"pos":"neg")+'">'+(profit>=0?"+":"")+money(profit)+'</b></div>'+
       '</div>'+
       '<div class="ripcontrols" style="margin-top:14px">'+
-        '<button class="primary" id="again">RIP ANOTHER · '+money(fmt.packPrice)+'</button>'+
+        '<button class="primary" id="again">RIP ANOTHER BOX · '+money(fmt.boxPrice)+'</button>'+
         (hits.length ? '<button id="sellHits">💰 Sell hits · '+money(hits.reduce((s,c)=>s+c.value,0))+'</button>' : '')+
         '<button id="backToList">Other Products</button>'+
       '</div>'+
@@ -2219,7 +2324,7 @@ function showReveal(prod, cards, isBox, fmt){
       setTimeout(()=>revealCard(el, cards[i]), Math.min(i*90, 3000));
     });
   };
-  byId("again").onclick = ()=>{ if(state.balance>=fmt.packPrice){ doRip(prod, fmt);} else { renderOpener(prod.id, fmt.key); } };
+  byId("again").onclick = ()=>{ if(state.balance>=fmt.boxPrice){ doRipBox(prod, fmt);} else { renderOpener(prod.id, fmt.key); } };
   byId("backToList").onclick = ()=> renderOpener(prod.id, fmt.key);
 
   renderWallet();
@@ -2346,7 +2451,8 @@ function showOdds(prod, fmt){
   // which cards are locked to which box
   const exclList = Object.keys(BOX_TYPES).map(k=>{
     const f = getFormat(prod, k);
-    return '<div style="padding:4px 0">'+f.icon+' <b>'+f.label+'</b> — '+f.packs+' packs × '+f.cpp+' cards · '+money(f.packPrice)+'/pk'+
+    if(!f) return "";
+    return '<div style="padding:4px 0">'+f.icon+' <b>'+f.label+'</b> — '+f.packs+' packs × '+f.cpp+' cards · '+money(f.boxPrice)+' box'+
       (f.excl ? ' · <span style="color:var(--accent)">Exclusive: '+f.excl.label+(f.excl.runs?' /'+f.excl.runs[0]:'')+'</span>' : '')+
       ' · autos '+odds1in( (prod.chase.find(c=>c.rar==="auto")||{p:0.01}).p * f.autoMult )+'</div>';
   }).join("");
