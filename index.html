@@ -720,6 +720,20 @@
   }
   .swipewrap .card.torchcard .front .np-name{ font-size:21px; }
   .swipewrap .card.torchcard .front .tmedal{ font-size:19px; }
+  /* prismatic diffraction: a rainbow interference spot that FOLLOWS the
+     pointer / device tilt, like a refractor moving under a lamp */
+  .card.torchcard .front .photowrap.duo::after,
+  .card.mambacard .front .photowrap::after,
+  .card.ivycard .front .photowrap::after{
+    content:""; position:absolute; inset:2.5px; border-radius:7px; pointer-events:none; z-index:4;
+    background:repeating-linear-gradient(115deg,
+      rgba(255,61,139,.16) 0 2px, rgba(90,209,255,.16) 2px 4px,
+      rgba(255,203,61,.16) 4px 6px, rgba(57,217,138,.14) 6px 8px, transparent 8px 11px);
+    mix-blend-mode:color-dodge;
+    -webkit-mask-image:radial-gradient(55% 55% at var(--holoX,50%) var(--holoY,42%), #000 15%, transparent 72%);
+            mask-image:radial-gradient(55% 55% at var(--holoX,50%) var(--holoY,42%), #000 15%, transparent 72%);
+    opacity:.95;
+  }
   /* Foil rarity = animated BORDER ring, not a sheen over the whole card.
      The ring is drawn with a padding+mask trick so only the frame shows. */
   .card.refractor .front::after,
@@ -984,7 +998,7 @@
 
   <div class="footer">
     Simulation only — no real cards, money, or purchases. Odds modeled on published hobby-pack configurations and are approximate.
-    <div style="margin-top:4px;opacity:.7">build v28</div>
+    <div style="margin-top:4px;opacity:.7">build v29</div>
   </div>
 </div>
 
@@ -2932,6 +2946,31 @@ function revealCard(el, c){
   attachTilt(el);
 }
 
+let gyroOn = false;
+function enableGyro(){
+  if(gyroOn){ gyroOn = false; window.removeEventListener("deviceorientation", onGyro); toast("🎥 Gyro tilt off"); rerender(); return; }
+  const go = ()=>{ gyroOn = true; window.addEventListener("deviceorientation", onGyro); toast("🎥 Gyro on — tilt your device"); rerender(); };
+  try{
+    if(typeof DeviceOrientationEvent !== "undefined" && DeviceOrientationEvent.requestPermission){
+      DeviceOrientationEvent.requestPermission().then(s=>{ if(s==="granted") go(); else toast("Gyro permission denied"); }).catch(()=>toast("Gyro not available"));
+    } else if(typeof DeviceOrientationEvent !== "undefined"){ go(); }
+    else toast("Gyro not available on this device");
+  }catch(e){ toast("Gyro not available"); }
+}
+function onGyro(e){
+  if(e.beta==null || e.gamma==null) return;
+  const rx = Math.max(-14, Math.min(14, (e.beta-45)*0.45));
+  const ry = Math.max(-16, Math.min(16, e.gamma*0.55));
+  document.querySelectorAll(".card.flipped").forEach(el=>{
+    const inner = el.querySelector(".inner"); if(!inner) return;
+    inner.style.transition = "transform .12s ease-out";
+    inner.style.transform = "rotateY("+(180 - ry)+"deg) rotateX("+rx+"deg)";
+    el.style.setProperty("--holoX", (50 + ry*4)+"%");
+    el.style.setProperty("--holoY", (42 + rx*4)+"%");
+    const g = el.querySelector(".glare");
+    if(g){ g.style.opacity = .45; g.style.backgroundPosition = (50+ry*4)+"% "+(50+rx*4)+"%"; }
+  });
+}
 function attachTilt(el){
   if(el._tilt) return; el._tilt = true;
   const inner = el.querySelector(".inner");
@@ -2946,6 +2985,8 @@ function attachTilt(el){
     const y = (p.clientY - r.top )/r.height - 0.5;
     inner.style.transition = "transform .08s ease";
     inner.style.transform = "rotateY("+(180 - x*22)+"deg) rotateX("+(y*16)+"deg)";
+    el.style.setProperty("--holoX", (50 + x*110)+"%");
+    el.style.setProperty("--holoY", (42 + y*110)+"%");
     if(glare){
       glare.style.opacity = 0.6;
       glare.style.backgroundPosition = (50 + x*100)+"% "+(50 + y*100)+"%";
@@ -3161,7 +3202,8 @@ function renderShowroom(tab){
   let html = '<div class="opener"><div class="opener-head"><div class="ptitle"><h2>🏆 Showroom</h2>'+
     '<div class="sub">'+(showTab==="case" ? pinned.length+" pinned · "+money(total)+" in the case" : "Your ten best pulls · "+money(total)+" on display")+'</div></div>'+
     '<div class="navpills"><button class="pill'+(showTab==="top"?" on":"")+'" id="srTop">🔥 Top 10</button>'+
-    '<button class="pill'+(showTab==="case"?" on":"")+'" id="srCase">📌 Display Case <span class="cnt">'+pinned.length+'</span></button></div></div>';
+    '<button class="pill'+(showTab==="case"?" on":"")+'" id="srCase">📌 Display Case <span class="cnt">'+pinned.length+'</span></button>'+
+    '<button class="pill'+(gyroOn?" on":"")+'" id="srGyro">🎥 Gyro</button></div></div>';
   if(!list.length){
     html += '<div class="packstage"><div class="empty">'+(showTab==="case"
       ? "Your case is empty. Pin cards from the 📒 Binder (📌 button on any card) to curate your own display."
@@ -3180,6 +3222,7 @@ function renderShowroom(tab){
   view.innerHTML = html;
   byId("srTop").onclick = ()=>renderShowroom("top");
   byId("srCase").onclick = ()=>renderShowroom("case");
+  byId("srGyro").onclick = enableGyro;
   view.querySelectorAll(".card").forEach(el=>{ el.classList.add("flipped"); attachTilt(el); });
   hydratePhotos(view);
 }
