@@ -59,7 +59,20 @@
   button.ghost{ background:transparent; }
   button:disabled{ opacity:.45; cursor:not-allowed; }
 
-  .toolbar{ display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px; }
+  .toolbar{ display:flex; gap:10px; flex-wrap:wrap; margin-bottom:16px; align-items:center; justify-content:space-between; }
+  .navpills{ display:flex; gap:4px; background:var(--panel); border:1px solid var(--line);
+    border-radius:14px; padding:4px; flex-wrap:wrap; }
+  .pill{ border:none; background:transparent; border-radius:10px; padding:9px 14px; font-size:13.5px; font-weight:700; color:var(--dim); }
+  .pill:hover{ color:var(--fg); border-color:transparent; }
+  .pill.on{ background:linear-gradient(180deg,#ffd95e,#f5a623); color:#1a1300; }
+  .pill.back{ padding:9px 12px; font-size:16px; }
+  .pill .cnt{ background:rgba(255,203,61,.18); color:var(--accent); border-radius:9px; padding:1px 7px; font-size:11px; margin-left:2px; }
+  .pill.on .cnt{ background:rgba(0,0,0,.18); color:#1a1300; }
+  .navutil{ display:flex; gap:6px; }
+  .chipdiv{ width:1px; align-self:stretch; background:var(--line); margin:0 2px; }
+  .pinbtn.on{ background:#241f10; border-color:var(--accent); }
+  #view > *{ animation:viewin .28s cubic-bezier(.2,.8,.3,1); }
+  @keyframes viewin{ from{ opacity:0; transform:translateY(10px);} }
 
   /* Product grid */
   .sport-group{ margin-bottom:20px; }
@@ -73,7 +86,7 @@
     background:linear-gradient(160deg,var(--bg2),var(--panel));
     overflow:hidden; cursor:pointer; transition:transform .12s ease, border-color .12s ease;
   }
-  .product:hover{ transform:translateY(-3px); border-color:var(--accent); }
+  .product:hover{ transform:translateY(-3px); border-color:var(--accent); box-shadow:0 14px 34px rgba(0,0,0,.45); }
   .product .sheen{ position:absolute; inset:0; background:linear-gradient(115deg,transparent 40%,rgba(255,255,255,.06) 50%,transparent 60%); pointer-events:none; }
   .product .yr{ font-size:11px; color:var(--dim); letter-spacing:1px; }
   .product h3{ margin:4px 0 2px; font-size:18px; }
@@ -708,8 +721,11 @@
   .pull-summary .row b.pos{ color:var(--good);} .pull-summary .row b.neg{ color:var(--bad);}
 
   /* Modal */
-  .modal-bg{ position:fixed; inset:0; background:rgba(4,7,14,.78); display:flex; align-items:flex-start; justify-content:center; padding:30px 14px; overflow:auto; z-index:50; }
-  .modal{ width:680px; max-width:100%; background:var(--bg2); border:1px solid var(--line); border-radius:16px; padding:20px; }
+  .modal-bg{ position:fixed; inset:0; background:rgba(4,7,14,.7); backdrop-filter:blur(7px); -webkit-backdrop-filter:blur(7px); display:flex; align-items:flex-start; justify-content:center; padding:30px 14px; overflow:auto; z-index:50; }
+  .modal{ width:680px; max-width:100%; background:var(--bg2); border:1px solid var(--line);
+    border-radius:18px; padding:20px; animation:modalin .26s cubic-bezier(.2,.8,.3,1);
+    box-shadow:0 24px 70px rgba(0,0,0,.6); }
+  @keyframes modalin{ from{ opacity:0; transform:translateY(22px) scale(.98);} }
   .modal h2{ margin:0 0 6px; }
   .modal .close{ float:right; }
   table.odds{ width:100%; border-collapse:collapse; font-size:13px; margin-top:10px; }
@@ -810,7 +826,7 @@
 
   <div class="footer">
     Simulation only — no real cards, money, or purchases. Odds modeled on published hobby-pack configurations and are approximate.
-    <div style="margin-top:4px;opacity:.7">build v21</div>
+    <div style="margin-top:4px;opacity:.7">build v22</div>
   </div>
 </div>
 
@@ -1804,19 +1820,25 @@ function renderWallet(){
 }
 function statBox(label, val){ return '<div class="stat"><small>'+label+'</small><b>'+val+'</b></div>'; }
 
-function renderToolbar(showBack){
-  let html = "";
-  if(showBack) html += '<button class="ghost" id="tbBack">‹ All Products</button>';
-  html += '<button class="ghost" id="tbColl">📒 Collection ('+state.collection.length+')</button>';
-  html += '<button class="ghost" id="tbShow">🏆 Showroom</button>';
-  html += '<button class="ghost" id="tbStats">📈 Stats</button>';
-  html += '<button class="ghost" id="tbPhotos">📷 Photos: '+(state.photos===false?"Off":"On")+'</button>';
-  html += '<button class="ghost" id="tbAdd">＋ Add $500</button>';
-  html += '<button class="ghost" id="tbReset">↺ Reset</button>';
+let navActive = "shop";
+function renderToolbar(showBack, active){
+  if(active) navActive = active;
+  let html = '<div class="navpills">';
+  if(showBack) html += '<button class="pill back" id="tbBack">‹</button>';
+  html += '<button class="pill'+(navActive==="shop"?" on":"")+'" id="tbShop">🛍 Shop</button>';
+  html += '<button class="pill" id="tbColl">📒 Binder <span class="cnt">'+state.collection.length+'</span></button>';
+  html += '<button class="pill'+(navActive==="show"?" on":"")+'" id="tbShow">🏆 Showroom</button>';
+  html += '<button class="pill" id="tbStats">📈 Stats</button>';
+  html += '</div><div class="navutil">';
+  html += '<button class="ghost" id="tbPhotos" title="Player photos">📷 '+(state.photos===false?"Off":"On")+'</button>';
+  html += '<button class="ghost" id="tbAdd">＋ $500</button>';
+  html += '<button class="ghost" id="tbReset" title="Reset save">↺</button>';
+  html += '</div>';
   toolbarEl.innerHTML = html;
   if(showBack) byId("tbBack").onclick = ()=>renderHome();
+  byId("tbShop").onclick = ()=>renderHome();
   byId("tbColl").onclick = showCollection;
-  byId("tbShow").onclick = renderShowroom;
+  byId("tbShow").onclick = ()=>renderShowroom();
   byId("tbStats").onclick = showStats;
   byId("tbPhotos").onclick = ()=>{ state.photos = (state.photos===false); save(); rerender(); };
   byId("tbAdd").onclick = ()=>{ state.balance += 500; save(); rerender(); };
@@ -1832,7 +1854,7 @@ let rerender = renderHome;
 
 function renderHome(){
   rerender = renderHome;
-  renderWallet(); renderToolbar(false);
+  renderWallet(); renderToolbar(false, "shop");
   const sports = { basketball:"🏀 Basketball", football:"🏈 Football", baseball:"⚾ Baseball" };
   let html = "";
   for(const sp of Object.keys(sports)){
@@ -1969,7 +1991,7 @@ function slimCard(c){
 // Keep the toolbar's "Collection (N)" live without re-rendering the screen
 function updateCollCount(){
   const b = byId("tbColl");
-  if(b) b.textContent = "📒 Collection ("+state.collection.length+")";
+  if(b) b.innerHTML = "📒 Binder <span class=\"cnt\">"+state.collection.length+"</span>";
 }
 function sellCard(id, silent){
   const i = state.collection.findIndex(x=>x.id===id);
@@ -2774,8 +2796,9 @@ function showOdds(prod, fmt){
 /* ============================================================
    COLLECTION MODAL
    ============================================================ */
-let collFilter = "all", collSort = "value", bulkOpen = false, bulkAmt = 10;
+let collFilter = "all", collSport = "all", collSort = "value", bulkOpen = false, bulkAmt = 10;
 function collMatches(c){
+  if(collSport!=="all" && c.sport!==collSport) return false;
   switch(collFilter){
     case "auto":   return !!c.auto;
     case "rookie": return !!c.rookie || !!c.firstBowman;
@@ -2803,15 +2826,20 @@ function renderCollBody(bg){
   if(!body) return;
   const coll = state.collection.filter(collMatches).slice();
   if(collSort==="value") coll.sort((a,b)=> b.value - a.value);
+  else if(collSort==="az") coll.sort((a,b)=> a.name.localeCompare(b.name));
   else coll.sort((a,b)=> (b.id||0) - (a.id||0));
 
+  const sports = [["all","All"],["basketball","🏀"],["football","🏈"],["baseball","⚾"]];
   const chips = [["all","All"],["auto","✍️ Autos"],["rookie","RC"],["graded","💎 Graded"],["big","$50+"]];
   let html = '<div class="chiprow">'+
+    sports.map(([k,l])=>'<span class="chip sp'+(collSport===k?" on":"")+'" data-sp="'+k+'">'+l+'</span>').join("")+
+    '<span class="chipdiv"></span>'+
     chips.map(([k,l])=>'<span class="chip'+(collFilter===k?" on":"")+'" data-f="'+k+'">'+l+'</span>').join("")+
     '<span class="chip'+(bulkOpen?" on":"")+'" id="bulkChip">💰 Sell Bulk</span>'+
     '<span style="flex:1"></span>'+
-    '<span class="chip'+(collSort==="value"?" on":"")+'" data-s="value">Top value</span>'+
-    '<span class="chip'+(collSort==="new"?" on":"")+'" data-s="new">Newest</span>'+
+    '<span class="chip'+(collSort==="value"?" on":"")+'" data-s="value">Value</span>'+
+    '<span class="chip'+(collSort==="new"?" on":"")+'" data-s="new">New</span>'+
+    '<span class="chip'+(collSort==="az"?" on":"")+'" data-s="az">A-Z</span>'+
   '</div>';
   if(bulkOpen){
     html += '<div class="bulkpanel">Sell every card worth less than '+
@@ -2840,6 +2868,7 @@ function renderCollBody(bg){
         '<div class="cl-sub">'+esc(c.set)+' '+c.year+' · '+esc(sub)+'</div></div>'+
         '<div class="cl-side"><div class="cl-val">'+money(c.value)+'</div>'+
           '<div class="collbtns">'+
+            '<button data-pin="'+c.id+'" class="pinbtn'+(c.pinned?" on":"")+'" title="Pin to Display Case">📌</button>'+
             (!c.grade ? '<button data-g="'+c.id+'">💎 Grade</button>' : '<button data-crack="'+c.id+'">🔨 Crack</button>')+
             '<button data-sell="'+c.id+'">💰 Sell</button>'+
           '</div>'+
@@ -2850,11 +2879,16 @@ function renderCollBody(bg){
   }
   body.innerHTML = html;
   body.querySelectorAll(".chip[data-f]").forEach(el=>{ el.onclick = ()=>{ collFilter = el.dataset.f; renderCollBody(bg); }; });
+  body.querySelectorAll(".chip[data-sp]").forEach(el=>{ el.onclick = ()=>{ collSport = el.dataset.sp; renderCollBody(bg); }; });
+  body.querySelectorAll("[data-pin]").forEach(el=>{ el.onclick = ()=>{
+    const c = state.collection.find(x=>x.id===+el.dataset.pin);
+    if(c){ c.pinned = !c.pinned; save(); toast(c.pinned ? "📌 Pinned to your Display Case" : "Unpinned"); renderCollBody(bg); }
+  }; });
   const bc = body.querySelector("#bulkChip");
   if(bc) bc.onclick = ()=>{ bulkOpen = !bulkOpen; renderCollBody(bg); };
   const ba = body.querySelector("#bulkAmt"), bgo = body.querySelector("#bulkGo");
   if(ba && bgo){
-    const bulkMatches = ()=> state.collection.filter(c=> c.value < (parseFloat(ba.value)||0) && !c.grade && c.rarKey!=="legend" && !c.mamba);
+    const bulkMatches = ()=> state.collection.filter(c=> c.value < (parseFloat(ba.value)||0) && !c.grade && c.rarKey!=="legend" && !c.mamba && !c.pinned);
     const refresh = ()=>{
       const m = bulkMatches();
       bgo.textContent = m.length ? ("Sell "+m.length+" cards · "+money(m.reduce((s,c)=>s+c.value,0))) : "Nothing under that";
@@ -2878,28 +2912,38 @@ function renderCollBody(bg){
 /* ============================================================
    SHOWROOM — your ten best pulls, displayed big
    ============================================================ */
-function renderShowroom(){
+let showTab = "top";
+function renderShowroom(tab){
+  if(tab) showTab = tab;
   document.querySelectorAll(".modal-bg").forEach(m=>m.remove());
-  rerender = renderShowroom;
-  renderWallet(); renderToolbar(true);
+  rerender = ()=>renderShowroom();
+  renderWallet(); renderToolbar(false, "show");
+  const pinned = state.collection.filter(c=>c.pinned).sort((a,b)=>b.value-a.value);
   const top = state.collection.slice().sort((a,b)=>b.value-a.value).slice(0,10);
-  const totalTop = top.reduce((s,c)=>s+c.value,0);
+  const list = showTab==="case" ? pinned : top;
+  const total = list.reduce((s,c)=>s+c.value,0);
   let html = '<div class="opener"><div class="opener-head"><div class="ptitle"><h2>🏆 Showroom</h2>'+
-    '<div class="sub">Your ten best pulls · '+money(totalTop)+' on display</div></div></div>';
-  if(!top.length){
-    html += '<div class="packstage"><div class="empty">Nothing on display yet — rip some boxes.</div></div></div>';
+    '<div class="sub">'+(showTab==="case" ? pinned.length+" pinned · "+money(total)+" in the case" : "Your ten best pulls · "+money(total)+" on display")+'</div></div>'+
+    '<div class="navpills"><button class="pill'+(showTab==="top"?" on":"")+'" id="srTop">🔥 Top 10</button>'+
+    '<button class="pill'+(showTab==="case"?" on":"")+'" id="srCase">📌 Display Case <span class="cnt">'+pinned.length+'</span></button></div></div>';
+  if(!list.length){
+    html += '<div class="packstage"><div class="empty">'+(showTab==="case"
+      ? "Your case is empty. Pin cards from the 📒 Binder (📌 button on any card) to curate your own display."
+      : "Nothing on display yet — rip some boxes.")+'</div></div></div>';
   } else {
-    html += '<div class="showroom">'+ top.map((c,i)=>{
+    html += '<div class="showroom">'+ list.map((c,i)=>{
       const r = RAR[c.rarKey] || {};
       const disp = Object.assign({}, c, {
         foilType: r.refractor ? "refractor" : (r.holo ? "holo" : null),
         big: ["auto","gold","superrare","oneofone","rare","legend","casehit"].includes(c.rarKey)
       });
-      return '<div class="showcase"><div class="rankb">#'+(i+1)+'</div>'+cardFrontHTML(disp)+
+      return '<div class="showcase">'+(showTab==="top"?'<div class="rankb">#'+(i+1)+'</div>':'<div class="rankb pin">📌</div>')+cardFrontHTML(disp)+
         '<div class="showval">'+esc(c.name)+' · <b>'+money(c.value)+'</b>'+(c.grade?' · 💎 GRADE '+c.grade:'')+'</div></div>';
     }).join("")+'</div></div>';
   }
   view.innerHTML = html;
+  byId("srTop").onclick = ()=>renderShowroom("top");
+  byId("srCase").onclick = ()=>renderShowroom("case");
   view.querySelectorAll(".card").forEach(el=>{ el.classList.add("flipped"); attachTilt(el); });
   hydratePhotos(view);
 }
