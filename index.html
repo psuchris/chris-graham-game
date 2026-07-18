@@ -612,7 +612,7 @@
 
   <div class="footer">
     Simulation only — no real cards, money, or purchases. Odds modeled on published hobby-pack configurations and are approximate.
-    <div style="margin-top:4px;opacity:.7">build v14</div>
+    <div style="margin-top:4px;opacity:.7">build v15</div>
   </div>
 </div>
 
@@ -1041,9 +1041,55 @@ function makeLegendCard(prod){
    STATE  (persisted to localStorage)
    ============================================================ */
 const SAVE_KEY = "ripcity_save_v1";
-// multipliers from the OLD grading system — needed by load()'s migration to
-// crack/repair slabs graded before v12. MUST be declared before load() runs.
+// multipliers from the OLD grading system — needed by migration to crack
+// slabs graded before v12. MUST be declared before load() runs.
 const LEGACY_GRADE_MULT = { "10":3.5, "9":1.6, "8":0.85, "7":0.5, "6":0.3, "AA":0.2 };
+
+// Deterministic fair value for a Graham legend given its serial — mirrors
+// cardValue's legend math at the noise midpoint. Self-contained (no forward
+// references: load() runs before the engine constants are declared).
+function fairLegendValue(serial){
+  const star = Math.pow(5, 2.1)/6, sp = Math.pow(star, 1.4);
+  let v = 45 + 26*sp;
+  const m = /\/(\d+)/.exec(serial||"");
+  if(m){
+    const run = parseInt(m[1],10);
+    v *= Math.min(6, Math.max(1, 200/run));
+    if(serial==="1/1") v *= 2.5;
+  }
+  return Math.round(v*0.26*0.95*100)/100;   // 0.26 = MARKET, 0.95 = noise midpoint
+}
+
+// One migration used by EVERY path that adopts stored state (initial load,
+// save-conflict adoption, tab-focus sync) — earlier builds only migrated in
+// load(), so multi-tab adoption could resurrect corrupted values.
+function migrateState(st){
+  for(const c of st.collection){
+    if(!c.id) c.id = st.seq++;
+    else st.seq = Math.max(st.seq, c.id+1);
+    // legacy slabs never stored preGrade — reconstruct from the old multipliers
+    if(c.grade && typeof c.preGrade!=="number"){
+      const m = LEGACY_GRADE_MULT[c.grade] || 1;
+      c.preGrade = Math.max(0.05, Math.round(c.value/m*100)/100);
+    }
+    // legends are self-healing: any legend (raw value, or a slab's preGrade)
+    // sitting under half its fair serial value was mangled by the old
+    // grade/crack bugs — restore it to fair value outright
+    if(c.rarKey==="legend"){
+      const fair = fairLegendValue(c.serial);
+      if(!c.grade && c.value < fair*0.5){
+        st.pullValue += (fair - c.value);
+        c.value = fair;
+        st._repaired = (st._repaired||0)+1;
+      }
+      if(c.grade && c.preGrade < fair*0.5){
+        c.preGrade = fair;
+      }
+    }
+  }
+  return st;
+}
+
 let state = load();
 
 function freshState(){
@@ -1054,25 +1100,10 @@ function load(){
   try{
     const s = JSON.parse(localStorage.getItem(SAVE_KEY));
     if(s && typeof s.balance==="number"){
-      const st = Object.assign(freshState(), s);
-      // migrate older saves: every card needs an id, and seq must stay ahead
-      for(const c of st.collection){
-        if(!c.id) c.id = st.seq++;
-        else st.seq = Math.max(st.seq, c.id+1);
-        // legacy slabs never stored preGrade — reconstruct it from the old
-        // multiplier table so cracking restores the true raw value
-        if(c.grade && typeof c.preGrade!=="number"){
-          const m = LEGACY_GRADE_MULT[c.grade] || 1;
-          c.preGrade = Math.max(0.05, Math.round(c.value/m*100)/100);
-        }
-        // repair pass: raw Graham legends can't legitimately sit under $200 —
-        // ones that do were cracked while the legacy-multiplier bug ate their
-        // value (e.g. Altered $600 -> $120). Undo the 0.2x.
-        if(c.rarKey==="legend" && !c.grade && c.value < 200){
-          const fixed = Math.round(c.value*5*100)/100;
-          st.pullValue += (fixed - c.value);
-          c.value = fixed;
-        }
+      const st = migrateState(Object.assign(freshState(), s));
+      if(st._repaired){
+        const n = st._repaired; delete st._repaired;
+        setTimeout(()=>toast("🔧 Restored "+n+" Graham legend"+(n>1?"s":"")+" to fair value"), 600);
       }
       return st;
     }
@@ -1085,7 +1116,8 @@ function save(){
     // never clobber a NEWER save made by another tab/session
     const s = JSON.parse(localStorage.getItem(SAVE_KEY));
     if(s && (s.rev||0) > (state.rev||0)){
-      state = Object.assign(freshState(), s);
+      state = migrateState(Object.assign(freshState(), s));
+      delete state._repaired;
       toast("↻ Synced with your other session");
       renderWallet(); rerender();
       return;
@@ -1095,7 +1127,7 @@ function save(){
   try{
     localStorage.setItem(SAVE_KEY, JSON.stringify(state));
   }catch(e){
-    if(!warnedSave){ warnedSave = true; toast("⚠️ Couldn't save progress — storage blocked/full. Pulls may not survive a reload."); }
+    if(!warnedSave){ warnedSave = true; toast("⚠️ Couldn\u2019t save progress — storage blocked/full. Pulls may not survive a reload."); }
   }
 }
 // Multi-tab / restored-tab protection: if another tab (or an earlier session
@@ -1105,7 +1137,8 @@ function syncFromStorage(){
   try{
     const s = JSON.parse(localStorage.getItem(SAVE_KEY));
     if(s && typeof s.balance==="number" && (s.rev||0) > (state.rev||0)){
-      state = Object.assign(freshState(), s);
+      state = migrateState(Object.assign(freshState(), s));
+      delete state._repaired;
       renderWallet(); rerender();
     }
   }catch(e){}
@@ -1636,8 +1669,10 @@ function crackSlab(id){
   if(!c || !c.grade) return;
   const mult = (GRADES.find(g=>g.g===c.grade)||{}).mult
             || LEGACY_GRADE_MULT[c.grade] || 1;
-  const raw = (typeof c.preGrade==="number") ? c.preGrade
-            : Math.max(0.05, Math.round(c.value/mult*100)/100);
+  let raw = (typeof c.preGrade==="number") ? c.preGrade
+          : Math.max(0.05, Math.round(c.value/mult*100)/100);
+  // legends self-heal: never let historical grade bugs crack one below fair
+  if(c.rarKey==="legend") raw = Math.max(raw, fairLegendValue(c.serial));
   state.pullValue += (raw - c.value);
   c.value = raw;
   delete c.grade; delete c.gradeLabel; delete c.preGrade;
