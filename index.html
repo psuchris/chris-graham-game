@@ -514,6 +514,41 @@
   /* bigger windows -> initials scale with them */
   .br-prizm .front .photo .initials, .br-optic .front .photo .initials{ font-size:44px; }
   .br-nt .front .photo .initials, .br-immaculate .front .photo .initials{ font-size:30px; }
+
+  /* == 🐍 THE MAMBA LOGOMAN — one card, its own universe == */
+  .card.mambacard .front{
+    background:
+      radial-gradient(120% 80% at 50% 0%, rgba(85,37,131,.55), transparent 60%),
+      repeating-conic-gradient(from 45deg at 50% 42%, rgba(253,185,39,.09) 0 8deg, transparent 8deg 16deg),
+      repeating-linear-gradient(115deg, rgba(85,37,131,.3) 0 5px, transparent 5px 11px),
+      linear-gradient(160deg,#140b20,#050308 70%);
+    box-shadow: inset 0 0 0 3px #fdb927, inset 0 0 0 6px #552583,
+                inset 0 0 0 7.5px rgba(253,185,39,.65), inset 0 0 0 12px rgba(253,185,39,.12);
+  }
+  .card.mambacard .front::before{
+    content:"8 · 24"; position:absolute; top:36%; left:0; right:0; z-index:1;
+    text-align:center; font-size:46px; font-weight:900; font-style:italic;
+    letter-spacing:5px; color:rgba(253,185,39,.12); pointer-events:none;
+  }
+  .card.mambacard .front .fbg, .card.mambacard .front .bgfx{ opacity:0; }
+  .card.mambacard .front .rail{ width:2%; background:linear-gradient(180deg,#fdb927,#552583); left:5%; }
+  .card.mambacard .front .photowrap{ top:9%; left:12%; right:12%; height:50%; padding:3px;
+    background:linear-gradient(135deg,#fdb927,#fff3c4 28%,#552583 62%,#fdb927); }
+  .card.mambacard .front .photowrap, .card.mambacard .front .photowrap .photo{
+    clip-path:none; border-radius:8px; }
+  .card.mambacard .front .nameplate{ left:12%; right:12%; background:linear-gradient(115deg,#552583,#2a1145);
+    border:1px solid #fdb927; border-bottom:3px solid #fdb927; clip-path:none; text-align:center; }
+  .card.mambacard .front .np-name{ color:#ffe9a8; letter-spacing:1px; }
+  .card.mambacard .front .np-sub{ color:#caa8ff; }
+  .card.mambacard .front .rarline{ text-align:center; color:#fdb927; font-size:10px; letter-spacing:1.5px; }
+  .card.mambacard .front .signature{ color:#ffd75e; font-size:26px;
+    text-shadow:0 0 14px rgba(253,185,39,.9), 0 2px 4px rgba(0,0,0,.8); }
+  .swipewrap .card.mambacard .front .signature{ font-size:42px; }
+  .card.mambacard.flipped{ animation:mambaglow 1.5s ease-in-out infinite; }
+  @keyframes mambaglow{
+    0%,100%{ box-shadow:0 0 0 2.5px #fdb927, 0 0 26px rgba(253,185,39,.55); }
+    50%    { box-shadow:0 0 0 3.5px #fdb927, 0 0 64px rgba(253,185,39,1), 0 0 110px rgba(85,37,131,.8); }
+  }
   /* Foil rarity = animated BORDER ring, not a sheen over the whole card.
      The ring is drawn with a padding+mask trick so only the frame shows. */
   .card.refractor .front::after,
@@ -775,7 +810,7 @@
 
   <div class="footer">
     Simulation only — no real cards, money, or purchases. Odds modeled on published hobby-pack configurations and are approximate.
-    <div style="margin-top:4px;opacity:.7">build v20</div>
+    <div style="margin-top:4px;opacity:.7">build v21</div>
   </div>
 </div>
 
@@ -1565,6 +1600,21 @@ function openPack(prod, fmt){
   keptSpecials.sort((a,b)=> a.value - b.value);
   for(const sp of keptSpecials){ cards.push(sp); }
 
+  // 🐍 THE MAMBA LOGOMAN — Flawless Basketball's white whale. Guaranteed in
+  // the first Flawless box ever opened on this save; 1:1,200 boxes after.
+  if(prod.id==="flawless_bk" && (!state.kobeGolden || chance(1/1200))){
+    state.kobeGolden = "claimed";
+    const kobe = finishCard(prod, ["Kobe Bryant","LAL","SG",5], "oneofone", RAR.oneofone,
+      { foilType:"refractor", label:"Mamba Logoman Autograph", serial:"1/1" });
+    kobe.auto = true; kobe.mamba = true;
+    kobe.tcOverride = ["#fdb927","#552583"];
+    kobe.photoKey = "Kobe Bryant";
+    kobe.value = Math.round((15000 + Math.random()*9000)*100)/100;
+    let mi = 0;
+    for(let i=1;i<cards.length;i++) if(cards[i].value < cards[mi].value) mi = i;
+    cards[mi] = kobe;
+  }
+
   return cards;
 }
 
@@ -1895,6 +1945,7 @@ function registerPulls(prod, cards){
       state.counts.hits = (state.counts.hits||0)+1;
       if(c.auto && c.rookie) state.counts.rcauto = (state.counts.rcauto||0)+1;
       if(!state.best || c.value > state.best.value){ state.best = sc; }
+      if(c.mamba) setTimeout(()=>toast("🐍 MAMBA OUT. The Logoman is real."), 900);
     }
   }
   // Keep the binder (and localStorage) healthy: retain the 600 best hits.
@@ -1909,7 +1960,7 @@ function slimCard(c){
            rarKey:c.rarKey, rarName:c.rarName, color:c.color, label:c.label, design:c.design,
            serial:c.serial, colorName:c.colorName, auto:c.auto, value:c.value,
            firstBowman:c.firstBowman, rookie:c.rookie,
-           photoKey:c.photoKey, tcOverride:c.tcOverride, legend:c.legend };
+           photoKey:c.photoKey, tcOverride:c.tcOverride, legend:c.legend, mamba:c.mamba };
 }
 
 /* ============================================================
@@ -1978,10 +2029,11 @@ function gradeCard(id){
     '</div>'
   );
   setTimeout(()=>{
-    const g = rollGrade();
+    const g = c.mamba ? GRADES[0] : rollGrade();   // the Mamba only gems
+    const mult = c.mamba ? 6 : g.mult;             // and the market goes insane
     const old = c.value;
     c.preGrade = old;   // kept so a bad slab can be cracked back to raw
-    c.value = Math.max(0.05, Math.round(old*g.mult*100)/100);
+    c.value = Math.max(0.05, Math.round(old*mult*100)/100);
     c.grade = g.g; c.gradeLabel = g.label;
     state.pullValue += (c.value - old);
     state.counts.graded = (state.counts.graded||0)+1;
@@ -2282,6 +2334,7 @@ function cardFrontHTML(c){
   if(c.foilType==="refractor"||c.foilType==="silver") cls += " refractor";
   if(c.big) cls += " bighit";
   if(c.legend) cls += " legendcard";
+  if(c.mamba) cls += " mambacard";
   const tc = c.tcOverride || teamColor(c.sport, c.team);
   // the parallel's color IS the card frame, like real cardboard; base cards
   // get a neutral chrome frame and let the team colors do the talking
@@ -2305,7 +2358,9 @@ function cardFrontHTML(c){
           ? '<div class="relicswatch'+(c.colorName==="Patch"?" patch":"")+'" style="--sw1:'+tc[0]+';--sw2:'+tc[1]+'"><i></i></div>'
           : '')+
         '<div class="topline">'+
-          (c.legend
+          (c.mamba
+            ? '<span class="bmark" style="color:#fdb927"><small>FLAWLESS</small>BLACK MAMBA</span>'
+            : c.legend
             ? '<span class="bmark" style="color:#39ffa0"><small>RIP CITY</small>LEGENDS</span>'
             : '<span class="bmark">'+(bm.sub?'<small>'+bm.sub+'</small>':'')+(bm.mark||esc(c.set))+'</span>')+
           (c.serial
@@ -2691,6 +2746,9 @@ function showOdds(prod, fmt){
       (fmt.excl.runs?' <span style="color:var(--dim)">('+fmt.excl.runs.map(x=>"/"+x).join(", ")+')</span>':'')+
       ' <b style="color:var(--accent)">'+fmt.label+' Exclusive</b></td><td class="r">'+odds1in(fmt.excl.p)+' packs</td></tr>';
   }
+  if(prod.id==="flawless_bk"){
+    rows += '<tr><td><span class="swatch" style="background:#fdb927"></span>🐍 Mamba Logoman Autograph 1/1 <span style="color:var(--dim)">(auto-gems a 10)</span></td><td class="r">1 : 1,200 boxes</td></tr>';
+  }
   rows += '<tr><td><span class="swatch" style="background:'+RAR.legend.color+'"></span>🟢 RIP City Legends (Graham Family) <span style="color:var(--dim)">(/10, /5, 1/1)</span></td><td class="r">'+odds1in(fmt.legendP)+' packs</td></tr>';
 
   // which cards are locked to which box
@@ -2796,7 +2854,7 @@ function renderCollBody(bg){
   if(bc) bc.onclick = ()=>{ bulkOpen = !bulkOpen; renderCollBody(bg); };
   const ba = body.querySelector("#bulkAmt"), bgo = body.querySelector("#bulkGo");
   if(ba && bgo){
-    const bulkMatches = ()=> state.collection.filter(c=> c.value < (parseFloat(ba.value)||0) && !c.grade && c.rarKey!=="legend");
+    const bulkMatches = ()=> state.collection.filter(c=> c.value < (parseFloat(ba.value)||0) && !c.grade && c.rarKey!=="legend" && !c.mamba);
     const refresh = ()=>{
       const m = bulkMatches();
       bgo.textContent = m.length ? ("Sell "+m.length+" cards · "+money(m.reduce((s,c)=>s+c.value,0))) : "Nothing under that";
