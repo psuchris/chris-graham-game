@@ -199,15 +199,15 @@
   .card .front .signature{
     position:absolute; bottom:34%; left:8%; right:8%; z-index:3;
     font-family:"Snell Roundhand","Savoye LET","Brush Script MT","Segoe Script","Dancing Script",cursive;
-    font-style:italic; font-size:17px; line-height:1;
+    font-style:italic; font-size:23px; line-height:1;
     letter-spacing:-.4px; white-space:nowrap; overflow:visible;
     transform:rotate(-7deg); transform-origin:left center;
     pointer-events:none; opacity:.95;
   }
-  .swipewrap .card .front .signature{ font-size:26px; }
-  .card .front .signature.sig-blue{ color:#2f54d9;
+  .swipewrap .card .front .signature{ font-size:38px; bottom:32%; }
+  .card .front .signature.sig-blue{ color:#3d6bff;
     text-shadow:0 1px 1px rgba(0,0,0,.4), 0 0 1px rgba(15,25,80,.7); }
-  .card .front .signature.sig-gold{ color:#f0c24b;
+  .card .front .signature.sig-gold{ color:#ffd75e;
     text-shadow:0 0 6px rgba(240,194,75,.55), 0 1px 1px rgba(60,40,0,.55); }
   /* top strip: brand wordmark + serial/year */
   .card .front .topline{
@@ -737,7 +737,7 @@
 
   <div class="footer">
     Simulation only — no real cards, money, or purchases. Odds modeled on published hobby-pack configurations and are approximate.
-    <div style="margin-top:4px;opacity:.7">build v17</div>
+    <div style="margin-top:4px;opacity:.7">build v18</div>
   </div>
 </div>
 
@@ -1685,7 +1685,11 @@ function cardValue(rarKey, opts, tier, prod, rookie, pos){
 
   // market noise + occasional outlier "hot" copy
   let mult = 0.6 + Math.random()*0.7;
-  if(rarKey!=="base" && Math.random()<0.08) mult *= 2.6;
+  if(rarKey!=="base"){
+    const r = Math.random();
+    if(r < 0.02)      mult *= 4 + Math.random()*6;  // grail spike: the four-figure raw pull
+    else if(r < 0.10) mult *= 2.6;                  // hot copy
+  }
   v *= mult * MARKET;
   return Math.max(0.05, Math.round(v*100)/100);
 }
@@ -1768,23 +1772,28 @@ function renderOpener(prodId, fmtKey){
   const prod = PRODUCTS.find(p=>p.id===prodId);
   if(!prod) return renderHome();
   fmtKey = fmtKey || "hobby";
-  const fmt = getFormat(prod, fmtKey);
+  const fmt = getFormat(prod, fmtKey) || getFormat(prod, "hobby");
   if(state.photos !== false) prefetchPoolPhotos(prod.pool);
   rerender = ()=>renderOpener(prodId, fmtKey);
   renderWallet(); renderToolbar(true);
   const grad = "linear-gradient(160deg,"+prod.palette[0]+","+prod.palette[1]+" 60%,"+prod.palette[2]+")";
-  const canAfford = state.balance >= fmt.packPrice;
-  const boxTotal = fmt.packPrice*fmt.packs;
+  const canAfford = state.balance >= fmt.boxPrice;
+  const boxTotal = fmt.boxPrice;
 
-  const fmtTiles = Object.keys(BOX_TYPES).map(k=>{
-    const f = getFormat(prod, k);
-    return '<div class="fmt'+(k===fmtKey?" on":"")+'" data-fmt="'+k+'">'+
-      '<b>'+f.icon+' '+f.label+'</b>'+
-      '<span>'+f.packs+' packs · '+f.cpp+' cards/pk · '+money(f.packPrice)+'/pk</span>'+
-      (f.excl?'<span class="fx">⭐ Excl: '+f.excl.label+(f.excl.runs?' /'+f.excl.runs[0]:'')+'</span>':'')+
-      '<span class="fx">'+f.blurb+'</span>'+
-    '</div>';
-  }).join("");
+  const fmtTiles = prod.hobbyOnly
+    ? '<div class="fmt on" style="grid-column:1/-1"><b>💎 Hobby Only — High End</b>'+
+      '<span>'+fmt.packs+' pack · '+fmt.cpp+' cards · every card a hit or numbered</span>'+
+      '<span class="fx">No retail. This is the big-boy table.</span></div>'
+    : Object.keys(BOX_TYPES).map(k=>{
+      const f = getFormat(prod, k);
+      if(!f) return "";
+      return '<div class="fmt'+(k===fmtKey?" on":"")+'" data-fmt="'+k+'">'+
+        '<b>'+f.icon+' '+f.label+' Box · '+money(f.boxPrice)+'</b>'+
+        '<span>'+f.packs+' packs · '+f.cpp+' cards/pk</span>'+
+        (f.excl?'<span class="fx">⭐ Excl: '+f.excl.label+(f.excl.runs?' /'+f.excl.runs[0]:'')+'</span>':'')+
+        '<span class="fx">'+f.blurb+'</span>'+
+      '</div>';
+    }).join("");
 
   view.innerHTML =
     '<div class="opener">'+
