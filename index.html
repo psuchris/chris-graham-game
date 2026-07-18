@@ -650,11 +650,13 @@
     display:flex; align-items:center; justify-content:center; }
   .torchcard .front .photowrap.duo .photo.duoa{
     background-color:#001a4a;
-    background-image:radial-gradient(130% 95% at 50% 22%, #00338D 0%, #001536 80%);
+    background-image:radial-gradient(130% 95% at 28% 22%, #00338D 0%, #001536 80%);
+    background-position:-6% 12%; background-size:64% auto;
     clip-path:polygon(0 0, 61% 0, 39% 100%, 0 100%); }
   .torchcard .front .photowrap.duo .photo.duob{
     background-color:#400512;
-    background-image:radial-gradient(130% 95% at 50% 22%, #C60C30 0%, #37040f 80%);
+    background-image:radial-gradient(130% 95% at 72% 22%, #C60C30 0%, #37040f 80%);
+    background-position:106% 12%; background-size:64% auto;
     clip-path:polygon(61% 0, 100% 0, 100% 100%, 39% 100%); }
   .torchcard .front .photowrap.duo .bolt{ position:absolute; top:-3%; bottom:-3%; left:36%; width:26%; z-index:3;
     background:linear-gradient(180deg,#fff7d6,#ffd75e 55%,#f5a623);
@@ -666,12 +668,12 @@
   .torchcard .front .signature{ position:absolute; z-index:5; pointer-events:none;
     font-family:"Snell Roundhand","Savoye LET","Brush Script MT","Segoe Script",cursive;
     font-style:italic; font-size:20px; white-space:nowrap; opacity:.96; }
-  .torchcard .front .signature{ bottom:auto; }
-  .torchcard .front .signature.siga{ left:7%; right:auto; top:41%; transform:rotate(-8deg); color:#ffd75e;
+  .torchcard .front .signature{ bottom:auto; font-size:21px; }
+  .torchcard .front .signature.siga{ left:8%; right:auto; max-width:46%; top:38.5%; transform:rotate(-8deg); color:#ffd75e;
     text-shadow:0 0 12px rgba(255,215,94,.9), 0 2px 4px rgba(0,0,0,.85); }
-  .torchcard .front .signature.sigb{ right:6%; left:auto; text-align:right; top:46.5%; transform:rotate(-4deg); color:#dbe9ff;
+  .torchcard .front .signature.sigb{ right:7%; left:auto; max-width:46%; text-align:right; top:44.5%; transform:rotate(-4deg); color:#dbe9ff;
     text-shadow:0 0 12px rgba(127,208,255,.9), 0 2px 4px rgba(0,0,0,.85); }
-  .swipewrap .torchcard .front .signature{ font-size:31px; }
+  .swipewrap .torchcard .front .signature{ font-size:33px; }
   .torchcard .front .patchrow{ position:absolute; top:56.5%; left:6.5%; right:6.5%; height:13.5%;
     display:flex; gap:6px; align-items:stretch; z-index:4; }
   .torchcard .front .tpatch{ flex:1; border:2px dashed rgba(255,255,255,.6); border-radius:6px;
@@ -703,8 +705,8 @@
     color:#ffd75e; text-shadow:0 0 8px rgba(255,215,94,.6); }
   .torchcard .front .photo .initials{ font-size:34px; font-weight:900; color:rgba(255,255,255,.9);
     text-shadow:0 2px 10px rgba(0,0,0,.5); }
-  .torchcard .front .photo.duoa .initials{ transform:translateX(-56%); }
-  .torchcard .front .photo.duob .initials{ transform:translateX(56%); }
+  .torchcard .front .photo.duoa .initials{ transform:translateX(-44%); }
+  .torchcard .front .photo.duob .initials{ transform:translateX(44%); }
   /* rotating aurora ring (CSS @property tech — degrades to static elsewhere) */
   .card.torchcard .front::after{
     background:conic-gradient(from var(--torchang), #C60C30, #ffd75e, #ffffff, #00338D, #7fd0ff, #C60C30);
@@ -982,7 +984,7 @@
 
   <div class="footer">
     Simulation only — no real cards, money, or purchases. Odds modeled on published hobby-pack configurations and are approximate.
-    <div style="margin-top:4px;opacity:.7">build v27</div>
+    <div style="margin-top:4px;opacity:.7">build v28</div>
   </div>
 </div>
 
@@ -1776,8 +1778,7 @@ function openPack(prod, fmt){
 
   // 🐍 THE MAMBA LOGOMAN — Flawless Basketball's white whale. Guaranteed in
   // the first Flawless box ever opened on this save; 1:1,200 boxes after.
-  if(prod.id==="flawless_bk" && (!state.kobeGolden || chance(1/1200))){
-    state.kobeGolden = "claimed";
+  if(prod.id==="flawless_bk" && chance(1/1200)){
     const kobe = finishCard(prod, ["Kobe Bryant","LAL","SG",5], "oneofone", RAR.oneofone,
       { foilType:"refractor", label:"Mamba Logoman Autograph", serial:"1/1" });
     kobe.auto = true; kobe.mamba = true;
@@ -1791,8 +1792,7 @@ function openPack(prod, fmt){
 
   // 🌿 THE WRIGLEY IVY — Dynasty Baseball's chase: PCA in the ivy, plaque gold.
   // Guaranteed in the first Dynasty box on this save; 1:800 boxes after.
-  if(prod.id==="dynasty_bb" && (!state.pcaGolden || chance(1/800))){
-    state.pcaGolden = "claimed";
+  if(prod.id==="dynasty_bb" && chance(1/800)){
     const pca = finishCard(prod, ["Pete Crow-Armstrong","CHC","OF",3.4], "oneofone", RAR.oneofone,
       { foilType:"refractor", label:"Wrigley Ivy Autograph", serial:"1/1" });
     pca.auto = true; pca.pca = true;
